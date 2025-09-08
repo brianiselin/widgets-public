@@ -1,206 +1,450 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>EV Lease Calculator</title>
-  <style>
-    :root{
-      --evlc-primary:#0f172a; /* navy */
-      --evlc-accent:#7b1e3a;  /* burgundy */
-      --evlc-border:#e5e7eb;
-      --evlc-bg:#f8fafc;
-      --evlc-text:#111827;
-      --evlc-muted:#475569;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      background:#0b1220;
-      color:#111;
-      font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-      line-height:1.45;
-      padding:16px;
-    }
-    .wrap{display:flex;justify-content:center}
-    .evlc-card{
-      width:100%;
-      max-width:900px;
-      background:#fff;
-      border:1px solid var(--evlc-border);
-      border-radius:16px;
-      padding:20px;
-      box-shadow:0 6px 24px rgba(0,0,0,.06);
-    }
-    .evlc-title{font-size:22px;font-weight:800;margin:0 0 6px;color:var(--evlc-primary)}
-    .evlc-sub{margin:0 0 18px;color:var(--evlc-muted)}
-    .evlc-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
-    .evlc-field{display:flex;flex-direction:column}
-    .evlc-label{font-size:14px;font-weight:700;margin-bottom:6px;color:var(--evlc-text)}
-    .evlc-input{padding:10px 12px;border:1px solid #cbd5e1;border-radius:10px;font-size:16px;outline:none;width:100%}
-    .evlc-input:focus{border-color:var(--evlc-accent);box-shadow:0 0 0 3px rgba(123,30,58,.15)}
-    .evlc-note{font-size:12px;color:#6b7280;margin-top:4px}
-    .evlc-results{margin-top:18px;border-top:1px dashed var(--evlc-border);padding-top:14px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
-    .evlc-kpi{background:var(--evlc-bg);border:1px solid var(--evlc-border);border-radius:14px;padding:14px}
-    .evlc-kpi h4{margin:0 0 4px;font-size:14px;color:#334155}
-    .evlc-kpi .val{font-size:22px;font-weight:800}
-    .evlc-help{font-size:12px;color:#475569;margin-top:6px}
-    .evlc-actions{margin-top:12px;display:flex;gap:10px;flex-wrap:wrap}
-    .evlc-btn{appearance:none;border:1px solid var(--evlc-accent);background:var(--evlc-accent);color:#fff;padding:10px 14px;border-radius:10px;font-weight:700;cursor:pointer}
-    .evlc-btn--ghost{background:#fff;color:var(--evlc-accent)}
-    .evlc-disclaimer{margin-top:12px;font-size:12px;color:#6b7280}
-    @media (max-width: 720px){
-      .evlc-grid, .evlc-results {grid-template-columns:1fr}
-      body{padding:10px}
-    }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>EV Lease Calculator — Universal</title>
+<style>
+  :root{
+    --navy:#0B1F3B;
+    --burg:#7A1735;
+    --ink:#111317;
+    --muted:#6b7280;
+    --bg:#f8fafc;
+    --card:#ffffff;
+    --ok:#0e9f6e;
+    --warn:#b45309;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font:500 16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
+  .wrap{max-width:980px;margin:24px auto;padding:16px}
+  .title{display:flex;gap:12px;align-items:center;margin:0 0 12px}
+  .swatch{width:14px;height:14px;border-radius:3px;background:linear-gradient(90deg,var(--burg),var(--navy))}
+  h1{font-size:20px;margin:0}
+  .tabs{display:flex;gap:8px;margin:8px 0 16px;flex-wrap:wrap}
+  .tab-btn{border:1px solid var(--navy);background:#fff;color:var(--navy);padding:8px 12px;border-radius:10px;cursor:pointer}
+  .tab-btn[aria-selected="true"]{background:var(--navy);color:#fff}
+  .grid{display:grid;grid-template-columns:1fr;gap:12px}
+  @media(min-width:760px){.grid{grid-template-columns:repeat(12,1fr)}}
+  .card{background:var(--card);border:1px solid #e5e7eb;border-radius:14px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+  .card h2{font-size:16px;margin:0;padding:12px 12px 0 12px;color:var(--navy)}
+  .body{padding:12px}
+  .row{display:grid;grid-template-columns:1fr 140px;gap:10px;align-items:center;margin:8px 0}
+  .row > label{color:#222}
+  .sub{font-size:12px;color:var(--muted)}
+  input[type="number"], input[type="text"], select{
+    width:100%;padding:9px 10px;border:1px solid #d1d5db;border-radius:10px;background:#fff;
+  }
+  .toggle{display:flex;gap:12px;align-items:center}
+  .kpi{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+  @media(min-width:760px){.kpi{grid-template-columns:repeat(4,1fr)}}
+  .pill{padding:10px;border-radius:12px;background:#fff;border:1px solid #e5e7eb}
+  .pill h3{margin:0 0 4px;font-size:13px;color:var(--burg)}
+  .val{font-weight:700;font-variant-numeric:tabular-nums}
+  .actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .btn{border:1px solid var(--navy);color:#fff;background:var(--navy);padding:8px 12px;border-radius:10px;cursor:pointer}
+  .btn.secondary{background:#fff;color:var(--navy)}
+  .warn{display:none;margin-top:8px;color:#fff;background:var(--warn);padding:8px 10px;border-radius:10px}
+  .ok{display:none;margin-top:8px;color:#fff;background:var(--ok);padding:8px 10px;border-radius:10px}
+  .section-title{grid-column:1/-1;border-top:1px dashed #e5e7eb;margin-top:4px;padding-top:10px;color:var(--navy);font-weight:700}
+  .foot{grid-column:1/-1;color:var(--muted);font-size:12px;margin-top:8px}
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,"Liberation Mono","Courier New",monospace}
+  /* simple compare table */
+  table{width:100%;border-collapse:separate;border-spacing:0 8px}
+  th,td{padding:10px 12px;background:#fff;border:1px solid #e5e7eb}
+  th{background:#f3f4f6;color:var(--navy);font-weight:700}
+  td:first-child,th:first-child{border-top-left-radius:12px;border-bottom-left-radius:12px}
+  td:last-child,th:last-child{border-top-right-radius:12px;border-bottom-right-radius:12px}
+  .min{outline:2px solid var(--ok);outline-offset:0;border-radius:10px}
+</style>
 </head>
 <body>
   <div class="wrap">
-    <div class="evlc-card" id="evlc-root">
-      <div class="evlc-title">EV Lease Calculator</div>
-      <p class="evlc-sub">Estimate a 36-month lease using money factor &amp; residual math. Values update as you type.</p>
-
-      <div class="evlc-grid" role="group" aria-label="Lease inputs">
-        <div class="evlc-field">
-          <label class="evlc-label" for="evlc-msrp">MSRP ($)</label>
-          <input class="evlc-input" id="evlc-msrp" data-evlc="msrp" type="number" min="0" step="100" value="40000">
-        </div>
-        <div class="evlc-field">
-          <label class="evlc-label" for="evlc-cap">Negotiated Cap Cost ($)</label>
-          <input class="evlc-input" id="evlc-cap" data-evlc="cap" type="number" min="0" step="100" value="38000">
-          <div class="evlc-note">Price after dealer discount, before incentives/fees/down.</div>
-        </div>
-        <div class="evlc-field">
-          <label class="evlc-label" for="evlc-resid">Residual (%)</label>
-          <input class="evlc-input" id="evlc-resid" data-evlc="residual_pct" type="number" min="30" max="90" step="0.5" value="58">
-          <div class="evlc-note">From captive bulletin (e.g., 58 = 58%).</div>
-        </div>
-        <div class="evlc-field">
-          <label class="evlc-label" for="evlc-mf">Money Factor (MF)</label>
-          <input class="evlc-input" id="evlc-mf" data-evlc="mf" type="text" value="0.00125">
-          <div class="evlc-note">APR ≈ MF × 2400 (0.00125 ≈ 3.0% APR). Accepts comma decimals.</div>
-        </div>
-        <div class="evlc-field">
-          <label class="evlc-label" for="evlc-term">Term (months)</label>
-          <input class="evlc-input" id="evlc-term" data-evlc="term" type="number" min="12" max="60" step="1" value="36">
-        </div>
-        <div class="evlc-field">
-          <label class="evlc-label" for="evlc-incent">Incentives / Rebates applied to Cap ($)</label>
-          <input class="evlc-input" id="evlc-incent" data-evlc="incentives" type="number" min="0" step="100" value="7500">
-          <div class="evlc-note">Include captive pass-through of the federal credit if applicable.</div>
-        </div>
-        <div class="evlc-field">
-          <label class="evlc-label" for="evlc-fees">Capitalized Fees ($)</label>
-          <input class="evlc-input" id="evlc-fees" data-evlc="fees_cap" type="number" min="0" step="50" value="1395">
-          <div class="evlc-note">Bank/acquisition + doc fees rolled into the cap.</div>
-        </div>
-        <div class="evlc-field">
-          <label class="evlc-label" for="evlc-down">Cash Down / Cap Reduction ($)</label>
-          <input class="evlc-input" id="evlc-down" data-evlc="down" type="number" min="0" step="100" value="0">
-          <div class="evlc-note">We recommend $0 down; pay first payment + DMV only.</div>
-        </div>
-        <div class="evlc-field">
-          <label class="evlc-label" for="evlc-tax">Sales Tax Rate (%)</label>
-          <input class="evlc-input" id="evlc-tax" data-evlc="tax_rate" type="text" value="7.5">
-          <div class="evlc-note">Simplified model: monthly tax applied to the base payment. Accepts comma decimals.</div>
-        </div>
-      </div>
-
-      <div class="evlc-results" aria-live="polite">
-        <div class="evlc-kpi"><h4>Residual Value</h4><div class="val" data-evlc-out="residual_val">—</div><div class="evlc-help">MSRP × Residual %</div></div>
-        <div class="evlc-kpi"><h4>APR (approx)</h4><div class="val" data-evlc-out="apr">—</div><div class="evlc-help">APR ≈ MF × 2400</div></div>
-        <div class="evlc-kpi"><h4>Base Payment (pre-tax)</h4><div class="val" data-evlc-out="base">—</div><div class="evlc-help">Depreciation + Finance Charge</div></div>
-        <div class="evlc-kpi"><h4>All-in Est. Monthly (after tax)</h4><div class="val" data-evlc-out="total">—</div><div class="evlc-help">Base × (1 + tax rate)</div></div>
-      </div>
-
-      <div class="evlc-actions">
-        <button type="button" class="evlc-btn" data-evlc-action="reset">Reset to defaults</button>
-        <button type="button" class="evlc-btn evlc-btn--ghost" data-evlc-action="copy">Copy results</button>
-      </div>
-
-      <p class="evlc-disclaimer">
-        This tool is an estimate. Actual taxes, incentives, and fees vary by state and lender. Always request the buy-rate MF and the exact residual percentage in writing from the current captive bulletin.
-      </p>
+    <div class="title">
+      <div class="swatch"></div><h1>EV Lease Calculator — Universal</h1>
     </div>
+
+    <div class="tabs" role="tablist">
+      <button class="tab-btn" role="tab" aria-selected="true" data-tab="calc">Calculator</button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-tab="compare">Compare (A/B/C)</button>
+    </div>
+
+    <!-- CALCULATOR -->
+    <section id="calc" class="card" role="tabpanel" aria-labelledby="calc-tab">
+      <h2>Inputs</h2>
+      <div class="body grid">
+        <!-- Left column -->
+        <div class="card body" style="grid-column:1/-1">
+          <div class="row">
+            <label>Currency</label>
+            <div class="toggle">
+              <select id="currency">
+                <option value="€">€</option>
+                <option value="£">£</option>
+                <option value="$">$</option>
+                <option value="custom">Custom…</option>
+              </select>
+              <input id="currencyCustom" type="text" placeholder="Symbol" style="width:80px;display:none" maxlength="3">
+            </div>
+          </div>
+
+          <div class="row"><label>MSRP / List Price</label><input type="number" id="msrp" value="40000" min="0" step="100"></div>
+          <div class="row"><label>Negotiated Cap Cost</label><input type="number" id="cap" value="38000" min="0" step="100"></div>
+
+          <div class="row"><label>Residual %</label><input type="number" id="residualPct" value="58" min="0" max="100" step="0.1"></div>
+          <div class="row">
+            <label>Residual tweak (%) <span class="sub">leave 0 unless your market uses a mileage rule</span></label>
+            <input type="number" id="residualTweak" value="0" step="0.1">
+          </div>
+
+          <div class="row"><label>Money Factor</label><input type="number" id="mf" value="0.00125" min="0" step="0.00001"></div>
+          <div class="row"><label>Term (months)</label><input type="number" id="term" value="36" min="12" max="72" step="1"></div>
+
+          <div class="row"><label>Incentives (reduce cap)</label><input type="number" id="incentives" value="7500" min="0" step="100"></div>
+
+          <div class="row">
+            <label>Fees</label>
+            <div class="toggle" style="width:100%">
+              <input type="number" id="fees" value="0" min="0" step="50" style="width:120px">
+              <label class="sub"><input type="radio" name="feesMode" value="cap" checked> Capitalised</label>
+              <label class="sub"><input type="radio" name="feesMode" value="upfront"> Up-front</label>
+            </div>
+          </div>
+
+          <div class="row"><label>Cash Down (reduces cap)</label><input type="number" id="cashDown" value="0" min="0" step="100"></div>
+
+          <div class="row">
+            <label>Tax Rate</label>
+            <div class="toggle" style="width:100%">
+              <input type="number" id="taxRate" value="0.21" min="0" max="1" step="0.01" style="width:120px">
+              <select id="taxMode">
+                <option value="monthly">Monthly on payment</option>
+                <option value="upfront">Up-front (at inception)</option>
+                <option value="none">None / VAT already included</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button class="btn" id="calcBtn">Calculate</button>
+            <button class="btn secondary" id="resetBtn">Reset</button>
+            <button class="btn secondary" id="copyBtn">Copy results</button>
+          </div>
+          <div class="warn" id="warn">Adjusted cap is below residual. Check your inputs (or reduce incentives/cash down).</div>
+          <div class="ok" id="ok">Results updated.</div>
+        </div>
+
+        <!-- Outputs -->
+        <div class="section-title">Summary</div>
+        <div class="kpi" style="grid-column:1/-1">
+          <div class="pill"><h3>Adjusted Cap</h3><div class="val" id="kCap">—</div><div class="sub">cap − incentives + capitalised fees − cash down</div></div>
+          <div class="pill"><h3>Residual Value</h3><div class="val" id="kResidual">—</div><div class="sub">MSRP × residual%</div></div>
+          <div class="pill"><h3>APR (effective)</h3><div class="val" id="kAPR">—</div><div class="sub">money factor × 2400</div></div>
+          <div class="pill"><h3>Base (pre-tax)</h3><div class="val" id="kBase">—</div><div class="sub">depreciation + finance</div></div>
+        </div>
+
+        <div class="section-title">Payment breakdown</div>
+        <div class="kpi" style="grid-column:1/-1">
+          <div class="pill"><h3>Depreciation / month</h3><div class="val" id="kDep">—</div></div>
+          <div class="pill"><h3>Finance / month</h3><div class="val" id="kFin">—</div></div>
+          <div class="pill"><h3>All-in Monthly</h3><div class="val" id="kMonthly">—</div><div class="sub" id="kTaxExplain">—</div></div>
+          <div class="pill"><h3>Up-front Tax</h3><div class="val" id="kUpfrontTax">—</div><div class="sub">shown when “Up-front” selected</div></div>
+        </div>
+
+        <div class="foot">
+          Formulas: <span class="mono">capAdj = cap − incentives + (feesMode=cap ? fees : 0) − cashDown</span>;
+          <span class="mono">residualVal = msrp × (residual% + tweak%)</span>;
+          <span class="mono">depr = (capAdj − residualVal)/term</span>;
+          <span class="mono">fin = (capAdj + residualVal) × MF</span>;
+          <span class="mono">base = depr + fin</span>;
+          Monthly tax mode: <span class="mono">monthly = base × (1 + taxRate)</span>;
+          Up-front: <span class="mono">monthly = base</span>, <span class="mono">upfrontTax = capAdj × taxRate</span>; None: <span class="mono">monthly = base</span>.
+        </div>
+      </div>
+    </section>
+
+    <!-- COMPARE -->
+    <section id="compare" class="card" role="tabpanel" aria-labelledby="compare-tab" hidden>
+      <h2>Compare (same sticker & structure, different residual/MF)</h2>
+      <div class="body">
+        <div class="sub" style="margin-bottom:8px">
+          Uses the **Calculator** inputs for price/term/tax/fees/incentives. Enter each model’s residual% and MF.
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th style="width:30%">Model</th>
+              <th>Residual %</th>
+              <th>Money Factor</th>
+              <th>Base / mo</th>
+              <th>All-in / mo</th>
+            </tr>
+          </thead>
+          <tbody id="cmpBody">
+            <tr>
+              <td contenteditable="true" class="mono">Model A (Vol. Crossover)</td>
+              <td><input type="number" class="cmpR" value="60" step="0.1"></td>
+              <td><input type="number" class="cmpM" value="0.00100" step="0.00001"></td>
+              <td class="mono cmpBase">—</td>
+              <td class="mono cmpAll">—</td>
+            </tr>
+            <tr>
+              <td contenteditable="true" class="mono">Model B (New Nameplate)</td>
+              <td><input type="number" class="cmpR" value="55" step="0.1"></td>
+              <td><input type="number" class="cmpM" value="0.00135" step="0.00001"></td>
+              <td class="mono cmpBase">—</td>
+              <td class="mono cmpAll">—</td>
+            </tr>
+            <tr>
+              <td contenteditable="true" class="mono">Model C (Premium Trim)</td>
+              <td><input type="number" class="cmpR" value="52" step="0.1"></td>
+              <td><input type="number" class="cmpM" value="0.00155" step="0.00001"></td>
+              <td class="mono cmpBase">—</td>
+              <td class="mono cmpAll">—</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="actions">
+          <button class="btn" id="cmpCalc">Recalculate</button>
+        </div>
+      </div>
+    </section>
   </div>
 
-  <script>
-    (function(){
-      function norm(v){ v=String(v||'').trim().replace(/\\s/g,'').replace(',', '.'); return parseFloat(v); }
-      function money(n){ return '$'+(Math.round(n*100)/100).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}); }
-      function clamp(n,min,max){ return Math.min(Math.max(n,min),max); }
+<script>
+(function(){
+  const $ = (q,root=document)=>root.querySelector(q);
+  const $$ = (q,root=document)=>[...root.querySelectorAll(q)];
 
-      function init(root){
-        const get = k => { const el = root.querySelector('[data-evlc="'+k+'"]'); const v = norm(el && el.value); return isNaN(v)?0:v; };
-        const setOut = (k,v) => { const el = root.querySelector('[data-evlc-out="'+k+'"]'); if(el) el.textContent = v; };
+  const els = {
+    currency: $('#currency'),
+    currencyCustom: $('#currencyCustom'),
+    msrp: $('#msrp'),
+    cap: $('#cap'),
+    residualPct: $('#residualPct'),
+    residualTweak: $('#residualTweak'),
+    mf: $('#mf'),
+    term: $('#term'),
+    incentives: $('#incentives'),
+    fees: $('#fees'),
+    feesMode: $$('input[name="feesMode"]'),
+    cashDown: $('#cashDown'),
+    taxRate: $('#taxRate'),
+    taxMode: $('#taxMode'),
+    // KPIs
+    kCap: $('#kCap'),
+    kResidual: $('#kResidual'),
+    kAPR: $('#kAPR'),
+    kBase: $('#kBase'),
+    kDep: $('#kDep'),
+    kFin: $('#kFin'),
+    kMonthly: $('#kMonthly'),
+    kTaxExplain: $('#kTaxExplain'),
+    kUpfrontTax: $('#kUpfrontTax'),
+    warn: $('#warn'),
+    ok: $('#ok'),
+    // buttons
+    calcBtn: $('#calcBtn'),
+    resetBtn: $('#resetBtn'),
+    copyBtn: $('#copyBtn'),
+    // tabs
+    tabBtns: $$('.tab-btn'),
+    calcTab: $('#calc'),
+    compareTab: $('#compare'),
+    // compare
+    cmpCalc: $('#cmpCalc'),
+    cmpBody: $('#cmpBody')
+  };
 
-        function recalc(){
-          const msrp = Math.max(0, get('msrp'));
-          const cap  = Math.max(0, get('cap'));
-          const residualPct = clamp(get('residual_pct'), 0, 100);
-          const mf   = Math.max(0, get('mf'));
-          const term = Math.max(1, Math.round(get('term')));
-          const incentives = Math.max(0, get('incentives'));
-          const feesCap    = Math.max(0, get('fees_cap'));
-          const down       = Math.max(0, get('down'));
-          const taxRate    = Math.max(0, get('tax_rate'))/100;
+  function currencySymbol(){
+    return els.currency.value === 'custom' ? (els.currencyCustom.value || '€') : els.currency.value;
+  }
 
-          const residualVal = msrp * (residualPct/100);
-          let adjCap = cap - incentives - down + feesCap; if(adjCap < 0) adjCap = 0;
+  function clamp(n, min, max){ return Math.min(Math.max(n, min), max); }
 
-          let depreciation = (adjCap - residualVal)/term; if(!isFinite(depreciation)) depreciation = 0;
-          let finance = (adjCap + residualVal)*mf; if(!isFinite(finance)) finance = 0;
+  function fmt(n){
+    const sym = currencySymbol();
+    // Keep the symbol only—no locale complexities to avoid mismatch with custom symbols
+    return `${sym}${Number(n).toLocaleString(undefined, {maximumFractionDigits:2, minimumFractionDigits:2})}`;
+  }
 
-          let base = depreciation + finance; if(!isFinite(base) || base < 0) base = 0;
+  function getFeeMode(){
+    const found = els.feesMode.find(r=>r.checked);
+    return found ? found.value : 'cap';
+  }
 
-          const total = base * (1 + taxRate);
-          const apr = mf * 2400;
+  function calcCore(){
+    const msrp = Math.max(0, +els.msrp.value||0);
+    const cap  = Math.max(0, +els.cap.value||0);
+    const residPct = clamp((+els.residualPct.value||0) + (+els.residualTweak.value||0), 0, 100);
+    const mf   = Math.max(0, +els.mf.value||0);
+    const term = clamp(+els.term.value||36, 1, 120);
+    const incentives = Math.max(0, +els.incentives.value||0);
+    const fees = Math.max(0, +els.fees.value||0);
+    const feesMode = getFeeMode();
+    const cashDown = Math.max(0, +els.cashDown.value||0);
+    const taxRate = clamp(+els.taxRate.value||0, 0, 1);
+    const taxMode = els.taxMode.value;
 
-          setOut('residual_val', money(residualVal));
-          setOut('apr', (Math.round(apr*100)/100).toFixed(2) + '%');
-          setOut('base', money(base));
-          setOut('total', money(total));
+    const capAdj = cap - incentives + (feesMode==='cap' ? fees : 0) - cashDown;
+    let residualVal = msrp * (residPct/100);
+    residualVal = clamp(residualVal, 0, msrp);
 
-          // Auto-resize to content height when embedded (postMessage)
-          try {
-            const h = document.documentElement.scrollHeight;
-            parent && parent.postMessage({evlcHeight: h}, '*');
-          } catch(e){}
-        }
+    const depreciation = (capAdj - residualVal) / term;
+    const finance      = (capAdj + residualVal) * mf;
+    const base         = depreciation + finance;
 
-        root.querySelectorAll('[data-evlc]').forEach(el => ['input','change','keyup'].forEach(evt => el.addEventListener(evt, recalc)));
-        root.querySelectorAll('[data-evlc-action="reset"]').forEach(btn => btn.addEventListener('click', function(){
-          root.querySelector('[data-evlc="msrp"]').value = '40000';
-          root.querySelector('[data-evlc="cap"]').value = '38000';
-          root.querySelector('[data-evlc="residual_pct"]').value = '58';
-          root.querySelector('[data-evlc="mf"]').value = '0.00125';
-          root.querySelector('[data-evlc="term"]').value = '36';
-          root.querySelector('[data-evlc="incentives"]').value = '7500';
-          root.querySelector('[data-evlc="fees_cap"]').value = '1395';
-          root.querySelector('[data-evlc="down"]').value = '0';
-          root.querySelector('[data-evlc="tax_rate"]').value = '7.5';
-          recalc();
-        }));
-        root.querySelectorAll('[data-evlc-action="copy"]').forEach(btn => btn.addEventListener('click', function(){
-          const base = root.querySelector('[data-evlc-out="base"]').textContent;
-          const total = root.querySelector('[data-evlc-out="total"]').textContent;
-          const apr = root.querySelector('[data-evlc-out="apr"]').textContent;
-          const resid = root.querySelector('[data-evlc-out="residual_val"]').textContent;
-          const text = `Lease estimate — Base (pre-tax): ${base}; After-tax monthly: ${total}; APR (approx): ${apr}; Residual value: ${resid}`;
-          if(navigator.clipboard && navigator.clipboard.writeText){
-            navigator.clipboard.writeText(text).then(()=>{ btn.textContent='Copied!'; setTimeout(()=>btn.textContent='Copy results',1500); });
-          }
-        }));
+    let monthly = base;
+    let upfrontTax = 0;
+    let taxExplain = '—';
 
-        recalc();
-        window.addEventListener('load', recalc);
-        window.addEventListener('resize', recalc);
+    if (taxMode === 'monthly'){
+      monthly = base * (1 + taxRate);
+      taxExplain = `Tax on monthly at ${(taxRate*100).toFixed(0)}%`;
+    } else if (taxMode === 'upfront'){
+      monthly = base;
+      upfrontTax = Math.max(0, capAdj) * taxRate;
+      taxExplain = `Tax at inception ${(taxRate*100).toFixed(0)}% on adjusted cap`;
+    } else {
+      monthly = base;
+      taxExplain = 'No additional tax in monthly';
+    }
+
+    const apr = mf * 2400;
+
+    return {
+      msrp, capAdj, residualVal, mf, apr, term, incentives, fees, feesMode,
+      cashDown, depreciation, finance, base, taxRate, taxMode, monthly, upfrontTax
+    };
+  }
+
+  function render(){
+    const r = calcCore();
+
+    // Warnings
+    els.warn.style.display = (r.capAdj < r.residualVal) ? 'block' : 'none';
+    els.ok.style.display = (r.capAdj >= r.residualVal) ? 'block' : 'none';
+    setTimeout(()=>{els.ok.style.display='none'},1200);
+
+    // KPIs
+    els.kCap.textContent = fmt(r.capAdj);
+    els.kResidual.textContent = fmt(r.residualVal);
+    els.kAPR.textContent = `${r.apr.toFixed(2)}%`;
+    els.kBase.textContent = fmt(r.base);
+
+    els.kDep.textContent = fmt(r.depreciation);
+    els.kFin.textContent = fmt(r.finance);
+    els.kMonthly.textContent = fmt(r.monthly);
+    els.kUpfrontTax.textContent = r.taxMode==='upfront' ? fmt(r.upfrontTax) : '—';
+    els.kTaxExplain.textContent = (r.taxMode==='monthly') ? `Monthly tax applied` :
+                                  (r.taxMode==='upfront') ? `Up-front tax on cap` : `No tax added`;
+
+    // compare table values
+    updateCompareRows(r);
+  }
+
+  function updateCompareRows(baseInputs){
+    const sym = currencySymbol();
+    const rows = $$('#cmpBody tr');
+    let minMonthly = Infinity, minRow = null;
+
+    rows.forEach(tr=>{
+      const resid = clamp((+$('.cmpR',tr).value||0),0,100);
+      const mf = Math.max(0,(+$('.cmpM',tr).value||0));
+      const rv = baseInputs.msrp * (resid/100);
+
+      const dep = (baseInputs.capAdj - rv) / baseInputs.term;
+      const fin = (baseInputs.capAdj + rv) * mf;
+      const base = dep + fin;
+
+      let monthly = base;
+      if (baseInputs.taxMode==='monthly') monthly = base * (1 + baseInputs.taxRate);
+
+      $('.cmpBase',tr).textContent = `${sym}${base.toFixed(2)}`;
+      $('.cmpAll',tr).textContent  = `${sym}${monthly.toFixed(2)}`;
+
+      tr.classList.remove('min');
+      if (monthly < minMonthly){minMonthly = monthly; minRow = tr;}
+    });
+    if (minRow) minRow.classList.add('min');
+  }
+
+  function copyResults(){
+    const r = calcCore();
+    const sym = currencySymbol();
+    const text =
+`EV Lease Results
+Adjusted Cap: ${sym}${r.capAdj.toFixed(2)}
+Residual Value: ${sym}${r.residualVal.toFixed(2)}
+Term: ${r.term} months
+Money Factor: ${r.mf.toFixed(5)}  (APR ${r.apr.toFixed(2)}%)
+Depreciation/month: ${sym}${r.depreciation.toFixed(2)}
+Finance/month: ${sym}${r.finance.toFixed(2)}
+Base (pre-tax): ${sym}${r.base.toFixed(2)}
+All-in Monthly: ${sym}${r.monthly.toFixed(2)}${r.taxMode==='upfront' ? `  (Up-front tax: ${sym}${r.upfrontTax.toFixed(2)})` : ''}`;
+    navigator.clipboard.writeText(text).then(()=>{
+      els.ok.textContent='Copied to clipboard.';
+      els.ok.style.display='block';
+      setTimeout(()=>{els.ok.style.display='none';els.ok.textContent='Results updated.'},1200);
+    });
+  }
+
+  function resetAll(){
+    $('#currency').value='€';
+    $('#currencyCustom').value='';
+    $('#currencyCustom').style.display='none';
+
+    els.msrp.value=40000;
+    els.cap.value=38000;
+    els.residualPct.value=58;
+    els.residualTweak.value=0;
+    els.mf.value=0.00125;
+    els.term.value=36;
+    els.incentives.value=7500;
+    els.fees.value=0;
+    els.feesMode[0].checked=true; // cap
+    els.cashDown.value=0;
+    els.taxRate.value=0.21;
+    els.taxMode.value='monthly';
+
+    // compare defaults
+    $$('.cmpR')[0].value=60; $$('.cmpM')[0].value=0.00100;
+    $$('.cmpR')[1].value=55; $$('.cmpM')[1].value=0.00135;
+    $$('.cmpR')[2].value=52; $$('.cmpM')[2].value=0.00155;
+    render();
+  }
+
+  // events
+  ['input','change'].forEach(evt=>{
+    document.addEventListener(evt,(e)=>{
+      if (e.target===els.currency){
+        if (els.currency.value==='custom'){ els.currencyCustom.style.display='inline-block'; }
+        else { els.currencyCustom.style.display='none'; }
       }
+      render();
+    }, true);
+  });
 
-      const root = document.getElementById('evlc-root');
-      if(root) init(root);
-    })();
-  </script>
+  els.calcBtn.addEventListener('click',render);
+  els.copyBtn.addEventListener('click',copyResults);
+  els.resetBtn.addEventListener('click',resetAll);
+
+  // Compare tab
+  els.cmpCalc.addEventListener('click',render);
+
+  // Tabs
+  els.tabBtns.forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      els.tabBtns.forEach(b=>b.setAttribute('aria-selected', b===btn ? 'true':'false'));
+      const tab = btn.getAttribute('data-tab');
+      els.calcTab.hidden = tab!=='calc';
+      els.compareTab.hidden = tab!=='compare';
+    })
+  });
+
+  // init
+  resetAll();
+})();
+</script>
 </body>
 </html>
