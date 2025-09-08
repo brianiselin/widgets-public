@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EV Lease Calculator</title>
+  <style>
+    :root{
+      --evlc-primary:#0f172a; /* navy */
+      --evlc-accent:#7b1e3a;  /* burgundy */
+      --evlc-border:#e5e7eb;
+      --evlc-bg:#f8fafc;
+      --evlc-text:#111827;
+      --evlc-muted:#475569;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      background:#0b1220;
+      color:#111;
+      font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      line-height:1.45;
+      padding:16px;
+    }
+    .wrap{display:flex;justify-content:center}
+    .evlc-card{
+      width:100%;
+      max-width:900px;
+      background:#fff;
+      border:1px solid var(--evlc-border);
+      border-radius:16px;
+      padding:20px;
+      box-shadow:0 6px 24px rgba(0,0,0,.06);
+    }
+    .evlc-title{font-size:22px;font-weight:800;margin:0 0 6px;color:var(--evlc-primary)}
+    .evlc-sub{margin:0 0 18px;color:var(--evlc-muted)}
+    .evlc-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+    .evlc-field{display:flex;flex-direction:column}
+    .evlc-label{font-size:14px;font-weight:700;margin-bottom:6px;color:var(--evlc-text)}
+    .evlc-input{padding:10px 12px;border:1px solid #cbd5e1;border-radius:10px;font-size:16px;outline:none;width:100%}
+    .evlc-input:focus{border-color:var(--evlc-accent);box-shadow:0 0 0 3px rgba(123,30,58,.15)}
+    .evlc-note{font-size:12px;color:#6b7280;margin-top:4px}
+    .evlc-results{margin-top:18px;border-top:1px dashed var(--evlc-border);padding-top:14px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+    .evlc-kpi{background:var(--evlc-bg);border:1px solid var(--evlc-border);border-radius:14px;padding:14px}
+    .evlc-kpi h4{margin:0 0 4px;font-size:14px;color:#334155}
+    .evlc-kpi .val{font-size:22px;font-weight:800}
+    .evlc-help{font-size:12px;color:#475569;margin-top:6px}
+    .evlc-actions{margin-top:12px;display:flex;gap:10px;flex-wrap:wrap}
+    .evlc-btn{appearance:none;border:1px solid var(--evlc-accent);background:var(--evlc-accent);color:#fff;padding:10px 14px;border-radius:10px;font-weight:700;cursor:pointer}
+    .evlc-btn--ghost{background:#fff;color:var(--evlc-accent)}
+    .evlc-disclaimer{margin-top:12px;font-size:12px;color:#6b7280}
+    @media (max-width: 720px){
+      .evlc-grid, .evlc-results {grid-template-columns:1fr}
+      body{padding:10px}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="evlc-card" id="evlc-root">
+      <div class="evlc-title">EV Lease Calculator</div>
+      <p class="evlc-sub">Estimate a 36-month lease using money factor &amp; residual math. Values update as you type.</p>
+
+      <div class="evlc-grid" role="group" aria-label="Lease inputs">
+        <div class="evlc-field">
+          <label class="evlc-label" for="evlc-msrp">MSRP ($)</label>
+          <input class="evlc-input" id="evlc-msrp" data-evlc="msrp" type="number" min="0" step="100" value="40000">
+        </div>
+        <div class="evlc-field">
+          <label class="evlc-label" for="evlc-cap">Negotiated Cap Cost ($)</label>
+          <input class="evlc-input" id="evlc-cap" data-evlc="cap" type="number" min="0" step="100" value="38000">
+          <div class="evlc-note">Price after dealer discount, before incentives/fees/down.</div>
+        </div>
+        <div class="evlc-field">
+          <label class="evlc-label" for="evlc-resid">Residual (%)</label>
+          <input class="evlc-input" id="evlc-resid" data-evlc="residual_pct" type="number" min="30" max="90" step="0.5" value="58">
+          <div class="evlc-note">From captive bulletin (e.g., 58 = 58%).</div>
+        </div>
+        <div class="evlc-field">
+          <label class="evlc-label" for="evlc-mf">Money Factor (MF)</label>
+          <input class="evlc-input" id="evlc-mf" data-evlc="mf" type="text" value="0.00125">
+          <div class="evlc-note">APR ≈ MF × 2400 (0.00125 ≈ 3.0% APR). Accepts comma decimals.</div>
+        </div>
+        <div class="evlc-field">
+          <label class="evlc-label" for="evlc-term">Term (months)</label>
+          <input class="evlc-input" id="evlc-term" data-evlc="term" type="number" min="12" max="60" step="1" value="36">
+        </div>
+        <div class="evlc-field">
+          <label class="evlc-label" for="evlc-incent">Incentives / Rebates applied to Cap ($)</label>
+          <input class="evlc-input" id="evlc-incent" data-evlc="incentives" type="number" min="0" step="100" value="7500">
+          <div class="evlc-note">Include captive pass-through of the federal credit if applicable.</div>
+        </div>
+        <div class="evlc-field">
+          <label class="evlc-label" for="evlc-fees">Capitalized Fees ($)</label>
+          <input class="evlc-input" id="evlc-fees" data-evlc="fees_cap" type="number" min="0" step="50" value="1395">
+          <div class="evlc-note">Bank/acquisition + doc fees rolled into the cap.</div>
+        </div>
+        <div class="evlc-field">
+          <label class="evlc-label" for="evlc-down">Cash Down / Cap Reduction ($)</label>
+          <input class="evlc-input" id="evlc-down" data-evlc="down" type="number" min="0" step="100" value="0">
+          <div class="evlc-note">We recommend $0 down; pay first payment + DMV only.</div>
+        </div>
+        <div class="evlc-field">
+          <label class="evlc-label" for="evlc-tax">Sales Tax Rate (%)</label>
+          <input class="evlc-input" id="evlc-tax" data-evlc="tax_rate" type="text" value="7.5">
+          <div class="evlc-note">Simplified model: monthly tax applied to the base payment. Accepts comma decimals.</div>
+        </div>
+      </div>
+
+      <div class="evlc-results" aria-live="polite">
+        <div class="evlc-kpi"><h4>Residual Value</h4><div class="val" data-evlc-out="residual_val">—</div><div class="evlc-help">MSRP × Residual %</div></div>
+        <div class="evlc-kpi"><h4>APR (approx)</h4><div class="val" data-evlc-out="apr">—</div><div class="evlc-help">APR ≈ MF × 2400</div></div>
+        <div class="evlc-kpi"><h4>Base Payment (pre-tax)</h4><div class="val" data-evlc-out="base">—</div><div class="evlc-help">Depreciation + Finance Charge</div></div>
+        <div class="evlc-kpi"><h4>All-in Est. Monthly (after tax)</h4><div class="val" data-evlc-out="total">—</div><div class="evlc-help">Base × (1 + tax rate)</div></div>
+      </div>
+
+      <div class="evlc-actions">
+        <button type="button" class="evlc-btn" data-evlc-action="reset">Reset to defaults</button>
+        <button type="button" class="evlc-btn evlc-btn--ghost" data-evlc-action="copy">Copy results</button>
+      </div>
+
+      <p class="evlc-disclaimer">
+        This tool is an estimate. Actual taxes, incentives, and fees vary by state and lender. Always request the buy-rate MF and the exact residual percentage in writing from the current captive bulletin.
+      </p>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      function norm(v){ v=String(v||'').trim().replace(/\\s/g,'').replace(',', '.'); return parseFloat(v); }
+      function money(n){ return '$'+(Math.round(n*100)/100).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}); }
+      function clamp(n,min,max){ return Math.min(Math.max(n,min),max); }
+
+      function init(root){
+        const get = k => { const el = root.querySelector('[data-evlc="'+k+'"]'); const v = norm(el && el.value); return isNaN(v)?0:v; };
+        const setOut = (k,v) => { const el = root.querySelector('[data-evlc-out="'+k+'"]'); if(el) el.textContent = v; };
+
+        function recalc(){
+          const msrp = Math.max(0, get('msrp'));
+          const cap  = Math.max(0, get('cap'));
+          const residualPct = clamp(get('residual_pct'), 0, 100);
+          const mf   = Math.max(0, get('mf'));
+          const term = Math.max(1, Math.round(get('term')));
+          const incentives = Math.max(0, get('incentives'));
+          const feesCap    = Math.max(0, get('fees_cap'));
+          const down       = Math.max(0, get('down'));
+          const taxRate    = Math.max(0, get('tax_rate'))/100;
+
+          const residualVal = msrp * (residualPct/100);
+          let adjCap = cap - incentives - down + feesCap; if(adjCap < 0) adjCap = 0;
+
+          let depreciation = (adjCap - residualVal)/term; if(!isFinite(depreciation)) depreciation = 0;
+          let finance = (adjCap + residualVal)*mf; if(!isFinite(finance)) finance = 0;
+
+          let base = depreciation + finance; if(!isFinite(base) || base < 0) base = 0;
+
+          const total = base * (1 + taxRate);
+          const apr = mf * 2400;
+
+          setOut('residual_val', money(residualVal));
+          setOut('apr', (Math.round(apr*100)/100).toFixed(2) + '%');
+          setOut('base', money(base));
+          setOut('total', money(total));
+
+          // Auto-resize to content height when embedded (postMessage)
+          try {
+            const h = document.documentElement.scrollHeight;
+            parent && parent.postMessage({evlcHeight: h}, '*');
+          } catch(e){}
+        }
+
+        root.querySelectorAll('[data-evlc]').forEach(el => ['input','change','keyup'].forEach(evt => el.addEventListener(evt, recalc)));
+        root.querySelectorAll('[data-evlc-action="reset"]').forEach(btn => btn.addEventListener('click', function(){
+          root.querySelector('[data-evlc="msrp"]').value = '40000';
+          root.querySelector('[data-evlc="cap"]').value = '38000';
+          root.querySelector('[data-evlc="residual_pct"]').value = '58';
+          root.querySelector('[data-evlc="mf"]').value = '0.00125';
+          root.querySelector('[data-evlc="term"]').value = '36';
+          root.querySelector('[data-evlc="incentives"]').value = '7500';
+          root.querySelector('[data-evlc="fees_cap"]').value = '1395';
+          root.querySelector('[data-evlc="down"]').value = '0';
+          root.querySelector('[data-evlc="tax_rate"]').value = '7.5';
+          recalc();
+        }));
+        root.querySelectorAll('[data-evlc-action="copy"]').forEach(btn => btn.addEventListener('click', function(){
+          const base = root.querySelector('[data-evlc-out="base"]').textContent;
+          const total = root.querySelector('[data-evlc-out="total"]').textContent;
+          const apr = root.querySelector('[data-evlc-out="apr"]').textContent;
+          const resid = root.querySelector('[data-evlc-out="residual_val"]').textContent;
+          const text = `Lease estimate — Base (pre-tax): ${base}; After-tax monthly: ${total}; APR (approx): ${apr}; Residual value: ${resid}`;
+          if(navigator.clipboard && navigator.clipboard.writeText){
+            navigator.clipboard.writeText(text).then(()=>{ btn.textContent='Copied!'; setTimeout(()=>btn.textContent='Copy results',1500); });
+          }
+        }));
+
+        recalc();
+        window.addEventListener('load', recalc);
+        window.addEventListener('resize', recalc);
+      }
+
+      const root = document.getElementById('evlc-root');
+      if(root) init(root);
+    })();
+  </script>
+</body>
+</html>
