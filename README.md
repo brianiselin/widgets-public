@@ -15,12 +15,6 @@ Each widget is a single, self-contained `.html` file (HTML/CSS/JS). No build ste
 | File | Live URL | What it does |
 |---|---|---|
 | `evlc-embed.html` | `https://brianiselin.github.io/widgets-public/evlc-embed.html` | Lease calculator (any vehicle) — MF/residual math, base vs after-tax monthly. |
-| `lease-calculator-universal.html` | `https://brianiselin.github.io/widgets-public/lease-calculator-universal.html` | Universal lease calculator (same as above; alternative skin). |
-| `affordability-slider_v2.html` | `https://brianiselin.github.io/widgets-public/affordability-slider_v2.html` | Income + DTI → price caps and monthly at 36/48/60 months. |
-| `mini-tco-buy-vs-lease.html` | `https://brianiselin.github.io/widgets-public/mini-tco-buy-vs-lease.html` | Buy vs. Lease + 3-year mini-TCO (payments, equity @36 mo, fuel/energy, insurance). |
-| `otd-otr-estimator.html` | `https://brianiselin.github.io/widgets-public/otd-otr-estimator.html` | Out-the-Door (US) / On-the-Road (UK) price estimator with hints. |
-
-> Don’t see all of these yet? No problem—this table is a template. Remove rows you’re not using or add your own files.
 
 ---
 
