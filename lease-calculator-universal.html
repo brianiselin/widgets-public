@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lease Calculator (Any Vehicle)</title>
+  <style>
+    :root{
+      --lc-primary:#0f172a; /* navy */
+      --lc-accent:#7b1e3a;  /* burgundy */
+      --lc-border:#e5e7eb;
+      --lc-bg:#f8fafc;
+      --lc-text:#111827;
+      --lc-muted:#475569;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      background:#0b1220;
+      color:#111;
+      font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      line-height:1.45;
+      padding:16px;
+    }
+    .wrap{display:flex;justify-content:center}
+    .card{
+      width:100%;
+      max-width:900px;
+      background:#fff;
+      border:1px solid var(--lc-border);
+      border-radius:16px;
+      padding:20px;
+      box-shadow:0 6px 24px rgba(0,0,0,.06);
+    }
+    .title{font-size:22px;font-weight:800;margin:0 0 6px;color:var(--lc-primary)}
+    .sub{margin:0 0 18px;color:var(--lc-muted)}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+    .field{display:flex;flex-direction:column}
+    .label{font-size:14px;font-weight:700;margin-bottom:6px;color:var(--lc-text)}
+    .input{padding:10px 12px;border:1px solid #cbd5e1;border-radius:10px;font-size:16px;outline:none;width:100%}
+    .input:focus{border-color:var(--lc-accent);box-shadow:0 0 0 3px rgba(123,30,58,.15)}
+    .note{font-size:12px;color:#6b7280;margin-top:4px}
+    .results{margin-top:18px;border-top:1px dashed var(--lc-border);padding-top:14px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+    .kpi{background:var(--lc-bg);border:1px solid var(--lc-border);border-radius:14px;padding:14px}
+    .kpi h4{margin:0 0 4px;font-size:14px;color:#334155}
+    .kpi .val{font-size:22px;font-weight:800}
+    .help{font-size:12px;color:#475569;margin-top:6px}
+    .actions{margin-top:12px;display:flex;gap:10px;flex-wrap:wrap}
+    .btn{appearance:none;border:1px solid var(--lc-accent);background:var(--lc-accent);color:#fff;padding:10px 14px;border-radius:10px;font-weight:700;cursor:pointer}
+    .btn--ghost{background:#fff;color:var(--lc-accent)}
+    .disc{margin-top:12px;font-size:12px;color:#6b7280}
+    @media (max-width: 720px){
+      .grid, .results {grid-template-columns:1fr}
+      body{padding:10px}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card" id="lease-root">
+      <div class="title">Lease Calculator (Any Vehicle)</div>
+      <p class="sub">Works for EVs, hybrids, and gas cars alike — lease math is the same. Enter your figures; values update as you type.</p>
+
+      <div class="grid" role="group" aria-label="Lease inputs">
+        <div class="field">
+          <label class="label" for="lc-msrp">MSRP ($)</label>
+          <input class="input" id="lc-msrp" data-k="msrp" type="text" value="40000">
+        </div>
+        <div class="field">
+          <label class="label" for="lc-cap">Negotiated Cap Cost ($)</label>
+          <input class="input" id="lc-cap" data-k="cap" type="text" value="38000">
+          <div class="note">Price after dealer discount, before incentives/fees/down.</div>
+        </div>
+        <div class="field">
+          <label class="label" for="lc-resid">Residual (%)</label>
+          <input class="input" id="lc-resid" data-k="residual_pct" type="text" value="58">
+          <div class="note">From captive bulletin (e.g., 58 = 58%).</div>
+        </div>
+        <div class="field">
+          <label class="label" for="lc-mf">Money Factor (MF)</label>
+          <input class="input" id="lc-mf" data-k="mf" type="text" value="0.00125">
+          <div class="note">APR ≈ MF × 2400 (0.00125 ≈ 3.0% APR). Accepts comma decimals.</div>
+        </div>
+        <div class="field">
+          <label class="label" for="lc-term">Term (months)</label>
+          <input class="input" id="lc-term" data-k="term" type="number" min="12" max="60" step="1" value="36">
+        </div>
+        <div class="field">
+          <label class="label" for="lc-incent">Incentives / Rebates applied to Cap ($)</label>
+          <input class="input" id="lc-incent" data-k="incentives" type="text" value="0">
+          <div class="note">OEM cash, loyalty/conquest, EV credit pass‑throughs, etc.</div>
+        </div>
+        <div class="field">
+          <label class="label" for="lc-fees">Capitalized Fees ($)</label>
+          <input class="input" id="lc-fees" data-k="fees_cap" type="text" value="1395">
+          <div class="note">Bank/acquisition + doc fees rolled into the cap.</div>
+        </div>
+        <div class="field">
+          <label class="label" for="lc-down">Cash Down / Cap Reduction ($)</label>
+          <input class="input" id="lc-down" data-k="down" type="text" value="0">
+          <div class="note">We recommend $0 down; pay first payment + DMV only.</div>
+        </div>
+        <div class="field">
+          <label class="label" for="lc-tax">Sales Tax Rate (%)</label>
+          <input class="input" id="lc-tax" data-k="tax_rate" type="text" value="7.5">
+          <div class="note">Simplified: monthly tax applied to the base payment. Accepts comma decimals.</div>
+        </div>
+      </div>
+
+      <div class="results" aria-live="polite">
+        <div class="kpi"><h4>Residual Value</h4><div class="val" data-out="residual_val">—</div><div class="help">MSRP × Residual %</div></div>
+        <div class="kpi"><h4>APR (approx)</h4><div class="val" data-out="apr">—</div><div class="help">APR ≈ MF × 2400</div></div>
+        <div class="kpi"><h4>Base Payment (pre‑tax)</h4><div class="val" data-out="base">—</div><div class="help">Depreciation + Finance Charge</div></div>
+        <div class="kpi"><h4>All‑in Est. Monthly (after tax)</h4><div class="val" data-out="total">—</div><div class="help">Base × (1 + tax rate)</div></div>
+      </div>
+
+      <div class="actions">
+        <button type="button" class="btn" data-act="reset">Reset to defaults</button>
+        <button type="button" class="btn btn--ghost" data-act="copy">Copy results</button>
+      </div>
+
+      <p class="disc">
+        Estimates only. Taxes, incentives, fees, and residuals vary by state, lender, model, and mileage. Ask for the buy‑rate MF and exact residual % in writing from the current captive bulletin.
+      </p>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      // Robust number parser: handles "40,000", "40 000", "7,5" (comma decimal), etc.
+      function norm(v){
+        v = String(v ?? '').trim();
+        if (!v) return 0;
+        v = v.replace(/\\s/g, '');
+        if (v.includes(',') && !v.includes('.')){
+          const parts = v.split(',');
+          if (parts.length > 2){ const dec = parts.pop(); v = parts.join('') + '.' + dec; }
+          else { v = v.replace(',', '.'); }
+        } else { v = v.replace(/,/g, ''); }
+        v = v.replace(/[^0-9.\\-]/g, '');
+        const n = parseFloat(v);
+        return Number.isFinite(n) ? n : 0;
+      }
+      function money(n){ n = Number.isFinite(n)?n:0; return '$'+(Math.round(n*100)/100).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}); }
+      function clamp(n,min,max){ n = Number.isFinite(n)?n:0; return Math.min(Math.max(n,min),max); }
+
+      function init(root){
+        const get = k => { const el = root.querySelector('[data-k="'+k+'"]'); const v = norm(el && el.value); return isNaN(v)?0:v; };
+        const setOut = (k,v) => { const el = root.querySelector('[data-out="'+k+'"]'); if(el) el.textContent = v; };
+
+        function recalc(){
+          const msrp = Math.max(0, get('msrp'));
+          const cap  = Math.max(0, get('cap'));
+          const residualPct = clamp(get('residual_pct'), 0, 100);
+          const mf   = Math.max(0, get('mf'));
+          const term = Math.max(1, Math.round(get('term')));
+          const incentives = Math.max(0, get('incentives'));
+          const feesCap    = Math.max(0, get('fees_cap'));
+          const down       = Math.max(0, get('down'));
+          const taxRate    = Math.max(0, get('tax_rate'))/100;
+
+          const residualVal = msrp * (residualPct/100);
+          let adjCap = cap - incentives - down + feesCap; if(adjCap < 0) adjCap = 0;
+
+          let depreciation = (adjCap - residualVal)/term; if(!isFinite(depreciation)) depreciation = 0;
+          let finance = (adjCap + residualVal)*mf; if(!isFinite(finance)) finance = 0;
+
+          let base = depreciation + finance; if(!isFinite(base) || base < 0) base = 0;
+
+          const total = base * (1 + taxRate);
+          const apr = mf * 2400;
+
+          setOut('residual_val', money(residualVal));
+          setOut('apr', (Math.round(apr*100)/100).toFixed(2) + '%');
+          setOut('base', money(base));
+          setOut('total', money(total));
+
+          // Auto-resize to content height when embedded (postMessage)
+          try {
+            const h = document.documentElement.scrollHeight;
+            parent && parent.postMessage({evlcHeight: h}, '*');
+          } catch(e){}
+        }
+
+        root.querySelectorAll('[data-k]').forEach(el => ['input','change','keyup'].forEach(evt => el.addEventListener(evt, recalc)));
+        root.querySelector('[data-act="reset"]').addEventListener('click', function(){
+          const defaults = {
+            msrp:'40000', cap:'38000', residual_pct:'58', mf:'0.00125', term:'36',
+            incentives:'0', fees_cap:'1395', down:'0', tax_rate:'7.5'
+          };
+          Object.keys(defaults).forEach(k => { const el = root.querySelector('[data-k="'+k+'"]'); if(el) el.value = String(defaults[k]); });
+          recalc();
+        });
+        root.querySelector('[data-act="copy"]').addEventListener('click', function(){
+          const base = root.querySelector('[data-out="base"]').textContent;
+          const total = root.querySelector('[data-out="total"]').textContent;
+          const apr = root.querySelector('[data-out="apr"]').textContent;
+          const resid = root.querySelector('[data-out="residual_val"]').textContent;
+          const text = `Lease estimate — Base (pre-tax): ${base}; After-tax monthly: ${total}; APR (approx): ${apr}; Residual value: ${resid}`;
+          if(navigator.clipboard && navigator.clipboard.writeText){
+            navigator.clipboard.writeText(text).then(()=>{ /* no-op */ });
+          }
+          alert(text);
+        });
+
+        recalc();
+        window.addEventListener('load', recalc);
+        window.addEventListener('resize', recalc);
+      }
+
+      const root = document.getElementById('lease-root');
+      if(root) init(root);
+    })();
+  </script>
+</body>
+</html>
