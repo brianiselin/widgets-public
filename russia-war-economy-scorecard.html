@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>NATO–Russia War Economic Shock Scorecard</title>
+<style>
+  :root{
+    --bg:#0b0f14;--card:#121824;--muted:#1a2230;--text:#e9f0f7;--sub:#a9b6c7;--accent:#5dd7ff;--bad:#ff6b6b;--warn:#ffd166;--good:#4cd97b;
+  }
+  *{box-sizing:border-box;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,"Helvetica Neue",Arial,"Apple Color Emoji","Segoe UI Emoji"}
+  body{margin:0;background:linear-gradient(180deg,#0a0e13,#0d1320 40%,#0a101a);color:var(--text)}
+  .wrap{max-width:1100px;margin:32px auto;padding:0 16px}
+  .hdr{display:flex;flex-wrap:wrap;align-items:center;gap:16px;margin-bottom:18px}
+  .title{font-size:clamp(22px,3.4vw,34px);font-weight:800;letter-spacing:.2px}
+  .sub{color:var(--sub);font-size:14px}
+  .card{background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.06);box-shadow:0 12px 30px rgba(0,0,0,.35);border-radius:16px}
+  .grid{display:grid;gap:16px}
+  @media(min-width:960px){.grid{grid-template-columns:1.25fr .75fr}}
+  .controls{padding:18px}
+  .control{background:var(--card);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:14px 14px;margin-bottom:12px}
+  .control h4{margin:0 0 6px 0;font-size:14px;font-weight:700;letter-spacing:.2px}
+  .row{display:flex;align-items:center;gap:10px}
+  input[type=range]{width:100%}
+  .val{min-width:62px;text-align:right;font-variant-numeric:tabular-nums;color:var(--accent);font-weight:700}
+  .toggle{appearance:none;width:44px;height:26px;background:#2a3446;border-radius:20px;position:relative;outline:none;border:1px solid rgba(255,255,255,.08);cursor:pointer}
+  .toggle:after{content:"";position:absolute;left:3px;top:3px;width:18px;height:18px;border-radius:50%;background:#aab8d0;transition:all .2s ease}
+  .toggle:checked{background:#2fd07b}
+  .toggle:checked:after{left:22px;background:#fff}
+  .right{padding:18px;display:grid;gap:16px}
+  .kpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  .kpi{background:var(--card);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:14px}
+  .kpi .lbl{color:var(--sub);font-size:12px}
+  .kpi .num{font-size:22px;font-weight:800;margin-top:4px}
+  .meter{padding:16px;background:var(--card);border:1px solid rgba(255,255,255,.06);border-radius:14px}
+  .bar{height:14px;border-radius:10px;background:linear-gradient(90deg,var(--good),var(--warn),var(--bad));position:relative}
+  .needle{position:absolute;top:-4px;width:2px;height:22px;background:#fff;border-radius:1px;box-shadow:0 0 0 2px rgba(255,255,255,.25)}
+  .legend{display:flex;justify-content:space-between;font-size:12px;color:var(--sub);margin-top:6px}
+  .actions{display:flex;flex-wrap:wrap;gap:10px}
+  button{background:var(--muted);border:1px solid rgba(255,255,255,.08);color:var(--text);padding:10px 12px;border-radius:10px;cursor:pointer;font-weight:700}
+  button:hover{filter:brightness(1.1)}
+  .note{color:var(--sub);font-size:12px;line-height:1.4}
+  details{background:var(--card);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:10px 12px}
+  summary{cursor:pointer;font-weight:700}
+  a{color:var(--accent)}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="hdr">
+      <div class="title">How fast does Russia’s war economy break under a NATO war?</div>
+      <div class="sub">Adjust the sliders to stress‑test a simple, transparent model. This is an educational scenario tool, not a forecast.</div>
+    </div>
+
+    <div class="grid card">
+      <div class="controls">
+        <div class="actions" style="margin-bottom:12px">
+          <button id="presetBase">Base case</button>
+          <button id="presetMax">Max pressure</button>
+          <button id="presetLeaky">Leaky sanctions</button>
+          <button id="copyLink">Copy scenario link</button>
+        </div>
+
+        <div class="control">
+          <h4>Defence spending (% of GDP)</h4>
+          <div class="row">
+            <input id="defSpend" type="range" min="5" max="12" step="0.1" value="7.2" />
+            <div class="val"><span id="defSpendVal">7.2</span>%</div>
+          </div>
+        </div>
+
+        <div class="control">
+          <h4>Oil export disruption (volume loss %)</h4>
+          <div class="row">
+            <input id="oilLoss" type="range" min="0" max="100" step="1" value="35" />
+            <div class="val"><span id="oilLossVal">35</span>%</div>
+          </div>
+        </div>
+
+        <div class="control">
+          <h4>Secondary sanctions severity</h4>
+          <div class="row">
+            <input id="secSanc" type="range" min="0" max="100" step="1" value="70" />
+            <div class="val"><span id="secSancVal">70</span>/100</div>
+          </div>
+        </div>
+
+        <div class="control">
+          <h4>Shadow fleet interdiction</h4>
+          <div class="row">
+            <input id="shadow" type="range" min="0" max="100" step="1" value="60" />
+            <div class="val"><span id="shadowVal">60</span>/100</div>
+          </div>
+        </div>
+
+        <div class="control">
+          <h4>China/India backfill (support)</h4>
+          <div class="row">
+            <input id="china" type="range" min="0" max="100" step="1" value="35" />
+            <div class="val"><span id="chinaVal">35</span>/100</div>
+          </div>
+        </div>
+
+        <div class="control">
+          <h4>Frozen assets confiscated?</h4>
+          <div class="row">
+            <input id="confisc" type="checkbox" class="toggle" />
+            <div class="val" id="confiscVal">No</div>
+          </div>
+        </div>
+
+        <div class="control">
+          <h4>NWF liquid buffer (USD bn)</h4>
+          <div class="row">
+            <input id="nwf" type="range" min="0" max="180" step="1" value="55" />
+            <div class="val">$<span id="nwfVal">55</span>bn</div>
+          </div>
+        </div>
+
+        <div class="control">
+          <h4>Rail freight trend (YoY %)</h4>
+          <div class="row">
+            <input id="rail" type="range" min="-20" max="5" step="0.1" value="-7" />
+            <div class="val"><span id="railVal">-7.0</span>%</div>
+          </div>
+        </div>
+
+        <div class="control">
+          <h4>Capital controls & repression capacity</h4>
+          <div class="row">
+            <input id="repress" type="range" min="0" max="100" step="1" value="65" />
+            <div class="val"><span id="repressVal">65</span>/100</div>
+          </div>
+        </div>
+
+        <details>
+          <summary>Model notes (click to expand)</summary>
+          <p class="note">This toy model maps inputs to outputs with simple, explainable functions. It is <em>illustrative</em> and deliberately conservative; it is not a prediction. You can expose these notes in articles to avoid over‑claiming.</p>
+          <ul class="note">
+            <li><b>Months to fiscal crunch</b> baseline: 8 months. Reduced by oil disruption, secondary sanctions, shadow interdiction (each scaled), and asset confiscation; increased by NWF liquid buffer and China/India backfill. Repression modestly extends runway.</li>
+            <li><b>Year‑1 GDP contraction</b> baseline: −4%. Additional losses from oil disruption, sanctions, rail slump; backfill softens the hit.</li>
+            <li><b>Inflation peak</b> baseline: 11%. Higher with FX pass‑through (oil loss + sanctions), lower with repression (price controls) but at cost of shortages.</li>
+            <li><b>Industrial output fall</b> focuses on sanction‑sensitive sectors (autos, aviation, electronics, precision). Driven by sanctions severity, shadow interdiction, and rail trend.</li>
+            <li><b>Collapse meter</b> converts “months to crunch” and severity indices to a 0–100 scale.</li>
+          </ul>
+        </details>
+      </div>
+
+      <div class="right">
+        <div class="kpis">
+          <div class="kpi">
+            <div class="lbl">Months to acute fiscal crunch</div>
+            <div class="num" id="kpiMonths">—</div>
+          </div>
+          <div class="kpi">
+            <div class="lbl">Year‑1 GDP change</div>
+            <div class="num" id="kpiGDP">—</div>
+          </div>
+          <div class="kpi">
+            <div class="lbl">Inflation peak (CPI)</div>
+            <div class="num" id="kpiCPI">—</div>
+          </div>
+          <div class="kpi">
+            <div class="lbl">Industrial output fall</div>
+            <div class="num" id="kpiInd">—</div>
+          </div>
+          <div class="kpi">
+            <div class="lbl">Oil & gas budget revenue hit</div>
+            <div class="num" id="kpiOil">—</div>
+          </div>
+          <div class="kpi">
+            <div class="lbl">Scenario preset</div>
+            <div class="num" id="kpiPreset">Custom</div>
+          </div>
+        </div>
+
+        <div class="meter">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <div>Collapse meter</div>
+            <div id="meterLbl" class="sub">—</div>
+          </div>
+          <div class="bar"><div class="needle" id="needle" style="left:0%"></div></div>
+          <div class="legend"><span>Resilient</span><span>Severe strain</span><span>Acute crisis</span></div>
+        </div>
+
+        <details>
+          <summary>How to use in an article</summary>
+          <div class="note">
+            <ol>
+              <li>Embed this file in your CMS as a raw HTML widget (or host as a standalone page and iframe it).</li>
+              <li>Use the <b>Preset</b> buttons to set the narrative quickly: <i>Base case</i>, <i>Max pressure</i>, or <i>Leaky sanctions</i>.</li>
+              <li>Encourage readers to tweak a single variable (e.g., defence spend or oil disruption) and watch the KPIs update instantly.</li>
+              <li>Click <b>Copy scenario link</b> to share a permalink with the current settings (URL hash encodes your inputs).</li>
+            </ol>
+          </div>
+        </details>
+      </div>
+    </div>
+
+    <p class="sub" style="margin-top:12px">Disclaimer: Educational tool based on simple mappings; not investment advice or an intelligence estimate.</p>
+  </div>
+
+<script>
+(function(){
+  const els = id => document.getElementById(id);
+  const inputs = {
+    defSpend: els('defSpend'),
+    oilLoss: els('oilLoss'),
+    secSanc: els('secSanc'),
+    shadow: els('shadow'),
+    china: els('china'),
+    confisc: els('confisc'),
+    nwf: els('nwf'),
+    rail: els('rail'),
+    repress: els('repress')
+  };
+  const vals = {
+    defSpendVal: els('defSpendVal'),
+    oilLossVal: els('oilLossVal'),
+    secSancVal: els('secSancVal'),
+    shadowVal: els('shadowVal'),
+    chinaVal: els('chinaVal'),
+    confiscVal: els('confiscVal'),
+    nwfVal: els('nwfVal'),
+    railVal: els('railVal'),
+    repressVal: els('repressVal')
+  };
+  const kpis = {
+    months: els('kpiMonths'),
+    gdp: els('kpiGDP'),
+    cpi: els('kpiCPI'),
+    ind: els('kpiInd'),
+    oil: els('kpiOil'),
+    preset: els('kpiPreset'),
+    needle: els('needle'),
+    meterLbl: els('meterLbl')
+  };
+
+  // Helper: clamp
+  const clamp = (x,min,max)=> Math.max(min, Math.min(max,x));
+
+  // Core mapping (toy, transparent)
+  function compute(){
+    const def = parseFloat(inputs.defSpend.value); // % GDP
+    const oil = parseFloat(inputs.oilLoss.value); // % loss
+    const sanc = parseFloat(inputs.secSanc.value)/100; // 0..1
+    const shad = parseFloat(inputs.shadow.value)/100; // 0..1
+    const chi = parseFloat(inputs.china.value)/100; // 0..1 support
+    const conf = inputs.confisc.checked ? 1 : 0;
+    const nwf = parseFloat(inputs.nwf.value); // USD bn
+    const rail = parseFloat(inputs.rail.value); // % y/y
+    const rep = parseFloat(inputs.repress.value)/100; // 0..1
+
+    // Months to fiscal crunch baseline and effects
+    let months = 8
+      - (oil/100)*4.0            // oil disruption hurts runway
+      - (sanc*3.0)               // strong secondary sanctions
+      - (shad*1.5)               // shadow fleet squeeze
+      - (conf*1.5)               // confiscation shock
+      + (chi*2.0)                // backfill buys time
+      + (nwf/180)*1.8            // liquid buffer
+      + (rep*0.8);               // controls stretch time a bit
+    months = clamp(Math.round(months*10)/10, 0.5, 18);
+
+    // GDP year-1 change baseline −4%
+    let gdp = -4
+      - (oil/100)*5.0
+      - (sanc*3.5)
+      - (shad*1.2)
+      - (Math.max(0,-rail)/20)*2.0 // if rail negative, adds hit up to ~2pp
+      + (chi*2.5);
+    gdp = clamp(Math.round(gdp*10)/10, -25, 2);
+
+    // Inflation peak baseline 11%
+    let cpi = 11
+      + (oil/100)*6.0
+      + (sanc*4.0)
+      - (rep*3.0); // controls suppress CPI headline
+    cpi = clamp(Math.round(cpi*10)/10, 6, 30);
+
+    // Industrial output fall baseline −8% for sensitive sectors
+    let ind = -8
+      - (sanc*10)
+      - (shad*6)
+      - (Math.max(0,-rail)/20)*3
+      + (chi*4);
+    ind = clamp(Math.round(ind*10)/10, -50, -2);
+
+    // Oil & gas budget revenue hit (proxy)
+    let oilHit = Math.round((oil*0.8 + sanc*20 + shad*10 - chi*10 + conf*10));
+    oilHit = clamp(oilHit, 0, 90);
+
+    // Collapse meter: combine severity & runway
+    const sev = (
+      ( ( -gdp )/25 )*40 + // weight GDP
+      ( ( cpi-6 )/24 )*20 + // weight CPI
+      ( oilHit/90 )*20 +
+      ( ( -ind-2 )/48 )*20
+    );
+    const runway = (18-months)/17; // more months left => less risk
+    let meter = clamp( (sev*0.7 + runway*30), 0, 100 );
+
+    // Update UI
+    kpis.months.textContent = months + ' mo';
+    kpis.gdp.textContent = gdp + '%';
+    kpis.cpi.textContent = cpi + '%';
+    kpis.ind.textContent = ind + '%';
+    kpis.oil.textContent = oilHit + '%';
+
+    const label = meter<35? 'Resilient' : meter<70? 'Severe strain' : 'Acute crisis';
+    kpis.meterLbl.textContent = label + ' (' + Math.round(meter) + '/100)';
+    kpis.needle.style.left = clamp(meter,0,100) + '%';
+
+    // mirror value bubbles
+    vals.defSpendVal.textContent = inputs.defSpend.value;
+    vals.oilLossVal.textContent = inputs.oilLoss.value;
+    vals.secSancVal.textContent = inputs.secSanc.value;
+    vals.shadowVal.textContent = inputs.shadow.value;
+    vals.chinaVal.textContent = inputs.china.value;
+    vals.confiscVal.textContent = inputs.confisc.checked? 'Yes' : 'No';
+    vals.nwfVal.textContent = inputs.nwf.value;
+    vals.railVal.textContent = parseFloat(inputs.rail.value).toFixed(1);
+    vals.repressVal.textContent = inputs.repress.value;
+
+    // push hash for permalink
+    const state = [inputs.defSpend.value,inputs.oilLoss.value,inputs.secSanc.value,inputs.shadow.value,inputs.china.value,inputs.confisc.checked?1:0,inputs.nwf.value,inputs.rail.value,inputs.repress.value].join(',');
+    history.replaceState(null,'','#'+state);
+  }
+
+  // Presets
+  function setPreset(name){
+    if(name==='base'){
+      inputs.defSpend.value=7.2;inputs.oilLoss.value=35;inputs.secSanc.value=70;inputs.shadow.value=60;inputs.china.value=35;inputs.confisc.checked=false;inputs.nwf.value=55;inputs.rail.value=-7;inputs.repress.value=65;
+      kpis.preset.textContent='Base case';
+    } else if(name==='max'){
+      inputs.defSpend.value=9.5;inputs.oilLoss.value=70;inputs.secSanc.value=95;inputs.shadow.value=90;inputs.china.value=10;inputs.confisc.checked=true;inputs.nwf.value=30;inputs.rail.value=-12;inputs.repress.value=70;
+      kpis.preset.textContent='Max pressure';
+    } else if(name==='leaky'){
+      inputs.defSpend.value=7.8;inputs.oilLoss.value=20;inputs.secSanc.value=35;inputs.shadow.value=25;inputs.china.value=65;inputs.confisc.checked=false;inputs.nwf.value=75;inputs.rail.value=-3;inputs.repress.value=60;
+      kpis.preset.textContent='Leaky sanctions';
+    }
+    compute();
+  }
+
+  // Load from hash if present
+  function loadFromHash(){
+    if(location.hash.length>1){
+      const parts = location.hash.substring(1).split(',');
+      if(parts.length===9){
+        [inputs.defSpend.value,inputs.oilLoss.value,inputs.secSanc.value,inputs.shadow.value,inputs.china.value,parts[5],inputs.nwf.value,inputs.rail.value,inputs.repress.value]=parts;
+        inputs.confisc.checked = parts[5]==='1';
+        kpis.preset.textContent='Custom';
+      }
+    }
+    compute();
+  }
+
+  // Events
+  Object.values(inputs).forEach(el=> el.addEventListener('input', ()=>{kpis.preset.textContent='Custom'; compute();}));
+  document.getElementById('presetBase').addEventListener('click',()=>setPreset('base'));
+  document.getElementById('presetMax').addEventListener('click',()=>setPreset('max'));
+  document.getElementById('presetLeaky').addEventListener('click',()=>setPreset('leaky'));
+  document.getElementById('copyLink').addEventListener('click',()=>{
+    navigator.clipboard.writeText(location.href).then(()=>{
+      const btn = document.getElementById('copyLink');
+      const old = btn.textContent; btn.textContent='Copied!';
+      setTimeout(()=>btn.textContent=old,1200);
+    });
+  });
+
+  loadFromHash();
+})();
+</script>
+</body>
+</html>
