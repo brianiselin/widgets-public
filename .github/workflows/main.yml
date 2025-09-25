@@ -1,0 +1,39 @@
+name: Update EU–China dashboard JSON
+
+on:
+  schedule:
+    # Every Monday 05:00 UTC (≈ 06:00 CET most of the year)
+    - cron: "0 5 * * 1"
+  workflow_dispatch: {}   # allows manual run from the Actions tab
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write   # needed to push the updated JSON
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install deps
+        run: pip install requests
+
+      - name: Run updater
+        run: python scripts/update_eu_china.py
+
+      - name: Commit & push if changed
+        run: |
+          if [[ -n "$(git status --porcelain data/eu-china.json)" ]]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add data/eu-china.json
+            git commit -m "chore(data): auto-update EU–China dashboard JSON"
+            git push
+          else
+            echo "No changes in data/eu-china.json"
+          fi
