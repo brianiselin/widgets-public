@@ -1,17 +1,37 @@
 {
-  "meta": { "updatedAt": "2025-09-25" },
+  "meta": {
+    "updatedAt": "2025-09-29"
+  },
   "trade2024": {
     "exportsBn": 213.3,
     "importsBn": 517.8,
     "importSharePct": 21.3
   },
   "highTechSuppliers2024": [
-    { "name": "China", "share": 30 },
-    { "name": "United States", "share": 23 },
-    { "name": "Switzerland", "share": 6 },
-    { "name": "Taiwan", "share": 6 },
-    { "name": "Vietnam", "share": 5 },
-    { "name": "United Kingdom", "share": 4 }
+    {
+      "name": "China",
+      "share": 30
+    },
+    {
+      "name": "United States",
+      "share": 23
+    },
+    {
+      "name": "Switzerland",
+      "share": 6
+    },
+    {
+      "name": "Taiwan",
+      "share": 6
+    },
+    {
+      "name": "Vietnam",
+      "share": 5
+    },
+    {
+      "name": "United Kingdom",
+      "share": 4
+    }
   ],
   "crm": {
     "magnetsDependencePct": 98,
@@ -23,7 +43,21 @@
     "screeningIndex": 65
   },
   "fdi": {
-    "years": [2019, 2020, 2021, 2022, 2023, 2024],
-    "valuesBn": [11.7, 6.5, 10.6, 7.9, 6.8, 10.0]
+    "years": [
+      2019,
+      2020,
+      2021,
+      2022,
+      2023,
+      2024
+    ],
+    "valuesBn": [
+      11.7,
+      6.5,
+      10.6,
+      7.9,
+      6.8,
+      10.0
+    ]
   }
 }
