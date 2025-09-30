@@ -202,7 +202,7 @@ body:after{ left:-80px; right:auto; top:18%}
     </div>
     <div class="card">
       <h3>Preset</h3>
-      <div class="big" id="kpiPreset">UPSC</div>
+      <div class="big" id="kpiPreset">UNPSC</div>
       <div class="desc">Switch any time</div>
     </div>
   </div>
@@ -244,7 +244,7 @@ body:after{ left:-80px; right:auto; top:18%}
     <h3>1) Presets &amp; scenario</h3>
     <div class="actions" id="presetRow">
       <button class="btn" data-preset="unsc">UNSC (baseline)</button>
-      <button class="btn" data-preset="upsc">UPSC (proposed)</button>
+      <button class="btn" data-preset="unpsc">UNPSC (proposed)</button>
       <button class="btn" data-preset="custom">Custom</button>
     </div>
     <div class="hr"></div>
@@ -346,7 +346,7 @@ body:after{ left:-80px; right:auto; top:18%}
       <button class="btn primary" id="copyLink">Copy shareable link</button>
       <button class="btn green" id="exportPNG">Export snapshot PNG</button>
       <button class="btn" id="exportPDF">Export PDF</button>
-      <button class="btn warn" id="resetUPSC">Reset to UPSC</button>
+      <button class="btn warn" id="resetUNPSC">Reset to UNPSC</button>
     </div>
     <div class="footer-note">Single-file, offline-friendly. Logo served from your GitHub repo.</div>
   </div>
@@ -372,7 +372,7 @@ const qs = (s, el=document) => el.querySelector(s);
 const clamp = (v,min,max)=>Math.max(min,Math.min(max,v));
 const fmtDays = d => (d.toFixed(1).replace(/\.0$/, '')) + ' days';
 
-/* ===== State (UPSC by default) ===== */
+/* ===== State (UNPSC by default) ===== */
 let state = {
   veto:false, enforceAbstention:true, icjAlignment:true,
   eligibility:0.80, majority:0.60, councilSize:15,
@@ -389,7 +389,7 @@ const PRESET_UNSC = {
   transparency:50, sunlight:40, dueProcess:70, readiness:60,
   threatVeto:0.50, penHoldInterested:0.50, lateTabling:0.50
 };
-const PRESET_UPSC = {
+const PRESET_UNPSC = {
   veto:false, enforceAbstention:true, icjAlignment:true,
   eligibility:0.80, majority:0.60, councilSize:15,
   transparency:80, sunlight:70, dueProcess:85, readiness:80,
@@ -680,7 +680,7 @@ function bindControls(){
     const p = btn.dataset.preset;
     let src = null;
     if(p==='unsc') src = PRESET_UNSC;
-    else if(p==='upsc') src = PRESET_UPSC;
+    else if(p==='unpsc') src = PRESET_UNPSC;
     else src = null;
     if(src){
       Object.assign(state, src);
@@ -728,9 +728,9 @@ function bindControls(){
     pdf.addImage(img, 'PNG', x, y, w, h);
     pdf.save('unpsc-di-snapshot.pdf');
   });
-  qs('#resetUPSC').addEventListener('click', ()=>{
-    Object.assign(state, PRESET_UPSC); renderAll();
-    qs('#kpiPreset').textContent = 'UPSC';
+  qs('#resetUNPSC').addEventListener('click', ()=>{
+    Object.assign(state, PRESET_UNPSC); renderAll();
+    qs('#kpiPreset').textContent = 'UNPSC';
   });
 }
 
@@ -763,7 +763,7 @@ function bindControls(){
   }
   bindControls();
   renderAll();
-  qs('#kpiPreset').textContent = 'UPSC';
+  qs('#kpiPreset').textContent = 'UNPSC';
 })();
 </script>
 </body>
