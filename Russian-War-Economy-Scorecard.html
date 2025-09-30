@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Russia War Economy Scorecard — Collapse Meter</title>
+<meta name="description" content="Interactive policy-setting model of Russia's wartime economy. Adjust sanctions, oil flows, rail volumes, and fiscal buffers to see the collapse meter move." />
+<style>
+  :root{
+    --bg:#0b1118;--panel:#0e1624;--panel2:#0b1320;--muted:#152033;
+    --text:#e7eef6;--sub:#a8b4c8;--accent:#66d1ff;
+    --good:#4ade80;--warn:#fde047;--bad:#fb7185;
+    --high:#ef4444;--medium:#f59e0b;--advanced:#3b82f6;
+  }
+  *{box-sizing:border-box;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial}
+  body{margin:0;padding-top:56px;padding-bottom:120px;background:var(--bg);color:var(--text)}
+  
+  .top-bar{position:fixed;top:0;left:0;right:0;z-index:1000;
+           background:linear-gradient(180deg,rgba(14,22,36,0.95),rgba(11,19,32,0.92));
+           border-bottom:1px solid rgba(255,255,255,.12);backdrop-filter:blur(12px);
+           padding:10px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .top-bar-left{display:flex;align-items:center;gap:12px}
+  .top-bar-logo{width:32px;height:32px;border-radius:6px;object-fit:cover}
+  .top-bar-brand{font-weight:700;font-size:14px;color:var(--text)}
+  .top-bar-center{font-size:12px;color:var(--sub);text-align:center;flex:1;min-width:200px}
+  
+  .bottom-bar{position:fixed;bottom:0;left:0;right:0;z-index:1000;
+              background:rgba(11,19,32,0.96);border-top:1px solid rgba(255,255,255,.1);
+              padding:14px 20px;backdrop-filter:blur(12px)}
+  .bottom-bar-content{max-width:1100px;margin:0 auto;display:flex;flex-direction:column;gap:8px}
+  .bottom-bar-row{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap}
+  .bottom-bar-brand{font-weight:700;font-size:13px;color:var(--text)}
+  .bottom-bar-meta{font-size:11px;color:var(--sub);line-height:1.5}
+  .bottom-bar-ip{font-size:10px;color:#6b7280;line-height:1.5;font-variant:small-caps;
+                  border-top:1px solid rgba(255,255,255,.06);padding-top:8px;margin-top:4px}
+  
+  .wrap{max-width:1100px;margin:0 auto;padding:18px}
+  h1{font-size:clamp(22px,3.4vw,36px);margin:6px 0 6px}
+  .sub{color:var(--sub)}
+  .shell{background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03));
+         border:1px solid rgba(255,255,255,.06);border-radius:16px;box-shadow:0 14px 36px rgba(0,0,0,.35)}
+  .grid{display:grid;gap:16px}
+  @media(min-width:980px){.grid{grid-template-columns:1.2fr .8fr}}
+  .left{padding:16px;background:var(--panel2);border-radius:16px;max-height:calc(100vh - 240px);overflow-y:auto}
+  .right{padding:16px;background:var(--panel);border-radius:16px;display:grid;gap:12px;grid-auto-rows:min-content}
+  .row{display:flex;align-items:center;gap:10px}
+  .control{background:var(--panel);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:12px;margin-bottom:10px}
+  .control h4{margin:0 0 4px;font-size:14px}
+  .control .help{font-size:11px;color:var(--sub);margin-bottom:6px;line-height:1.4}
+  input[type=range]{width:100%;accent-color:var(--accent)}
+  .val{min-width:56px;text-align:right;font-variant-numeric:tabular-nums;color:var(--accent);font-weight:700}
+  .pill{padding:2px 8px;border-radius:999px;background:#0f1b2b;border:1px solid rgba(255,255,255,.18);font-size:12px;color:var(--sub)}
+  .kpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .kpi{background:var(--panel);border:1px solid rgba(255,255,255,.09);border-radius:14px;padding:14px}
+  .kpi .lbl{color:var(--sub);font-size:12px}
+  .kpi .num{font-size:24px;font-weight:800;margin-top:4px}
+  
+  .gauge-container{background:var(--panel);border:1px solid rgba(255,255,255,.09);border-radius:14px;padding:16px;
+                    display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:240px}
+  .gauge-svg{width:100%;max-width:320px;height:auto}
+  .gauge-value{font-size:48px;font-weight:900;margin-top:8px;font-variant-numeric:tabular-nums}
+  .gauge-label{font-size:13px;color:var(--sub);margin-top:4px;text-transform:uppercase;letter-spacing:0.5px}
+  
+  .section-group{margin-top:16px;border:1px solid rgba(255,255,255,.08);border-radius:14px;background:var(--muted);overflow:hidden}
+  .section-header{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;cursor:pointer;user-select:none}
+  .section-header:hover{background:rgba(255,255,255,.03)}
+  .section-title{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px}
+  .priority-badge{padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px}
+  .badge-high{background:var(--high);color:#fff}
+  .badge-medium{background:var(--medium);color:#0b1118}
+  .badge-advanced{background:var(--advanced);color:#fff}
+  .section-count{font-size:11px;color:var(--sub);margin-left:6px}
+  .section-explainer{font-size:11px;color:var(--sub);line-height:1.5;padding:0 14px 12px;border-bottom:1px solid rgba(255,255,255,.06)}
+  .section-content{display:none;padding:12px}
+  .section-content.expanded{display:block}
+  .expand-icon{transition:transform 0.2s;color:var(--sub)}
+  .expanded-icon{transform:rotate(180deg)}
+  
+  .expand-all-btn{background:var(--panel);border:1px solid rgba(255,255,255,.1);color:var(--accent);padding:8px 12px;
+                  border-radius:10px;cursor:pointer;font-weight:600;font-size:12px;margin-top:12px;width:100%;
+                  text-align:center}
+  .expand-all-btn:hover{filter:brightness(1.1)}
+  
+  button{background:var(--muted);border:1px solid rgba(255,255,255,.08);color:var(--text);padding:9px 12px;border-radius:10px;cursor:pointer;font-weight:700}
+  button:hover{filter:brightness(1.08)}
+  .toprow{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:10px}
+  .presets{display:flex;gap:8px;flex-wrap:wrap}
+  details{background:var(--muted);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:12px;margin-top:16px}
+  summary{cursor:pointer;font-weight:700;user-select:none}
+  details[open] summary{margin-bottom:8px}
+  
+  @media(max-width:980px){
+    .left{max-height:none}
+  }
+  @media(max-width:640px){
+    .top-bar{padding:8px 12px;font-size:12px}
+    .top-bar-logo{width:28px;height:28px}
+    .top-bar-center{display:none}
+    .bottom-bar{padding:10px 12px}
+    .bottom-bar-meta{font-size:10px}
+  }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="top-bar-left">
+    <img src="https://github.com/brianiselin/widgets-public/blob/main/Iselin%20Group%20Logo%201024%20x.jpg?raw=true" alt="Iselin Group" class="top-bar-logo">
+    <span class="top-bar-brand">Iselin Group - Strategic Consulting</span>
+  </div>
+  <div class="top-bar-center">iselingroup.com - brian.iselin(@)iselingroup.com</div>
+</div>
+
+<div class="wrap">
+  <div class="toprow">
+    <div>
+      <h1>Russia War Economy Scorecard</h1>
+      <div class="sub">Adjust the knobs to test scenarios. Educational policy-setting model — not a forecast.</div>
+    </div>
+    <div class="presets">
+      <button id="presetBase">Base case</button>
+      <button id="presetMax">Max pressure</button>
+      <button id="presetLeaky">Leaky sanctions</button>
+      <button id="copy">Copy scenario link</button>
+    </div>
+  </div>
+
+  <div class="shell" style="padding:16px;margin-top:8px">
+    <div class="grid">
+      <div class="left">
+        <h3 style="margin:0 0 12px;font-size:16px">Core Variables</h3>
+        
+        <div class="control">
+          <h4>Rail freight trend (YoY %)</h4>
+          <div class="help">Real economic activity proxy. Rail volumes track industrial output and supply chain health.</div>
+          <div class="row">
+            <input id="rail" type="range" min="-20" max="10" value="-6" />
+            <div class="val"><span id="railVal">-6</span>%</div>
+          </div>
+        </div>
+
+        <div class="control">
+          <h4>Sanctions severity (enforcement, designations, export controls)</h4>
+          <div class="help">Western restrictions on financial flows, technology access, and trade. Higher = tighter enforcement.</div>
+          <div class="row">
+            <input id="sanc" type="range" min="0" max="10" value="6" />
+            <div class="val"><span id="sancVal">6</span><span class="pill">/10</span></div>
+          </div>
+        </div>
+
+        <div class="control">
+          <h4>Shadow fleet & evasion capacity</h4>
+          <div class="help">Ability to bypass oil sanctions and import restrictions through third countries and opaque shipping networks.</div>
+          <div class="row">
+            <input id="shad" type="range" min="0" max="10" value="6" />
+            <div class="val"><span id="shadVal">6</span><span class="pill">/10</span></div>
+          </div>
+        </div>
+
+        <div class="control">
+          <h4>Oil revenue hit (discounts/volumes vs pre‑war, %)</h4>
+          <div class="help">Lost export income from price caps, discounts to India/China, and volume restrictions. Primary revenue constraint.</div>
+          <div class="row">
+            <input id="oil" type="range" min="0" max="100" value="40" />
+            <div class="val"><span id="oilVal">40</span><span class="pill">/100</span></div>
+          </div>
+        </div>
+
+        <div class="control">
+          <h4>Conflict intensity (manpower draw, rotation strain)</h4>
+          <div class="help">Battlefield tempo, mobilization pressure, and force rotation demands. Compounds labor shortages.</div>
+          <div class="row">
+            <input id="conf" type="range" min="0" max="10" value="6" />
+            <div class="val"><span id="confVal">6</span><span class="pill">/10</span></div>
+          </div>
+        </div>
+
+        <div class="control">
+          <h4>China/Global South support (goods/finance/backfill)</h4>
+          <div class="help">Trade, component imports, and financial lifelines from non-Western partners. Cushions sanctions impact.</div>
+          <div class="row">
+            <input id="chi" type="range" min="0" max="10" value="4" />
+            <div class="val"><span id="chiVal">4</span><span class="pill">/10</span></div>
+          </div>
+        </div>
+
+        <div class="control">
+          <h4>National Wealth Fund liquid buffers (USD bn)</h4>
+          <div class="help">Accessible fiscal reserves to cover deficits and stabilize currency. Running low as war costs mount.</div>
+          <div class="row">
+            <input id="nwf" type="range" min="0" max="200" value="120" />
+            <div class="val"><span id="nwfVal">120</span><span class="pill">bn</span></div>
+          </div>
+        </div>
+
+        <div class="control">
+          <h4>Repression & controls (FX, labour, media)</h4>
+          <div class="help">State capacity to suppress dissent, control capital flows, and manage information. Delays crisis visibility.</div>
+          <div class="row">
+            <input id="rep" type="range" min="0" max="10" value="6" />
+            <div class="val"><span id="repVal">6</span><span class="pill">/10</span></div>
+          </div>
+        </div>
+
+        <div class="control">
+          <h4>Defence spending (% of GDP)</h4>
+          <div class="help">Military budget as share of GDP. Above baseline (7.2%) crowds out civilian investment and accelerates economic strain.</div>
+          <div class="row">
+            <input id="defSpend" type="range" min="5" max="12" step="0.1" value="7.2" />
+            <div class="val"><span id="defVal">7.2</span>%</div>
+          </div>
+        </div>
+
+        <div class="section-group">
+          <div class="section-header" id="highHeader">
+            <div class="section-title">
+              <span class="priority-badge badge-high">High Priority</span>
+              <span>Critical Near-Term Drivers</span>
+              <span class="section-count">(+4)</span>
+            </div>
+            <span class="expand-icon">▼</span>
+          </div>
+          <div class="section-explainer">
+            These factors are reaching critical thresholds in 2025 and have immediate, non-linear effects on collapse pathways. Adjust these for realistic near-term scenarios.
+          </div>
+          <div class="section-content" id="highContent">
+            <div class="control">
+              <h4>Labor market strain (workforce availability)</h4>
+              <div class="help">Unemployment at 2.2%, 4.8M worker shortage. Wage inflation (50% of GDP) crushes profits. Above 7/10 triggers exponential GDP damage.</div>
+              <div class="row">
+                <input id="labor" type="range" min="0" max="10" value="7" />
+                <div class="val"><span id="laborVal">7</span><span class="pill">/10</span></div>
+              </div>
+            </div>
+
+            <div class="control">
+              <h4>Military-industrial capacity utilization (%)</h4>
+              <div class="help">Production doubled/tripled but quality degrading. Above 85% triggers equipment failures, lower efficiency, maintenance crises.</div>
+              <div class="row">
+                <input id="milCap" type="range" min="50" max="100" value="85" />
+                <div class="val"><span id="milCapVal">85</span>%</div>
+              </div>
+            </div>
+
+            <div class="control">
+              <h4>Technology & component access (sanctions circumvention)</h4>
+              <div class="help">Microchips, precision components via third countries. Below 4/10 causes cascading quality collapse and maintenance failures.</div>
+              <div class="row">
+                <input id="tech" type="range" min="0" max="10" value="5" />
+                <div class="val"><span id="techVal">5</span><span class="pill">/10</span></div>
+              </div>
+            </div>
+
+            <div class="control">
+              <h4>Agricultural output shock (%)</h4>
+              <div class="help">2025 grain production down 18% from 2022. Bad harvests strain fiscal buffers, require imports, lose export revenue.</div>
+              <div class="row">
+                <input id="agri" type="range" min="-20" max="10" value="-12" />
+                <div class="val"><span id="agriVal">-12</span>%</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-group">
+          <div class="section-header" id="mediumHeader">
+            <div class="section-title">
+              <span class="priority-badge badge-medium">Medium Priority</span>
+              <span>Important Multipliers</span>
+              <span class="section-count">(+5)</span>
+            </div>
+            <span class="expand-icon">▼</span>
+          </div>
+          <div class="section-explainer">
+            These variables amplify or dampen effects of core drivers. Include them for more sophisticated scenario modeling and to capture second-order effects.
+          </div>
+          <div class="section-content" id="mediumContent">
+            <div class="control">
+              <h4>Capital flight pressure (outflow intensity)</h4>
+              <div class="help">$160B/year outflow (8% GDP). Above 7/10 triggers liquidity crisis, investment collapse, banking instability. Accelerates with low NWF.</div>
+              <div class="row">
+                <input id="capFlight" type="range" min="0" max="10" value="5" />
+                <div class="val"><span id="capFlightVal">5</span><span class="pill">/10</span></div>
+              </div>
+            </div>
+
+            <div class="control">
+              <h4>Military casualties & rotation capacity</h4>
+              <div class="help">Personnel losses compound labor shortages, affecting battlefield effectiveness and domestic workforce. Creates demographic spiral.</div>
+              <div class="row">
+                <input id="casualties" type="range" min="0" max="10" value="6" />
+                <div class="val"><span id="casualtiesVal">6</span><span class="pill">/10</span></div>
+              </div>
+            </div>
+
+            <div class="control">
+              <h4>Western military aid to Ukraine (flow intensity)</h4>
+              <div class="help">Higher aid extends timeline Russia must sustain spending. Compounds attrition effects and increases Russian costs per month.</div>
+              <div class="row">
+                <input id="westAid" type="range" min="0" max="10" value="6" />
+                <div class="val"><span id="westAidVal">6</span><span class="pill">/10</span></div>
+              </div>
+            </div>
+
+            <div class="control">
+              <h4>Civilian sector vitality (two-speed economy)</h4>
+              <div class="help">Non-war economy health. Military crowding out creates political pressure. Below 3/10 risks domestic unrest.</div>
+              <div class="row">
+                <input id="civilian" type="range" min="0" max="10" value="4" />
+                <div class="val"><span id="civilianVal">4</span><span class="pill">/10</span></div>
+              </div>
+            </div>
+
+            <div class="control">
+              <h4>Inflation policy stance (CB rate tightness)</h4>
+              <div class="help">Central Bank balancing growth vs price stability. High rates constrain economy but necessary. Interacts with labor costs.</div>
+              <div class="row">
+                <input id="inflation" type="range" min="0" max="10" value="7" />
+                <div class="val"><span id="inflationVal">7</span><span class="pill">/10</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-group">
+          <div class="section-header" id="advancedHeader">
+            <div class="section-title">
+              <span class="priority-badge badge-advanced">Advanced</span>
+              <span>Sophisticated Scenarios</span>
+              <span class="section-count">(+3)</span>
+            </div>
+            <span class="expand-icon">▼</span>
+          </div>
+          <div class="section-explainer">
+            These variables model edge cases, long-tail risks, and complex political dynamics. Use for expert-level scenario planning and exploring non-obvious collapse pathways.
+          </div>
+          <div class="section-content" id="advancedContent">
+            <div class="control">
+              <h4>Regional fragility & territorial cohesion</h4>
+              <div class="help">Ethnic tensions, regionalist movements, elite fractures. Accelerates state collapse once economic stress crosses thresholds.</div>
+              <div class="row">
+                <input id="regional" type="range" min="0" max="10" value="3" />
+                <div class="val"><span id="regionalVal">3</span><span class="pill">/10</span></div>
+              </div>
+            </div>
+
+            <div class="control">
+              <h4>Rogue state partnerships (NK/Iran dependencies)</h4>
+              <div class="help">North Korean ammunition, Iranian drones. Higher dependence signals desperation but provides temporary relief from production limits.</div>
+              <div class="row">
+                <input id="rogue" type="range" min="0" max="10" value="5" />
+                <div class="val"><span id="rogueVal">5</span><span class="pill">/10</span></div>
+              </div>
+            </div>
+
+            <div class="control">
+              <h4>Black swan shock probability</h4>
+              <div class="help">Leadership change, coup, natural disaster, industrial accident. Models tail risks and discontinuous breaks in trajectory.</div>
+              <div class="row">
+                <input id="blackswan" type="range" min="0" max="10" value="2" />
+                <div class="val"><span id="blackswanVal">2</span><span class="pill">/10</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button class="expand-all-btn" id="expandAllBtn">Expand All Sections</button>
+      </div>
+
+      <div class="right">
+        <div class="gauge-container">
+          <h3 style="margin:0 0 12px;font-size:18px;align-self:flex-start">Collapse meter</h3>
+          <svg class="gauge-svg" viewBox="0 0 240 140" id="gaugeSVG">
+            <defs>
+              <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:#4ade80;stop-opacity:1" />
+                <stop offset="25%" style="stop-color:#d9f99d;stop-opacity:1" />
+                <stop offset="50%" style="stop-color:#fde047;stop-opacity:1" />
+                <stop offset="75%" style="stop-color:#fbbf24;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#fb7185;stop-opacity:1" />
+              </linearGradient>
+            </defs>
+            <path id="gaugeArc" d="M 30 110 A 90 90 0 0 1 210 110" fill="none" stroke="url(#gaugeGrad)" stroke-width="20" stroke-linecap="round"/>
+            <circle id="gaugeCenter" cx="120" cy="110" r="6" fill="#e7eef6"/>
+            <line id="gaugeNeedle" x1="120" y1="110" x2="120" y2="35" stroke="#e7eef6" stroke-width="3" stroke-linecap="round"/>
+            <text x="30" y="130" fill="#a8b4c8" font-size="11" text-anchor="start">Resilient</text>
+            <text x="120" y="130" fill="#a8b4c8" font-size="11" text-anchor="middle">Stressed</text>
+            <text x="210" y="130" fill="#a8b4c8" font-size="11" text-anchor="end">Failing</text>
+          </svg>
+          <div class="gauge-value" id="gaugeValue">—</div>
+          <div class="gauge-label">Composite score</div>
+        </div>
+        
+        <div class="kpis">
+          <div class="kpi">
+            <div class="lbl">Months to fiscal crunch</div>
+            <div class="num" id="months">—</div>
+          </div>
+          <div class="kpi">
+            <div class="lbl">Real GDP (%, y/y)</div>
+            <div class="num" id="gdp">—</div>
+          </div>
+          <div class="kpi">
+            <div class="lbl">CPI inflation (%, y/y)</div>
+            <div class="num" id="cpi">—</div>
+          </div>
+          <div class="kpi">
+            <div class="lbl">Industrial output (%, y/y)</div>
+            <div class="num" id="indust">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <details>
+      <summary>Model notes & methodology</summary>
+      <p style="margin:8px 0;line-height:1.6;color:var(--sub)">
+        <strong>Core model:</strong> Oil revenue loss and sanctions drive most movement; shadow fleet blunts oil sanctions; rail tracks real activity; buffers and repression slow the slide. Defence spending above 7.2% baseline has modest additional effect to avoid double-counting.
+      </p>
+      <p style="margin:8px 0;line-height:1.6;color:var(--sub)">
+        <strong>High-priority non-linear effects:</strong> Labor strain above 7/10 has exponential GDP impact (wage inflation crushing profits). Military capacity above 85% triggers quality degradation. Tech access below 4/10 causes cascading failures. Capital flight above 7/10 triggers liquidity crisis with accelerating effects.
+      </p>
+      <p style="margin:8px 0;line-height:1.6;color:var(--sub)">
+        <strong>Critical interaction effects:</strong> (1) Labor strain × military capacity = production bottleneck multiplier, (2) Capital flight × low NWF = liquidity crisis threshold, (3) Tech access × military capacity = quality vs quantity tradeoff, (4) Casualties × labor strain = demographic death spiral, (5) Civilian vitality collapse × regional fragility = political instability cascade.
+      </p>
+      <p style="margin:8px 0;line-height:1.6;color:var(--sub)">
+        <strong>Medium-priority variables:</strong> Capital flight, casualties, Western aid, civilian vitality, and inflation policy amplify or dampen core effects. Use for sophisticated multi-factor scenarios.
+      </p>
+      <p style="margin:8px 0;line-height:1.6;color:var(--sub)">
+        <strong>Advanced variables:</strong> Regional fragility, rogue partnerships, and black swan risks model edge cases and discontinuous breaks. For expert scenario planning only.
+      </p>
+      <p style="margin:8px 0;line-height:1.6;color:var(--sub)">
+        <strong>Calibration sources:</strong> Labor market data (CBR, 2025), military production constraints (Chatham House, 2025), capital flight estimates ($160B/yr, 2024), agricultural output (Russian govt reports, 2025). All weights are illustrative for educational purposes.
+      </p>
+    </details>
+  </div>
+</div>
+
+<div class="bottom-bar">
+  <div class="bottom-bar-content">
+    <div class="bottom-bar-row">
+      <div class="bottom-bar-brand">Iselin Group - Strategic Consulting</div>
+      <div class="bottom-bar-meta">© Iselin Group. Russian Collapse Meter— single‑file widget. iselingroup.com - brian.iselin(@)iselingroup.com</div>
+    </div>
+    <div class="bottom-bar-ip">
+      The underlying decision‑integrity model, logic, and UI are proprietary to Iselin Group and may not be reproduced, adapted, or deployed in whole or in part without prior written consent; all rights reserved.
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+(function(){
+  const $ = id => document.getElementById(id);
+  const inputs = {
+    rail: $('rail'), sanc: $('sanc'), shad: $('shad'), oil: $('oil'),
+    conf: $('conf'), chi: $('chi'), nwf: $('nwf'), rep: $('rep'), defSpend: $('defSpend'),
+    labor: $('labor'), milCap: $('milCap'), tech: $('tech'), agri: $('agri'),
+    capFlight: $('capFlight'), casualties: $('casualties'), westAid: $('westAid'),
+    civilian: $('civilian'), inflation: $('inflation'),
+    regional: $('regional'), rogue: $('rogue'), blackswan: $('blackswan')
+  };
+  const outs = {
+    railVal:$('railVal'), sancVal:$('sancVal'), shadVal:$('shadVal'), oilVal:$('oilVal'),
+    confVal:$('confVal'), chiVal:$('chiVal'), nwfVal:$('nwfVal'), repVal:$('repVal'), defVal:$('defVal'),
+    laborVal:$('laborVal'), milCapVal:$('milCapVal'), techVal:$('techVal'), agriVal:$('agriVal'),
+    capFlightVal:$('capFlightVal'), casualtiesVal:$('casualtiesVal'), westAidVal:$('westAidVal'),
+    civilianVal:$('civilianVal'), inflationVal:$('inflationVal'),
+    regionalVal:$('regionalVal'), rogueVal:$('rogueVal'), blackswanVal:$('blackswanVal'),
+    months:$('months'), gdp:$('gdp'), cpi:$('cpi'), indust:$('indust')
+  };
+  const gaugeNeedle = $('gaugeNeedle');
+  const gaugeValue = $('gaugeValue');
+
+  const presets = {
+    base: { rail:-6, sanc:6, shad:6, oil:40, conf:6, chi:4, nwf:120, rep:6, defSpend:7.2,
+            labor:7, milCap:85, tech:5, agri:-12,
+            capFlight:5, casualties:6, westAid:6, civilian:4, inflation:7,
+            regional:3, rogue:5, blackswan:2 },
+    max:  { rail:-15, sanc:10, shad:2, oil:70, conf:8, chi:2, nwf:80, rep:4, defSpend:9,
+            labor:9, milCap:95, tech:2, agri:-18,
+            capFlight:8, casualties:9, westAid:9, civilian:2, inflation:9,
+            regional:7, rogue:8, blackswan:4 },
+    leaky:{ rail:-2, sanc:3, shad:9, oil:15, conf:4, chi:7, nwf:160, rep:8, defSpend:6.5,
+            labor:4, milCap:70, tech:8, agri:-5,
+            capFlight:3, casualties:4, westAid:4, civilian:6, inflation:5,
+            regional:2, rogue:3, blackswan:1 }
+  };
+
+  function clamp(v,min,max){ return Math.max(min,Math.min(max,v)); }
+
+  function updateGaugeNeedle(score){
+    const angle = -180 + (score / 100) * 180;
+    const rad = angle * Math.PI / 180;
+    const centerX = 120;
+    const centerY = 110;
+    const length = 70;
+    const endX = centerX + length * Math.cos(rad);
+    const endY = centerY + length * Math.sin(rad);
+    gaugeNeedle.setAttribute('x2', endX.toFixed(2));
+    gaugeNeedle.setAttribute('y2', endY.toFixed(2));
+  }
+
+  function compute(){
+    const r = parseFloat(inputs.rail.value);
+    const s = parseFloat(inputs.sanc.value);
+    const sh = parseFloat(inputs.shad.value);
+    const o = parseFloat(inputs.oil.value);
+    const c = parseFloat(inputs.conf.value);
+    const chi = parseFloat(inputs.chi.value);
+    const nwf = parseFloat(inputs.nwf.value);
+    const rep = parseFloat(inputs.rep.value);
+    const def = parseFloat(inputs.defSpend.value);
+    
+    const lab = parseFloat(inputs.labor.value);
+    const mc = parseFloat(inputs.milCap.value);
+    const tech = parseFloat(inputs.tech.value);
+    const agri = parseFloat(inputs.agri.value);
+    
+    const cf = parseFloat(inputs.capFlight.value);
+    const cas = parseFloat(inputs.casualties.value);
+    const wa = parseFloat(inputs.westAid.value);
+    const civ = parseFloat(inputs.civilian.value);
+    const inf = parseFloat(inputs.inflation.value);
+    
+    const reg = parseFloat(inputs.regional.value);
+    const rog = parseFloat(inputs.rogue.value);
+    const bs = parseFloat(inputs.blackswan.value);
+
+    const oilNet = o * (1 - sh*0.08);
+    const sanctionsNet = s * (1 - sh*0.06);
+    const defEffect = Math.max(0, (def - 7.2) * 0.15);
+    
+    const laborExponential = lab > 7 ? Math.pow((lab - 7) / 3, 1.8) * 2 : 0;
+    const laborEffect = lab * 0.35 + laborExponential;
+    
+    const capacityDegradation = mc > 85 ? Math.pow((mc - 85) / 15, 1.6) * 1.5 : 0;
+    const capacityEffect = (mc - 70) * 0.06 + capacityDegradation;
+    
+    const techCascade = tech < 4 ? Math.pow((4 - tech) / 4, 1.7) * 2 : 0;
+    const techEffect = (10 - tech) * 0.25 + techCascade;
+    
+    const agriEffect = agri * 0.12;
+    
+    const capFlightCrisis = cf > 7 ? Math.pow((cf - 7) / 3, 1.9) * 2.5 : 0;
+    const nwfInteraction = nwf < 80 && cf > 6 ? (80 - nwf) * 0.02 * cf * 0.1 : 0;
+    const capFlightEffect = cf * 0.2 + capFlightCrisis + nwfInteraction;
+    
+    const casualtyLaborSpiral = cas * lab * 0.015;
+    const casualtyEffect = cas * 0.18 + casualtyLaborSpiral;
+    
+    const westAidEffect = wa * 0.18;
+    
+    const civilianPolitical = civ < 3 ? Math.pow((3 - civ) / 3, 1.5) * 1.2 : 0;
+    const civilianEffect = (10 - civ) * 0.18 + civilianPolitical;
+    
+    const inflationEffect = inf * 0.12;
+    
+    const regionalCivilianCascade = reg > 5 && civ < 4 ? reg * (4 - civ) * 0.08 : 0;
+    const regionalEffect = reg * 0.25 + regionalCivilianCascade;
+    
+    const rogueEffect = (10 - rog) * 0.08;
+    const blackswanEffect = bs * 0.6;
+    
+    const laborCapacityBottleneck = lab > 7 && mc > 85 ? (lab - 7) * (mc - 85) * 0.012 : 0;
+    const techCapacityQuality = tech < 5 && mc > 80 ? (5 - tech) * (mc - 80) * 0.01 : 0;
+
+    let months = 24 + nwf*0.08 - oilNet*0.12 - sanctionsNet*1.2 - c*0.8 + chi*1.5 + rep*1.0 - defEffect*2
+                 - laborEffect*0.6 - capacityEffect*0.5 - techEffect*0.35 - agriEffect*0.25
+                 - capFlightEffect*0.5 - casualtyEffect*0.35 - westAidEffect*0.35 + civilianEffect*0.15 - inflationEffect*0.18
+                 - regionalEffect*0.35 + rogueEffect*0.25 - blackswanEffect*0.7
+                 - laborCapacityBottleneck*0.8 - techCapacityQuality*0.6;
+    months = clamp(months, 2, 48);
+
+    let gdp = 1.2 + r*0.15 - oilNet*0.025 - sanctionsNet*0.15 - c*0.2 + chi*0.25 - defEffect*0.3
+              - laborEffect*0.20 - capacityEffect*0.10 - techEffect*0.12 + agriEffect*0.10
+              - capFlightEffect*0.15 - casualtyEffect*0.10 - westAidEffect*0.06 + civilianEffect*0.10 - inflationEffect*0.14
+              - regionalEffect*0.12 + rogueEffect*0.06 - blackswanEffect*0.25
+              - laborCapacityBottleneck*0.15 - techCapacityQuality*0.12;
+    gdp = clamp(gdp, -15, 4);
+
+    let cpi = 8 + oilNet*0.06 + sanctionsNet*0.25 + c*0.3 - chi*0.2 - rep*0.3 + defEffect*0.4
+              + laborEffect*0.25 + capacityEffect*0.12 + techEffect*0.18 - agriEffect*0.12
+              + capFlightEffect*0.18 + casualtyEffect*0.12 + westAidEffect*0.10 - civilianEffect*0.08 + inflationEffect*0.30
+              + regionalEffect*0.14 - rogueEffect*0.06 + blackswanEffect*0.35
+              + laborCapacityBottleneck*0.10;
+    cpi = clamp(cpi, 4, 35);
+
+    let ind = -1 + r*0.2 - oilNet*0.02 - sanctionsNet*0.12 + chi*0.2 - defEffect*0.25
+              - laborEffect*0.25 - capacityEffect*0.15 - techEffect*0.18 + agriEffect*0.06
+              - capFlightEffect*0.10 - casualtyEffect*0.12 - westAidEffect*0.06 + civilianEffect*0.12 - inflationEffect*0.12
+              - regionalEffect*0.10 + rogueEffect*0.06 - blackswanEffect*0.18
+              - laborCapacityBottleneck*0.18 - techCapacityQuality*0.15;
+    ind = clamp(ind, -18, 6);
+
+    const comp = 50 - (months - 24)*0.8 - gdp*2 + (cpi - 8)*1.5 - ind*1.2;
+    const compClamped = clamp(comp, 0, 100);
+
+    outs.months.textContent = Math.round(months);
+    outs.gdp.textContent = gdp.toFixed(1);
+    outs.cpi.textContent = cpi.toFixed(1);
+    outs.indust.textContent = ind.toFixed(1);
+    gaugeValue.textContent = compClamped.toFixed(0);
+    
+    updateGaugeNeedle(compClamped);
+  }
+
+  function applyPreset(p){
+    Object.keys(inputs).forEach(key => {
+      if(p[key] !== undefined) inputs[key].value = p[key];
+    });
+    updateDisplays();
+    compute();
+    updateHash();
+  }
+
+  function updateDisplays(){
+    outs.railVal.textContent = inputs.rail.value;
+    outs.sancVal.textContent = inputs.sanc.value;
+    outs.shadVal.textContent = inputs.shad.value;
+    outs.oilVal.textContent = inputs.oil.value;
+    outs.confVal.textContent = inputs.conf.value;
+    outs.chiVal.textContent = inputs.chi.value;
+    outs.nwfVal.textContent = inputs.nwf.value;
+    outs.repVal.textContent = inputs.rep.value;
+    outs.defVal.textContent = parseFloat(inputs.defSpend.value).toFixed(1);
+    outs.laborVal.textContent = inputs.labor.value;
+    outs.milCapVal.textContent = inputs.milCap.value;
+    outs.techVal.textContent = inputs.tech.value;
+    outs.agriVal.textContent = inputs.agri.value;
+    outs.capFlightVal.textContent = inputs.capFlight.value;
+    outs.casualtiesVal.textContent = inputs.casualties.value;
+    outs.westAidVal.textContent = inputs.westAid.value;
+    outs.civilianVal.textContent = inputs.civilian.value;
+    outs.inflationVal.textContent = inputs.inflation.value;
+    outs.regionalVal.textContent = inputs.regional.value;
+    outs.rogueVal.textContent = inputs.rogue.value;
+    outs.blackswanVal.textContent = inputs.blackswan.value;
+  }
+
+  function updateHash(){
+    const state = {};
+    Object.keys(inputs).forEach(key => {
+      state[key] = inputs[key].value;
+    });
+    window.location.hash = btoa(JSON.stringify(state));
+  }
+
+  function loadFromHash(){
+    if(!window.location.hash) return false;
+    try{
+      const state = JSON.parse(atob(window.location.hash.slice(1)));
+      Object.keys(state).forEach(key => {
+        if(inputs[key]) inputs[key].value = state[key];
+      });
+      return true;
+    }catch(e){ return false; }
+  }
+
+  Object.values(inputs).forEach(inp => {
+    inp.addEventListener('input', () => {
+      updateDisplays();
+      compute();
+      updateHash();
+    });
+  });
+
+  $('presetBase').addEventListener('click', () => applyPreset(presets.base));
+  $('presetMax').addEventListener('click', () => applyPreset(presets.max));
+  $('presetLeaky').addEventListener('click', () => applyPreset(presets.leaky));
+
+  $('copy').addEventListener('click', () => {
+    const url = window.location.href;
+    navigator.clipboard.writeText(url).then(() => {
+      const btn = $('copy');
+      const orig = btn.textContent;
+      btn.textContent = 'Copied!';
+      setTimeout(() => { btn.textContent = orig; }, 1500);
+    });
+  });
+
+  function toggleSection(headerId, contentId, iconSelector){
+    const header = $(headerId);
+    const content = $(contentId);
+    const icon = header.querySelector(iconSelector);
+    
+    header.addEventListener('click', () => {
+      const isExpanded = content.classList.contains('expanded');
+      content.classList.toggle('expanded');
+      icon.classList.toggle('expanded-icon');
+    });
+  }
+
+  toggleSection('highHeader', 'highContent', '.expand-icon');
+  toggleSection('mediumHeader', 'mediumContent', '.expand-icon');
+  toggleSection('advancedHeader', 'advancedContent', '.expand-icon');
+
+  let allExpanded = false;
+  $('expandAllBtn').addEventListener('click', () => {
+    const sections = ['highContent', 'mediumContent', 'advancedContent'];
+    const icons = document.querySelectorAll('.expand-icon');
+    
+    if(allExpanded){
+      sections.forEach(id => $(id).classList.remove('expanded'));
+      icons.forEach(icon => icon.classList.remove('expanded-icon'));
+      $('expandAllBtn').textContent = 'Expand All Sections';
+      allExpanded = false;
+    } else {
+      sections.forEach(id => $(id).classList.add('expanded'));
+      icons.forEach(icon => icon.classList.add('expanded-icon'));
+      $('expandAllBtn').textContent = 'Collapse All Sections';
+      allExpanded = true;
+    }
+  });
+
+  if(!loadFromHash()){
+    applyPreset(presets.base);
+  } else {
+    updateDisplays();
+    compute();
+  }
+})();
+</script>
+
+</body>
+</html>
