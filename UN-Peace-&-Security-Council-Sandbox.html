@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>UN PSC Decision Integrity Sandbox</title>
+<style>
+:root{
+  --bg:#0c111b;
+  --card:#121a29;
+  --ink:#e8f0ff;
+  --muted:#b9c7e6;
+  --rail:#2a3344;
+  --accent:#63d4ff;
+  --para:#ffd166;
+  --capt:#ffd166;
+  --over:#7dfcc2;
+  --border:#243047;
+  --btn-blue:#204b7a;
+  --btn-green:#1f5e42;
+  --btn-amber:#6a3d15;
+  --shadow:0 10px 24px rgba(0,0,0,.35);
+  --chip:#0f1730;
+  --tip-bg:#0b1222;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font:14px/1.5 system-ui,Segoe UI,Roboto,Helvetica,Arial;
+  padding-bottom:110px; /* room for fixed bottom bar */
+}
+a{color:#9ccaff;text-decoration:none}
+.wrap{max-width:1160px;margin:0 auto;padding:0 16px}
+
+/* ===== Brand bars ===== */
+.topbar{
+  background:linear-gradient(180deg, rgba(10,16,32,.85), rgba(6,10,22,.65));
+  -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px);
+  border-bottom:1px solid var(--border);
+  color:var(--ink);
+}
+.topbrand{
+  display:grid; align-items:center;
+  grid-template-columns: auto 1fr; /* removed right mini-logo */
+  gap:14px; padding:10px 0;
+}
+.brand-logo-lg{
+  height:95px; width:95px; border-radius:8px; object-fit:contain;
+  box-shadow:0 6px 20px rgba(0,0,0,.35);
+}
+.topbrand .left{display:flex; align-items:center; gap:12px}
+.topbrand .left .name{font-weight:700; letter-spacing:.3px; white-space:nowrap}
+.topbrand .center{
+  display:flex; flex-direction:column; align-items:center; gap:6px; min-width:0;
+}
+.breadcrumbs{color:var(--muted); font-variant:all-small-caps; letter-spacing:.6px; opacity:.95; text-align:center}
+.feature-pill{
+  font-size:12px; color:#cfe7ff; background:rgba(99,212,255,.08);
+  border:1px solid rgba(99,212,255,.22); padding:6px 10px; border-radius:999px;
+}
+
+.bottombar{
+  position:fixed; left:0; right:0; bottom:0;
+  background:linear-gradient(180deg,#0b1226,#0a1020);
+  border-top:1px solid var(--border);
+  color:var(--ink); z-index:20;
+}
+.bottomrow{padding:10px 0}
+.bottomrow .meta{
+  color:#aab7d6; opacity:.9; font-size:12px; margin:2px 0;
+}
+.smallcaps{font-variant:all-small-caps; letter-spacing:.6px}
+.ip{color:#8ea0c6; font-size:11.5px; line-height:1.45; opacity:.85}
+
+/* ===== Cards, grid, UI ===== */
+.grid{display:grid;gap:16px; grid-template-columns: repeat(12, 1fr);}
+.card{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px; box-shadow:var(--shadow)}
+.card h3{margin:0 0 8px 0; color:var(--muted); font-size:14px}
+.kpi{display:grid; grid-template-columns: repeat(3, 1fr); gap:16px}
+.kpi .big{font-size:32px; font-weight:800}
+.actions{display:flex; gap:10px; flex-wrap:wrap}
+
+/* graphics layout helpers */
+.center{ display:flex; align-items:center; justify-content:center }
+.gauge svg{ overflow:visible; display:block }
+.di-big .gauge svg{ min-height:240px }
+.risks .gauge svg{ min-height:300px } /* taller to fit 3 rows cleanly */
+
+/* panel spans (balanced L/R) */
+.di-big{ grid-column: span 6 }
+.risks{ grid-column: span 3 }
+.radar{ grid-column: span 3 }
+.controls{ grid-column: span 12 }
+@media (max-width: 900px){
+  .grid{ grid-template-columns: 1fr }
+  .di-big,.risks,.radar,.controls{ grid-column: span 1 }
+  .kpi{ grid-template-columns: 1fr; }
+}
+
+/* buttons & switches */
+.btn{
+  background:#1c2a40;border:1px solid var(--border);color:var(--ink);
+  padding:9px 14px;border-radius:12px;font-weight:600;cursor:pointer
+}
+.btn.primary{background:var(--btn-blue)}
+.btn.green{background:var(--btn-green)}
+.btn.warn{background:var(--btn-amber)}
+.btn:disabled{opacity:.6;cursor:not-allowed}
+
+label small{ color:var(--muted) }
+.control{ display:grid; grid-template-columns: 240px 1fr 84px; gap:12px; align-items:center; margin:10px 0 }
+.control input[type="range"]{ width:100% }
+.switch{ display:inline-flex; align-items:center; gap:8px }
+.switch input{ accent-color:#5ad1ff; transform:scale(1.15) }
+.badge{ font-size:12px; padding:4px 8px; border-radius:999px; border:1px solid var(--border); background:#0b0f1c; color:var(--muted) }
+.kpi .card{display:flex; flex-direction:column; justify-content:center}
+.kpi .desc{ color:var(--muted); font-size:12px}
+.hr{ height:1px; background:var(--border); margin:12px 0 }
+.footer-note{ color:var(--muted); font-size:12px; margin-top:8px}
+
+/* tooltips */
+.tip{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:18px; height:18px; border-radius:50%;
+  margin-left:6px; font-size:12px; font-weight:700; color:#cfe7ff;
+  border:1px solid rgba(99,212,255,.35); background:rgba(99,212,255,.08);
+  position:relative; cursor:default;
+}
+.tip::after{
+  content:attr(data-tip);
+  position:absolute; left:50%; transform:translateX(-50%) translateY(8px);
+  bottom:-8px; opacity:0; pointer-events:none;
+  background:var(--tip-bg); color:#cfe7ff; padding:8px 10px; border-radius:8px;
+  border:1px solid var(--border); width:max-content; max-width:340px;
+  font-size:12px; line-height:1.35; box-shadow:var(--shadow);
+  transition:opacity .15s ease;
+  z-index:10;
+}
+.tip:hover::after{opacity:1}
+
+/* gentle UN-style watermark */
+body:before, body:after{
+  content:""; position:fixed; inset:auto -80px 12% auto; width:320px; height:320px;
+  background: radial-gradient(closest-side, rgba(44,77,122,.12), transparent 70%);
+  filter: blur(10px); z-index:-1;
+}
+body:after{ left:-80px; right:auto; top:18%}
+
+/* About modal (safe if button exists elsewhere) */
+.modal{position:fixed; inset:0; display:none; place-items:center; background:rgba(0,0,0,.45); padding:24px; z-index:50}
+.modal.open{display:grid}
+.modal .inner{max-width:760px; background:var(--card); border:1px solid var(--border); border-radius:14px; padding:18px; box-shadow:var(--shadow)}
+.modal .inner h2{margin:0 0 8px 0}
+.modal .inner p{color:var(--muted); margin:6px 0}
+.modal .inner .close{float:right}
+
+/* centered radar canvas inside its card */
+.card.radar{ display:flex; flex-direction:column; align-items:center; justify-content:center }
+.card.radar canvas{ max-width:100%; height:auto; display:block }
+
+/* explainers under charts */
+.meta.explainer{
+  margin:10px auto 0;
+  text-align:center;
+  color:var(--muted);
+  font-size:12.5px;
+  max-width:68ch;
+}
+</style>
+</head>
+<body>
+
+<!-- ============ TOP BRAND BAR ============ -->
+<div class="topbar">
+  <div class="wrap topbrand">
+    <div class="left">
+      <img class="brand-logo-lg" src="https://raw.githubusercontent.com/brianiselin/widgets-public/main/Iselin%20Group%20Logo%201024%20x.jpg" alt="Iselin Group"/>
+      <span class="name">Iselin Group — Strategic Consulting</span>
+    </div>
+
+    <div class="center">
+      <div class="breadcrumbs">iselingroup.com — brian.iselin(@)iselingroup.com</div>
+      <div class="feature-pill">No-veto architecture — Atrocity prevention mode</div>
+    </div>
+    <!-- right brand-chip removed by request -->
+  </div>
+</div>
+
+<div class="wrap" id="app">
+  <!-- KPIs -->
+  <div class="kpi" style="margin-top:14px">
+    <div class="card">
+      <h3>Overall DI</h3>
+      <div class="big" id="kpiDI">—</div>
+      <div class="desc">Composite of Lawful, Timely, Impartial, Effective (0–100)</div>
+    </div>
+    <div class="card">
+      <h3>Time to decision</h3>
+      <div class="big" id="kpiTime">—</div>
+      <div class="desc">Estimated days to Council action (scenario-neutral)</div>
+    </div>
+    <div class="card">
+      <h3>Preset</h3>
+      <div class="big" id="kpiPreset">UPSC</div>
+      <div class="desc">Switch any time</div>
+    </div>
+  </div>
+
+  <!-- Charts -->
+  <div class="grid" style="margin-top:16px">
+    <div class="card di-big">
+      <h3>Decision Integrity</h3>
+      <div class="gauge center">
+        <svg id="svgDI" viewBox="0 0 140 120" width="100%" height="auto" aria-label="Decision Integrity gauge"></svg>
+      </div>
+      <div class="meta explainer">
+        Overall Decision Integrity (0–100). Equal-weight composite of four pillars—Effectiveness, Legitimacy, Lawfulness, Timeliness. Higher reflects faster, lawful, broadly supported action; values update live with control changes.
+      </div>
+    </div>
+
+    <div class="card risks">
+      <h3>Paralysis • Capture • Overreach</h3>
+      <div class="gauge center">
+        <!-- taller viewBox for clean vertical spacing -->
+        <svg id="svgRisks" viewBox="0 0 120 300" width="100%" height="auto" aria-label="Risk gauges (vertical)"></svg>
+      </div>
+      <div class="meta explainer">
+        Operational risks derived from current settings. Colours indicate thresholds: &lt;33 green (lower risk), &lt;66 amber (moderate), ≥66 red (higher). Capture rises with pen-holding while interested, threatened vetoes, late-tabling, low transparency, and very high voting thresholds.
+      </div>
+    </div>
+
+    <div class="card radar">
+      <h3>Pillars</h3>
+      <canvas id="radar" width="280" height="220" aria-label="Lawful Timely Impartial Effective radar"></canvas>
+      <div class="meta explainer">
+        Four-pillar profile (0–100). The polygon expands with stronger performance and shrinks with trade-offs. Use it to see which settings drive Overall DI.
+      </div>
+    </div>
+  </div>
+
+  <!-- Controls -->
+  <div class="card controls">
+    <h3>1) Presets &amp; scenario</h3>
+    <div class="actions" id="presetRow">
+      <button class="btn" data-preset="unsc">UNSC (baseline)</button>
+      <button class="btn" data-preset="upsc">UPSC (proposed)</button>
+      <button class="btn" data-preset="custom">Custom</button>
+    </div>
+    <div class="hr"></div>
+
+    <h3>2) Rules &amp; composition</h3>
+    <div class="control">
+      <label class="switch">
+        <input type="checkbox" id="veto"> <span>Veto on non-procedural</span>
+      </label>
+      <input type="range" min="0" max="1" step="0.01" value="0.6" id="majority">
+      <div class="badge">
+        Majority: <span id="majorityVal">0.60</span>
+        <span class="tip" data-tip="↑ majority threshold → slower decisions (Timely↓), higher Capture (mild). ↓ threshold → faster (Timely↑).">i</span>
+      </div>
+    </div>
+    <div class="control">
+      <label class="switch">
+        <input type="checkbox" id="abstention"> <span>Enforce party-to-dispute abstention</span>
+      </label>
+      <input type="range" min="5" max="30" step="1" value="15" id="csize">
+      <div class="badge">
+        Council size: <span id="csizeVal">15</span>
+        <span class="tip" data-tip="↑ size can slow drafting/votes (Timely↓). Smaller councils act faster (Timely↑).">i</span>
+      </div>
+    </div>
+    <div class="control">
+      <label class="switch">
+        <input type="checkbox" id="icj"> <span>Require ICJ alignment when applicable</span>
+      </label>
+      <input type="range" min="0" max="1" step="0.01" value="0.8" id="eligibility">
+      <div class="badge">
+        Eligibility: <span id="eligibilityVal">0.80</span>
+        <span class="tip" data-tip="↑ eligibility (merit floor) can improve cohesion; extreme values may affect compromise space. DI impact indirect.">i</span>
+      </div>
+    </div>
+
+    <h3>3) Process &amp; transparency</h3>
+    <div class="control">
+      <label>Transparency <br><small>Openness of deliberations</small></label>
+      <input type="range" min="0" max="100" step="1" value="80" id="transparency">
+      <div class="badge">
+        <span id="transparencyVal">80</span>
+        <span class="tip" data-tip="↑ transparency → quicker & fairer (Timely↑, Capture↓, Overreach↓). ↓ transparency → delays & capture risks.">i</span>
+      </div>
+    </div>
+    <div class="control">
+      <label>Sunlight <br><small>Media/press scrutiny</small></label>
+      <input type="range" min="0" max="100" step="1" value="70" id="sunlight">
+      <div class="badge">
+        <span id="sunlightVal">70</span>
+        <span class="tip" data-tip="↑ sunlight → accelerates action (Timely↑) and shortens time-to-decision.">i</span>
+      </div>
+    </div>
+    <div class="control">
+      <label>Due process <br><small>Soundness of procedure</small></label>
+      <input type="range" min="0" max="100" step="1" value="85" id="dueProcess">
+      <div class="badge">
+        <span id="dueVal">85</span>
+        <span class="tip" data-tip="↑ due-process → Effective↑, Overreach↓. Weak due-process raises overreach risk.">i</span>
+      </div>
+    </div>
+    <div class="control">
+      <label>Readiness <br><small>Monitoring/enforcement</small></label>
+      <input type="range" min="0" max="100" step="1" value="80" id="readiness">
+      <div class="badge">
+        <span id="readyVal">80</span>
+        <span class="tip" data-tip="↑ readiness → Effective↑, Overreach↓ (better compliance & implementation).">i</span>
+      </div>
+    </div>
+
+    <h3>4) Dynamics</h3>
+    <div class="control">
+      <label>Threatened veto</label>
+      <input type="range" min="0" max="1" step="0.01" value="0.1" id="threatVeto">
+      <div class="badge">
+        <span id="threatVal">0.10</span>
+        <span class="tip" data-tip="↑ threatened veto → Timely↓, Paralysis↑.">i</span>
+      </div>
+    </div>
+    <div class="control">
+      <label>Pen-holding by interested party</label>
+      <input type="range" min="0" max="1" step="0.01" value="0.1" id="penHold">
+      <div class="badge">
+        <span id="penVal">0.10</span>
+        <span class="tip" data-tip="↑ pen-holding while interested → Impartial↓, Capture↑.">i</span>
+      </div>
+    </div>
+    <div class="control">
+      <label>Late-tabling / delay games</label>
+      <input type="range" min="0" max="1" step="0.01" value="0.2" id="late">
+      <div class="badge">
+        <span id="lateVal">0.20</span>
+        <span class="tip" data-tip="↑ late-tabling → Timely↓, Paralysis↑.">i</span>
+      </div>
+    </div>
+
+    <div class="hr"></div>
+    <div class="actions">
+      <button class="btn primary" id="copyLink">Copy shareable link</button>
+      <button class="btn green" id="exportPNG">Export snapshot PNG</button>
+      <button class="btn" id="exportPDF">Export PDF</button>
+      <button class="btn warn" id="resetUPSC">Reset to UPSC</button>
+    </div>
+    <div class="footer-note">Single-file, offline-friendly. Logo served from your GitHub repo.</div>
+  </div>
+</div>
+
+<!-- ============ BOTTOM BRAND BAR (fixed) ============ -->
+<div class="bottombar">
+  <div class="wrap bottomrow">
+    <div class="meta smallcaps">Iselin Group — Strategic Consulting</div>
+    <div class="meta">© Iselin Group 2025. UNPSC Decision Integrity Sandbox — single-file widget. iselingroup.com — brian.iselin(@)iselingroup.com.</div>
+    <div class="ip">
+      The underlying decision-integrity model, logic, and UI are proprietary to Iselin Group and may not be reproduced, adapted, or deployed in whole or in part without prior written consent; all rights reserved.
+    </div>
+  </div>
+</div>
+
+<!-- libs for export -->
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script>
+/* ===== Utilities ===== */
+const qs = (s, el=document) => el.querySelector(s);
+const clamp = (v,min,max)=>Math.max(min,Math.min(max,v));
+const fmtDays = d => (d.toFixed(1).replace(/\.0$/, '')) + ' days';
+
+/* ===== State (UPSC by default) ===== */
+let state = {
+  veto:false, enforceAbstention:true, icjAlignment:true,
+  eligibility:0.80, majority:0.60, councilSize:15,
+  transparency:80, sunlight:70, dueProcess:85, readiness:80,
+  threatVeto:0.10, penHoldInterested:0.10, lateTabling:0.20,
+  lawful:0, timely:0, impartial:0, effective:0,
+  paralysis:0, capture:0, overreach:0,
+  di:0, timeToDecisionDays:0
+};
+
+const PRESET_UNSC = {
+  veto:true, enforceAbstention:false, icjAlignment:false,
+  eligibility:0.80, majority:0.60, councilSize:15,
+  transparency:50, sunlight:40, dueProcess:70, readiness:60,
+  threatVeto:0.50, penHoldInterested:0.50, lateTabling:0.50
+};
+const PRESET_UPSC = {
+  veto:false, enforceAbstention:true, icjAlignment:true,
+  eligibility:0.80, majority:0.60, councilSize:15,
+  transparency:80, sunlight:70, dueProcess:85, readiness:80,
+  threatVeto:0.10, penHoldInterested:0.10, lateTabling:0.20
+};
+
+/* ===== URL hash encoding (for shareable links) ===== */
+function encodeState(st){ return '#' + btoa(unescape(encodeURIComponent(JSON.stringify(st)))); }
+function decodeState(hash){
+  try{
+    const s = decodeURIComponent(escape(atob(hash.replace(/^#/,''))));
+    const obj = JSON.parse(s);
+    return Object.assign({}, state, obj);
+  }catch(e){ return null; }
+}
+function updateHash(){ history.replaceState(null,'', encodeState(state)); }
+let raf=null; function updateHashThrottled(){ if(raf) cancelAnimationFrame(raf); raf=requestAnimationFrame(updateHash); }
+
+/* ===== Scoring model (directionally aligned) ===== */
+function computeScores(s){
+  // --- Lawful (0–100)
+  let lawful = 100;
+  lawful += s.icjAlignment ? 10 : 0;
+  lawful += s.enforceAbstention ? 0 : -25;
+  lawful += s.veto ? -15 : 0;
+  lawful = clamp(lawful, 0, 100);
+
+  // --- Timely (0–100)
+  let delayPenalty =
+      40*s.lateTabling +
+      30*s.threatVeto +
+      10*(1 - s.transparency/100) +
+      8*Math.max(0, s.majority - 0.60) / 0.40 +   // up to +8 as majority → 1.00
+      0.3*Math.max(0, s.councilSize - 15);        // +0.3 per seat over 15
+  delayPenalty = clamp(delayPenalty, 0, 100);
+
+  let timely = clamp(100 - delayPenalty + 5*(s.sunlight/100), 0, 100); // sunlight boost up to +5
+
+  // --- Impartial (0–100)
+  const biasPenalty = clamp(
+    45*s.penHoldInterested +
+    25*(s.veto?1:0) +
+    10*(s.enforceAbstention?0:1),
+    0, 100
+  );
+  let impartial = clamp(100 - biasPenalty, 0, 100);
+
+  // --- Effective (0–100)
+  let effective = clamp(
+    0.35*s.dueProcess + 0.35*s.readiness + 30*(s.icjAlignment?1:0),
+    0, 100
+  );
+
+  // --- Risks (0–100)
+  const paralysis = Math.round(
+    (50*s.lateTabling*100 + 50*s.threatVeto*100)
+  )/100;
+
+  let capture =
+      60*s.penHoldInterested +
+      25*(s.veto?1:0) +
+      15*(s.enforceAbstention?0:1) +
+      10*(1 - s.transparency/100) +               // opacity raises capture
+      10*Math.max(0, s.majority - 0.60) / 0.40;   // high thresholds raise capture (mild)
+  capture = clamp(capture, 0, 100);
+
+  let overreach = 10 +
+      (s.icjAlignment ? 0 : 20) +
+      (s.transparency < 30 ? 15 : 0) +
+      (s.readiness    < 30 ? 15 : 0) +
+      (s.dueProcess   < 30 ? 15 : 0);
+  overreach = clamp(overreach, 0, 100);
+
+  // --- Overall DI
+  const weights = { lawful:.30, timely:.25, impartial:.25, effective:.20 };
+  const di = Math.round(
+    lawful*weights.lawful +
+    timely*weights.timely +
+    impartial*weights.impartial +
+    effective*weights.effective
+  );
+
+  // --- Time to decision (days)
+  const ttd = Math.max(
+    1,
+    6
+      + 12*s.lateTabling
+      + 10*s.threatVeto
+      + 1.5*Math.max(0, s.councilSize - 15)        // structure friction
+      + 2*Math.max(0, s.majority - 0.60) / 0.40    // high thresholds
+      - 4*(s.sunlight/100)                         // press scrutiny speeds
+  );
+
+  Object.assign(s, {
+    lawful, timely, impartial, effective,
+    paralysis: Math.round(paralysis), capture: Math.round(capture), overreach: Math.round(overreach),
+    di, timeToDecisionDays: ttd
+  });
+}
+
+/* ===== Rendering ===== */
+function renderAll(){
+  computeScores(state);
+  // KPIs
+  qs('#kpiDI').textContent = state.di;
+  qs('#kpiTime').textContent = fmtDays(state.timeToDecisionDays);
+
+  renderGauges();
+  renderMiniGauges();
+  try{ renderRadar(); } catch(e){ /* safe no-op */ }
+  updateHashThrottled();
+}
+
+function renderGauges(){
+  const svg = qs('#svgDI'); svg.innerHTML='';
+  const cx=70, cy=86, r=58, full=Math.PI*r;
+
+  // rail
+  svg.insertAdjacentHTML('beforeend',
+    `<path d="M ${cx-r} ${cy} A ${r} ${r} 0 1 1 ${cx+r} ${cy}"
+      stroke="${getComputedStyle(document.documentElement).getPropertyValue('--rail').trim()}"
+      stroke-width="14" fill="none" stroke-linecap="round"/>`);
+
+  // value
+  const on = full * (state.di/100);
+  svg.insertAdjacentHTML('beforeend',
+    `<path d="M ${cx-r} ${cy} A ${r} ${r} 0 1 1 ${cx+r} ${cy}"
+      stroke="var(--accent)" stroke-width="14" fill="none" stroke-linecap="round"
+      stroke-dasharray="${on} ${full - on}"/>`);
+
+  // big number
+  svg.insertAdjacentHTML('beforeend',
+    `<text x="${cx}" y="${cy-6}" text-anchor="middle" font-size="26" fill="#fff" font-weight="700">${state.di}</text>`);
+}
+
+/* ===== vertical mini risk gauges — extra spacing so labels don't overlap ===== */
+function renderMiniGauges(){
+  const svg = qs('#svgRisks'); svg.innerHTML='';
+  const items = [
+    {name:'Paralysis', val:state.paralysis, col:'var(--para)'},
+    {name:'Capture',   val:state.capture,   col:'var(--capt)'},
+    {name:'Overreach', val:state.overreach, col:'var(--over)'},
+  ];
+
+  const x = 60;
+  const ys = [60, 150, 240];    // generous vertical separation
+  const r = 26;
+  const full = Math.PI * r;
+
+  items.forEach((it, i)=>{
+    const y = ys[i];
+    // rail
+    svg.insertAdjacentHTML('beforeend',
+      `<path d="M ${x-r} ${y} A ${r} ${r} 0 1 1 ${x+r} ${y}"
+         stroke="var(--rail)" stroke-width="8" fill="none" stroke-linecap="round"/>`);
+    // value
+    const on = full * (it.val/100);
+    svg.insertAdjacentHTML('beforeend',
+      `<path d="M ${x-r} ${y} A ${r} ${r} 0 1 1 ${x+r} ${y}"
+         stroke="${it.col}" stroke-width="8" fill="none" stroke-linecap="round"
+         stroke-dasharray="${on} ${full - on}"/>`);
+    // number
+    svg.insertAdjacentHTML('beforeend',
+      `<text x="${x}" y="${y+4}" text-anchor="middle" font-size="12" fill="#e6ecff" font-weight="600">${Math.round(it.val)}</text>`);
+    // label moved further down
+    svg.insertAdjacentHTML('beforeend',
+      `<text x="${x}" y="${y + r + 22}" text-anchor="middle" font-size="11" fill="#9cb5e0">${it.name}</text>`);
+  });
+}
+
+/* ===== centered & responsive radar with safe sizing ===== */
+function renderRadar(){
+  const cvs = qs('#radar');
+  const ctx = cvs.getContext('2d');
+
+  const dpr = window.devicePixelRatio || 1;
+  const pad = 16;
+  const box = cvs.parentElement.getBoundingClientRect();
+  const w = Math.max(180, box.width || 280);
+  const h = Math.max(180, box.height || w);
+  const size = Math.max(180, Math.min(w, h) - pad*2);
+
+  cvs.width = size * dpr;
+  cvs.height = size * dpr;
+  cvs.style.width = size + 'px';
+  cvs.style.height = size + 'px';
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  ctx.clearRect(0, 0, size, size);
+  const center = { x: size/2, y: size/2 };
+  const rad = size * 0.34;
+
+  const axes = ['Lawful','Timely','Impartial','Effective'];
+  const vals = [state.lawful, state.timely, state.impartial, state.effective].map(v=>v/100);
+  const angles = [-Math.PI/2, 0, Math.PI/2, Math.PI];
+
+  // grid rings
+  ctx.globalAlpha=0.9;
+  ctx.strokeStyle='#2a3554';
+  for(let rr=0.3; rr<=1.0; rr+=0.2){
+    ctx.beginPath();
+    for(let i=0;i<4;i++){
+      const a=angles[i];
+      const x=center.x+rad*rr*Math.cos(a);
+      const y=center.y+rad*rr*Math.sin(a);
+      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.closePath(); ctx.stroke();
+  }
+
+  // spokes
+  ctx.strokeStyle='#34456b';
+  for(let i=0;i<4;i++){
+    const a=angles[i];
+    ctx.beginPath();
+    ctx.moveTo(center.x,center.y);
+    ctx.lineTo(center.x+rad*Math.cos(a), center.y+rad*Math.sin(a));
+    ctx.stroke();
+  }
+
+  // polygon
+  ctx.fillStyle='rgba(90,209,255,0.22)';
+  ctx.strokeStyle='#5ad1ff';
+  ctx.lineWidth=2;
+  ctx.beginPath();
+  for(let i=0;i<4;i++){
+    const a=angles[i];
+    const r = rad * vals[i];
+    const x = center.x + r*Math.cos(a);
+    const y = center.y + r*Math.sin(a);
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.closePath(); ctx.fill(); ctx.stroke();
+
+  // labels
+  ctx.fillStyle='#9cb5e0';
+  ctx.font='12px system-ui, sans-serif';
+  for(let i=0;i<4;i++){
+    const a=angles[i];
+    const x=center.x+(rad+14)*Math.cos(a);
+    const y=center.y+(rad+14)*Math.sin(a);
+    ctx.textAlign='center';
+    ctx.textBaseline='middle';
+    ctx.fillText(axes[i], x, y);
+  }
+}
+
+/* ===== Controls ===== */
+function bindControls(){
+  // toggles
+  qs('#veto').checked = state.veto;
+  qs('#abstention').checked = state.enforceAbstention;
+  qs('#icj').checked = state.icjAlignment;
+
+  qs('#veto').addEventListener('change', e=>{ state.veto = e.target.checked; renderAll(); });
+  qs('#abstention').addEventListener('change', e=>{ state.enforceAbstention = e.target.checked; renderAll(); });
+  qs('#icj').addEventListener('change', e=>{ state.icjAlignment = e.target.checked; renderAll(); });
+
+  // sliders
+  const bind = (id, key, badge, fmt=(v)=>v)=>{
+    const el = qs(id), b = qs(badge);
+    const setBadge = (v)=> b.textContent = typeof fmt==='function' ? fmt(v) : v;
+    if(key in state) el.value = state[key];
+    setBadge(key==='majority'||key==='eligibility'? Number(el.value).toFixed(2) : (key==='councilSize'? Math.round(el.value): Math.round(el.value)));
+    el.addEventListener('input', e=>{
+      let v = parseFloat(e.target.value);
+      if(key==='councilSize') v = Math.round(v);
+      state[key] = v;
+      setBadge(key==='majority'||key==='eligibility'? v.toFixed(2) : (key==='councilSize'? v: Math.round(v)));
+      renderAll();
+    });
+  };
+  bind('#majority','majority','#majorityVal');
+  bind('#csize','councilSize','#csizeVal');
+  bind('#eligibility','eligibility','#eligibilityVal', v=>Number(v).toFixed(2));
+  bind('#transparency','transparency','#transparencyVal');
+  bind('#sunlight','sunlight','#sunlightVal');
+  bind('#dueProcess','dueProcess','#dueVal');
+  bind('#readiness','readiness','#readyVal');
+  bind('#threatVeto','threatVeto','#threatVal', v=>Number(v).toFixed(2));
+  bind('#penHold','penHoldInterested','#penVal', v=>Number(v).toFixed(2));
+  bind('#late','lateTabling','#lateVal', v=>Number(v).toFixed(2));
+
+  // presets
+  const row = qs('#presetRow');
+  row.addEventListener('click', (e)=>{
+    const btn = e.target.closest('button'); if(!btn) return;
+    const p = btn.dataset.preset;
+    let src = null;
+    if(p==='unsc') src = PRESET_UNSC;
+    else if(p==='upsc') src = PRESET_UPSC;
+    else src = null;
+    if(src){
+      Object.assign(state, src);
+      qs('#veto').checked = state.veto;
+      qs('#abstention').checked = state.enforceAbstention;
+      qs('#icj').checked = state.icjAlignment;
+      const map = {
+        majority:'#majority', councilSize:'#csize', eligibility:'#eligibility',
+        transparency:'#transparency', sunlight:'#sunlight', dueProcess:'#dueProcess', readiness:'#readiness',
+        threatVeto:'#threatVeto', penHoldInterested:'#penHold', lateTabling:'#late'
+      };
+      Object.keys(map).forEach(k=>{
+        const el = qs(map[k]); if(el){ el.value = state[k]; el.dispatchEvent(new Event('input')); }
+      });
+      qs('#kpiPreset').textContent = p.toUpperCase();
+    }else{
+      qs('#kpiPreset').textContent = 'CUSTOM';
+    }
+    renderAll();
+  });
+
+  // actions
+  qs('#copyLink').addEventListener('click', async ()=>{
+    updateHash();
+    try{ await navigator.clipboard.writeText(location.href); alert('Shareable link copied.'); }
+    catch(e){ prompt('Copy this link:', location.href); }
+  });
+  qs('#exportPNG').addEventListener('click', async ()=>{
+    const node = qs('#app');
+    const canvas = await html2canvas(node, {backgroundColor: null, scale: 2, useCORS:true});
+    const a = document.createElement('a'); a.href = canvas.toDataURL('image/png'); a.download='unpsc-di-snapshot.png'; a.click();
+  });
+  qs('#exportPDF').addEventListener('click', async ()=>{
+    const node = qs('#app');
+    const canvas = await html2canvas(node, {backgroundColor: '#0c111b', scale: 2, useCORS:true});
+    const img = canvas.toDataURL('image/png');
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({orientation:'landscape', unit:'pt', format:'a4'});
+    const pageW = pdf.internal.pageSize.getWidth();
+    const pageH = pdf.internal.pageSize.getHeight();
+    const ratio = Math.min(pageW / canvas.width, pageH / canvas.height);
+    const w = canvas.width * ratio, h = canvas.height * ratio;
+    const x = (pageW - w)/2, y = (pageH - h)/2;
+    pdf.setFillColor(12,17,27); pdf.rect(0,0,pageW,pageH,'F');
+    pdf.addImage(img, 'PNG', x, y, w, h);
+    pdf.save('unpsc-di-snapshot.pdf');
+  });
+  qs('#resetUPSC').addEventListener('click', ()=>{
+    Object.assign(state, PRESET_UPSC); renderAll();
+    qs('#kpiPreset').textContent = 'UPSC';
+  });
+}
+
+/* ===== About modal (optional trigger elsewhere) ===== */
+(function modal(){
+  const body = document.body;
+  const div = document.createElement('div');
+  div.className='modal'; div.id='aboutModal';
+  div.innerHTML = `
+    <div class="inner">
+      <button class="btn close" id="aboutClose">Close</button>
+      <h2>About Decision Integrity (DI)</h2>
+      <p><b>Lawful</b> — compliance with Charter voting rules, including party-to-a-dispute abstention.</p>
+      <p><b>Timely</b> — speed to decision; fallback route if the council stalls.</p>
+      <p><b>Impartial</b> — no interested great power steering or blocking the outcome in its own cause.</p>
+      <p><b>Effective</b> — outcomes align with international law, especially ICJ provisional measures where relevant.</p>
+      <p class="footer-note">DI is computed as a weighted blend of the four pillars. Risk dials show Paralysis, Capture, and Overreach.</p>
+    </div>`;
+  body.appendChild(div);
+  const close = ()=>div.classList.remove('open');
+  div.addEventListener('click', e=>{ if(e.target===div) close(); });
+  setTimeout(()=>{ const c=document.getElementById('aboutClose'); if(c) c.addEventListener('click', close); },0);
+})();
+
+/* ===== Init ===== */
+(function init(){
+  if(location.hash.length>1){
+    const s = decodeState(location.hash);
+    if(s) state = Object.assign(state, s);
+  }
+  bindControls();
+  renderAll();
+  qs('#kpiPreset').textContent = 'UPSC';
+})();
+</script>
+</body>
+</html>
