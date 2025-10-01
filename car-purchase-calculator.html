@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Car Purchase Calculator - Iselin Group</title>
+<style>
+  /* Color palette: Navy and Burgundy */
+  :root {
+    --color-navy: #001f4d;
+    --color-burgundy: #800020;
+    --color-light-bg: #f9f9f9;
+    --color-accent-bg: #e8f0fe;
+    --color-accent-border: #a52a2a;
+    --color-button-bg: #800020;
+    --color-button-hover-bg: #5a0017;
+    --color-text-primary: #001f4d;
+    --color-text-secondary: #5a0017;
+  }
+
+  body {
+    font-family: Arial, sans-serif;
+    max-width: 480px;
+    margin: 1em auto;
+    padding: 1em 1.2em 2em;
+    border: 2px solid var(--color-burgundy);
+    border-radius: 8px;
+    background: var(--color-light-bg);
+    color: var(--color-text-primary);
+  }
+  header {
+    text-align: center;
+    margin-bottom: 0.6em;
+  }
+  header img {
+    max-width: 160px;
+    height: auto;
+    margin-bottom: 0.3em;
+  }
+  h2 {
+    margin: 0.3em 0 1em;
+    color: var(--color-burgundy);
+    font-weight: bold;
+    letter-spacing: 0.04em;
+  }
+  label {
+    display: block;
+    margin: 0.5em 0 0.3em;
+    font-weight: 600;
+  }
+  select, input[type="number"] {
+    width: 100%;
+    padding: 0.4em 0.5em;
+    font-size: 1em;
+    box-sizing: border-box;
+    border: 1px solid var(--color-navy);
+    border-radius: 4px;
+    color: var(--color-navy);
+    background: white;
+    transition: border-color 0.3s;
+  }
+  select:focus, input[type="number"]:focus {
+    outline: none;
+    border-color: var(--color-burgundy);
+  }
+  .result {
+    background: var(--color-accent-bg);
+    border: 1px solid var(--color-accent-border);
+    padding: 1em;
+    margin-top: 1.3em;
+    border-radius: 6px;
+    color: var(--color-text-primary);
+  }
+  .toggle-finance {
+    margin: 1em 0 0.6em;
+    text-align: center;
+    font-weight: 600;
+  }
+  button {
+    background: var(--color-button-bg);
+    color: white;
+    border: none;
+    padding: 0.7em 1.4em;
+    font-size: 1.1em;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    transition: background-color 0.3s;
+    display: block;
+    width: 100%;
+  }
+  button:hover,
+  button:focus {
+    background: var(--color-button-hover-bg);
+    outline: none;
+  }
+  .tip {
+    font-size: 0.9em;
+    color: var(--color-text-secondary);
+    margin-top: 1.8em;
+    background: #fff1f1;
+    border: 1px solid var(--color-burgundy);
+    padding: 1em;
+    border-radius: 6px;
+    line-height: 1.4;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <img src="https://raw.githubusercontent.com/brianiselin/widgets-public/main/Iselin%20Group%20Logo%201024%20x.jpg" alt="Iselin Group Logo" />
+</header>
+
+<h2>Car Purchase Calculator</h2>
+
+<form id="calcForm" onsubmit="return false;">
+  <label for="currency">Select Currency</label>
+  <select id="currency" onchange="updatePlaceholders()">
+    <option value="EUR" selected>Euro (EUR, €)</option>
+    <option value="USD">US Dollar (USD, $)</option>
+    <option value="GBP">British Pound (GBP, £)</option>
+    <option value="AUD">Australian Dollar (AUD, A$)</option>
+  </select>
+
+  <label for="carPrice">Car Price (Dealer or MSRP)</label>
+  <input id="carPrice" type="number" min="0" step="0.01" required value="30000" />
+
+  <label for="tradeIn">Trade-In Value (if any)</label>
+  <input id="tradeIn" type="number" min="0" step="0.01" value="0" />
+
+  <label for="downPayment">Down Payment</label>
+  <input id="downPayment" type="number" min="0" step="0.01" value="3000" />
+
+  <label for="taxRate">Sales Tax / VAT Rate %</label>
+  <input id="taxRate" type="number" min="0" max="100" step="0.01" value="21" />
+
+  <label for="otherFees">Other Fees (Registration, Dealer Fees)</label>
+  <input id="otherFees" type="number" min="0" step="0.01" value="500" />
+
+  <label for="financeInterest">Loan Interest Rate (APR) % (optional)</label>
+  <input id="financeInterest" type="number" min="0" max="100" step="0.01" value="5" />
+
+  <label for="loanTerm">Loan Term (Months) (optional)</label>
+  <input id="loanTerm" type="number" min="1" max="120" step="1" value="60" />
+
+  <div class="toggle-finance">
+    <label><input type="checkbox" id="financeToggle" checked /> Show Financing Breakdown</label>
+  </div>
+
+  <button onclick="calculateCosts()">Calculate</button>
+</form>
+
+<div id="results" class="result" aria-live="polite" aria-atomic="true"></div>
+
+<div class="tip">
+  <strong>Tip:</strong> Dealers may add fees and markups beyond MSRP, and financing can significantly increase total cost. Always ask for a full itemized quote including fees, taxes, and interest. Consider paying outright if possible to avoid interest.
+</div>
+
+<script>
+// Fixed currency data with example exchange rates relative to EUR
+const currencyData = {
+  EUR: { symbol: "€", rate: 1 },
+  USD: { symbol: "$", rate: 1.10 },
+  GBP: { symbol: "£", rate: 0.88 },
+  AUD: { symbol: "A$", rate: 1.55 },
+};
+
+function updatePlaceholders() {
+  const cur = document.getElementById('currency').value;
+  const symbol = currencyData[cur].symbol;
+
+  ['carPrice', 'tradeIn', 'downPayment', 'otherFees'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.placeholder = symbol;
+  });
+
+  calculateCosts();
+}
+
+function calculateCosts() {
+  const cur = document.getElementById('currency').value;
+  const symbol = currencyData[cur].symbol;
+  const rate = currencyData[cur].rate;
+
+  const carPriceRaw = parseFloat(document.getElementById('carPrice').value) || 0;
+  const tradeInRaw = parseFloat(document.getElementById('tradeIn').value) || 0;
+  const downPaymentRaw = parseFloat(document.getElementById('downPayment').value) || 0;
+  const taxRate = parseFloat(document.getElementById('taxRate').value) || 0;
+  const otherFeesRaw = parseFloat(document.getElementById('otherFees').value) || 0;
+  const financeInterest = parseFloat(document.getElementById('financeInterest').value) || 0;
+  const loanTerm = parseInt(document.getElementById('loanTerm').value) || 0;
+  const financeToggle = document.getElementById('financeToggle').checked;
+
+  const carPriceEUR = carPriceRaw / rate;
+  const tradeInEUR = tradeInRaw / rate;
+  const downPaymentEUR = downPaymentRaw / rate;
+  const otherFeesEUR = otherFeesRaw / rate;
+
+  const baseAfterTrade = Math.max(carPriceEUR - tradeInEUR, 0);
+  const taxAmountEUR = baseAfterTrade * (taxRate / 100);
+  const totalPurchaseEUR = baseAfterTrade + taxAmountEUR + otherFeesEUR;
+
+  const amountFinanced = Math.max(totalPurchaseEUR - downPaymentEUR, 0);
+
+  let monthlyPayment = 0;
+  let totalInterest = 0;
+  let totalCostFinanced = totalPurchaseEUR;
+
+  if (financeToggle && amountFinanced > 0 && financeInterest > 0 && loanTerm > 0) {
+    const monthlyRate = financeInterest / 100 / 12;
+    monthlyPayment = (amountFinanced * monthlyRate) / (1 - Math.pow(1 + monthlyRate, -loanTerm));
+    totalInterest = monthlyPayment * loanTerm - amountFinanced;
+    totalCostFinanced = totalPurchaseEUR + totalInterest;
+  }
+
+  const conv = (v) => (v * rate);
+
+  let resultHtml = `<strong>Purchase Breakdown:</strong><br/>`;
+  resultHtml += `Car Price (after trade-in): ${symbol}${conv(baseAfterTrade).toFixed(2)}<br/>`;
+  resultHtml += `Sales Tax / VAT (${taxRate.toFixed(2)}%): ${symbol}${conv(taxAmountEUR).toFixed(2)}<br/>`;
+  resultHtml += `Other Fees: ${symbol}${conv(otherFeesEUR).toFixed(2)}<br/>`;
+  resultHtml += `<strong>Total Purchase Price (before financing): ${symbol}${conv(totalPurchaseEUR).toFixed(2)}</strong><br/>`;
+  resultHtml += `Down Payment: ${symbol}${conv(downPaymentEUR).toFixed(2)}<br/>`;
+
+  if (financeToggle && amountFinanced > 0 && financeInterest > 0 && loanTerm > 0) {
+    resultHtml += `<br/><strong>Financing Details:</strong><br/>`;
+    resultHtml += `Amount Financed: ${symbol}${conv(amountFinanced).toFixed(2)}<br/>`;
+    resultHtml += `Loan Term: ${loanTerm} months<br/>`;
+    resultHtml += `Interest Rate (APR): ${financeInterest.toFixed(2)}%<br/>`;
+    resultHtml += `Monthly Payment: ${symbol}${conv(monthlyPayment).toFixed(2)}<br/>`;
+    resultHtml += `Total Interest Paid: ${symbol}${conv(totalInterest).toFixed(2)}<br/>`;
+    resultHtml += `<strong>Total Cost with Financing: ${symbol}${conv(totalCostFinanced).toFixed(2)}</strong><br/>`;
+  } else {
+    resultHtml += `<br/><em>Financing not selected or zero interest/loan term.</em><br/>`;
+    resultHtml += `<strong>Total Cost if Buying Outright: ${symbol}${conv(totalPurchaseEUR).toFixed(2)}</strong><br/>`;
+  }
+
+  document.getElementById('results').innerHTML = resultHtml;
+}
+
+window.onload = () => {
+  updatePlaceholders();
+  calculateCosts();
+};
+</script>
+
+</body>
+</html>
