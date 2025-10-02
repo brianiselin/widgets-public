@@ -27,17 +27,13 @@
   <div class="wrap">
     <h2>Latest on Medium</h2>
     <div id="grid" class="grid"></div>
-    <p id="err" style="display:none">Couldn’t load Medium posts.</p>
+    <p id="err" style="display:none">Couldn't load Medium posts.</p>
   </div>
 
   <script>
   (async () => {
-    // Allow simple config via query params: ?handle=NAME&n=12
-    const params = new URLSearchParams(location.search);
-    const HANDLE = (params.get('handle') || 'brianiselin67').trim();
-    const MAX = Math.max(1, Math.min(parseInt(params.get('n') || '12', 10) || 12, 40));
-
-    const url = 'https://r.jina.ai/http://medium.com/feed/@' + encodeURIComponent(HANDLE);
+    const HANDLE = 'brianiselin67';
+    const RSS_URL = `https://api.rss2json.com/v1/api.json?rss_url=https://medium.com/feed/@${HANDLE}`;
 
     const grid = document.getElementById('grid');
     const err = document.getElementById('err');
@@ -47,41 +43,50 @@
       catch { return ''; }
     }
 
-    function card(p){
+    function extractReadTime(description){
+      const match = description.match(/(\d+)\s*min\s*read/i);
+      return match ? `${match[1]} min read` : '';
+    }
+
+    function extractImage(description){
+      const imgMatch = description.match(/<img[^>]+src="([^"]+)"/i);
+      return imgMatch ? imgMatch[1] : null;
+    }
+
+    function card(item){
+      const img = item.thumbnail || extractImage(item.description || '');
+      const readTime = extractReadTime(item.description || '');
+      
       return `
         <article>
-          ${p.image ? `<a class="img" href="${p.link}" target="_blank" rel="noopener"><img src="${p.image}" alt=""></a>` : ''}
+          ${img ? `<a class="img" href="${item.link}" target="_blank" rel="noopener"><img src="${img}" alt=""></a>` : ''}
           <div class="card">
-            <a href="${p.link}" target="_blank" rel="noopener"><h3>${p.title}</h3></a>
-            <div class="meta">${[p.pubDate?fmtDate(p.pubDate):'', p.readMin?`${p.readMin} min read`:'', p.author].filter(Boolean).join(' • ')}</div>
-            <a class="link" href="${p.link}" target="_blank" rel="noopener">Read on Medium →</a>
+            <a href="${item.link}" target="_blank" rel="noopener"><h3>${item.title}</h3></a>
+            <div class="meta">${[fmtDate(item.pubDate), readTime, item.author].filter(Boolean).join(' • ')}</div>
+            <a class="link" href="${item.link}" target="_blank" rel="noopener">Read on Medium →</a>
           </div>
         </article>`;
     }
 
     try {
-      const xml = await (await fetch(url, {cache:'no-store'})).text();
-      const doc = new DOMParser().parseFromString(xml, 'text/xml');
-      const items = Array.from(doc.querySelectorAll('item')).slice(0, MAX).map(it => {
-        const pick = t => it.querySelector(t)?.textContent || '';
-        const enc = it.getElementsByTagNameNS('http://purl.org/rss/1.0/modules/content/','encoded')[0]?.textContent || '';
-        const imgMatch = enc.match(/<img[^>]+src="([^"]+)"/i);
-        const img = imgMatch ? imgMatch[1] : null;
-        const words = enc.replace(/<[^>]+>/g,' ').trim().split(/\s+/).filter(Boolean).length;
-        return {
-          title: pick('title'),
-          link: pick('link'),
-          pubDate: pick('pubDate'),
-          author: it.getElementsByTagNameNS('http://purl.org/dc/elements/1.1/','creator')[0]?.textContent || '',
-          image: img,
-          readMin: Math.max(2, Math.round(words/200))
-        };
-      });
+      const response = await fetch(RSS_URL);
+      const data = await response.json();
+      
+      if (data.status !== 'ok') {
+        throw new Error('RSS feed error: ' + (data.message || 'Unknown error'));
+      }
 
-      grid.innerHTML = items.map(card).join('');
-      err.style.display = items.length ? 'none' : 'block';
+      const items = data.items || [];
+      
+      if (items.length === 0) {
+        err.textContent = 'No posts found.';
+        err.style.display = 'block';
+      } else {
+        grid.innerHTML = items.map(card).join('');
+        err.style.display = 'none';
+      }
     } catch(e){
-      console.error(e);
+      console.error('Error loading Medium posts:', e);
       err.style.display = 'block';
     }
   })();
