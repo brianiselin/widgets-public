@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Iselin Group Lease or Buy Calculator</title>
+<!-- Cloudflare Web Analytics -->
+<script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "22466d27b8c14ef98293d50b38526660"}'></script><!-- End Cloudflare Web Analytics -->
+<!-- html2canvas for PNG export -->
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<style>
+:root {
+  --navy: #001f4d;
+  --navy-trans: rgba(0,31,77, 0.80);
+  --burgundy: #800020;
+  --burgundy-dark: #67001a;
+  --gradient-bar: linear-gradient(90deg, #001633 0 30%, #262350 50%, #560d22 100%);
+  --light-bg: #f9f9fa;
+  --accent-bg: #f4f7fc;
+  --border: #9da0aa;
+  --shadow: 0 4px 16px rgba(0,0,0,0.08);
+  --brand-chip-bg: #fff;
+  --brand-chip-text: var(--burgundy);
+  --brand-chip-shadow: 0 0 0 2px #f6e9f1;
+  --input-br: 5.5px;
+  --input-focus: #80002055;
+  --control-label: #3d4782;
+  --disabled: #ccd1db;
+  --tip-bg: #fcf3e8;
+  --tip-text: #725120;
+  --link-accent: #1234bb;
+  --smallcaps: small-caps;
+}
+html, body {
+  background: var(--light-bg);
+  margin: 0; padding: 0;
+  min-height: 100vh;
+}
+body {
+  font-family: 'Segoe UI', 'Arial', sans-serif;
+  color: var(--navy);
+  box-sizing: border-box;
+  min-height: 100vh;
+}
+#branding-bar {
+  width: 100%; height: 52px; min-height: 52px; z-index:90;
+  background: var(--gradient-bar);
+  border-bottom: 1px solid #3a4763;
+  color: #fff;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 22px 0 16px;
+  position: sticky; top: 0; left: 0;
+  box-sizing: border-box;
+  backdrop-filter: blur(3px);
+}
+#branding-bar .brand-logo {
+  width: 40px; height: 40px;
+  border-radius: 5px;
+  object-fit: contain;
+  margin-right: 16px;
+  background: #fff;
+  border: 1.5px solid #233554;
+  vertical-align: middle;
+}
+#branding-bar .brand-left {
+  display: flex; align-items: center;
+  gap: 12px;
+  font-weight: 600; font-size: 1.06em;
+  letter-spacing: 0.01em;
+  text-shadow: 0 1px 2px #112;
+}
+#branding-bar .bar-breadcrumbs {
+  font-size: 0.95em;
+  font-variant: var(--smallcaps);
+  flex: 1 1 auto; text-align: center;
+  min-width: 0;
+  opacity: 0.96;
+  white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis;
+}
+#branding-bar .brand-chip {
+  background: var(--brand-chip-bg);
+  color: var(--brand-chip-text);
+  border-radius: 7px;
+  padding: 2px 14px 2px 7px;
+  box-shadow: var(--brand-chip-shadow);
+  font-weight: 600; font-size: 0.98em;
+  letter-spacing: 0.03em;
+  display: flex; align-items: center; gap: 7px;
+  height: 28px;
+}
+#branding-bar .brand-chip .logo-mini {
+  width: 21px; height: 21px;
+  border-radius: 4.5px;
+  margin-right: 2.5px;
+  border: 0.5px solid #4441;
+  background: #fff;
+  vertical-align:middle;
+  object-fit: cover;
+}
+
+/* Container */
+#app-root-container {
+  display: flex; justify-content: center; align-items: flex-start; min-height: calc(100vh - 64px);
+  background: none;
+  margin: 0 auto; max-width: 1240px;
+  padding: 28px 20px 64px 20px;
+  box-sizing: border-box;
+}
+#main-widget-wrap {
+  background: var(--accent-bg);
+  border: 1.7px solid var(--burgundy);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  padding: 25px 32px 25px 32px;
+  max-width: 1050px;
+  width: 100%;
+  min-width: 330px;
+  margin: 0 auto;
+  position: relative;
+}
+
+#dual-view-row {
+  display: flex;
+  gap: 38px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  width: 100%;
+}
+#inputs-col {
+  width: 324px; min-width: 280px; max-width: 99vw;
+  flex: 0 0 324px;
+  margin-right: 10px;
+}
+#results-col {
+  flex: 1 1 420px;
+  min-width: 335px; max-width: 600px;
+  display: flex; flex-direction: row; gap: 18px;
+}
+.res-box {
+  background: #fff;
+  border: 1.1px solid var(--navy);
+  border-radius: 10px;
+  padding: 16px 22px 14px 22px;
+  box-sizing: border-box;
+  min-width: 0;
+  flex: 1 1 50%;
+  min-height: 390px;
+  display: flex; flex-direction: column;
+  position: relative;
+}
+@media (max-width: 950px) {
+  #main-widget-wrap { padding: 16px 2vw 18px 2vw; }
+  #dual-view-row { flex-direction: column; gap:24px; }
+  #inputs-col, #results-col { width: 100%; max-width: 99vw; min-width: 180px; }
+  #results-col { gap: 9px; }
+}
+@media (max-width:620px) {
+  #main-widget-wrap { padding: 6vw 2vw 18px 2vw; }
+  .res-box { padding: 9px 2vw 14px 2vw;}
+}
+/* Input & label styles */
+.form-label-info {
+  font-size: 13.7px;
+  font-weight: 800;
+  margin-bottom: 4px;
+  color: var(--burgundy-dark);
+  letter-spacing: 0.04em;
+  display: flex; align-items: center; gap: 5px;
+}
+input[type="number"], select {
+  appearance: none; outline: none; border: 1.2px solid var(--border);
+  background: #fff;
+  padding: 9px 10px;
+  margin-bottom: 7px; margin-top: 2.5px;
+  border-radius: var(--input-br);
+  font-size:1.06em; color:var(--navy);
+  font-weight: 500;
+  transition: border-color 0.2s;
+  width: 100%; box-sizing: border-box;
+}
+input[type="number"]:focus, select:focus {
+  border-color: var(--burgundy);
+  box-shadow: 0 0 0 1.5px var(--input-focus);
+}
+input[type="number"]:disabled {
+  background: var(--disabled);
+  cursor: not-allowed;
+}
+.input-tip {
+  font-size: 12px; color: var(--tip-text);
+  background: var(--tip-bg);
+  margin-bottom: 8.5px;
+  margin-top: -2.5px;
+  border-left: 2.2px solid var(--burgundy);
+  padding: 5.5px 8px 5.5px 11px;
+  border-radius: 0 8px 8px 0;
+  font-style: italic;
+}
+input::-webkit-inner-spin-button,input::-webkit-outer-spin-button { opacity: 0.3;}
+/* Button styles */
+.button-row { display:flex; gap:9px; margin: 10px 0 12px 0;}
+button, .fake-btn {
+  font-family: inherit;
+  font-size: 1em;
+  color: #fff;
+  background: var(--burgundy);
+  border-radius: 6px;
+  border: none;
+  padding: 8.5px 24px;
+  font-weight: 700;
+  box-shadow: 0 1.5px 2px #00182f14;
+  transition:background 0.2s;
+  cursor: pointer;
+  margin-bottom: 2px;
+  letter-spacing: 0.03em;
+}
+button[aria-pressed="true"], .active-btn {
+  background: var(--navy);
+}
+button:disabled {
+  background: #d6cad6;
+  cursor: not-allowed;
+}
+button.sharebtn {
+  background: #f4e9f1;
+  color: var(--burgundy-dark);
+  border: 0.5px solid var(--burgundy);
+  font-weight: 700;
+}
+button:focus-visible, .fake-btn:focus-visible {
+  outline: 2.5px solid #d85064;
+}
+.bar-divider {
+  margin: 2px 0;
+  border-top: 1.1px solid #d9c4de;
+}
+.details-row {
+  font-size: 14.5px;
+  margin-bottom: 9px;
+}
+.big-result {
+  font-weight: 800;
+  font-size: 1.32em;
+  color: var(--burgundy);
+  margin-top: 2px;
+  margin-bottom: 7px;
+  letter-spacing: 0.01em;
+}
+.result-label {
+  font-weight: 700;
+  color: var(--navy);
+}
+.monthly-br {
+  color: var(--navy); font-weight: 700; font-size: 1.06em;
+}
+.residual-desc {
+  font-size: 12.5px; color: #4b4367; background: #f3e5eb;
+  padding: 7px 10px 7px 13px; border-radius: 6px;
+  margin-bottom: 4px;
+  margin-top: 3px;
+  border-left: 2.7px solid var(--burgundy-dark);
+}
+#chart-area {
+  min-height:120px; /* Prevent collapse for offscreen render */
+  width:100%; margin:16px 0 3px 0;
+  background: #f9f9fc;
+  border-radius: 7px;
+  border:1.2px solid #bab5c3;
+  box-shadow: 0 1.5px 8px #2c004f04;
+  display: flex; justify-content: center; align-items: flex-end;
+  overflow-x: auto;
+}
+.chart-canvas {
+  width: 100%; min-width:286px; max-width:540px; height:180px;
+  display: block;
+  background: #fffefb;
+  border-radius: 5px;
+}
+
+#share-row { display: flex; gap: 12px; align-items: center; margin-top: 17px; margin-bottom: 6px;}
+#share-row .fake-btn, #share-row button {
+  padding: 7px 10px;
+  font-size: 1em; min-width: 100px; min-height: 35px; border: 1.1px solid #aa7;
+}
+.shareconfirm {
+  color: var(--burgundy-dark); font-weight: 700;
+  font-size: 0.98em;
+  margin-left: 7px; margin-right: 2px;
+  background: #f9eaf1;
+  padding: 2.5px 9px 2.5px 7px;
+  border-radius: 9px;
+  border: 1.2px solid #f1d8e8;
+  box-shadow: 0 1px 2.5px #d7bbbb31;
+}
+
+.faq-details {
+  background: #fff;
+  border: 1.2px solid #c5b0c1;
+  border-radius: 8px;
+  margin-bottom: 17px;
+  padding: 0 11px;
+}
+.faq-details summary {
+  font-weight: 700;
+  color: var(--burgundy-dark);
+  font-size: 1.05em;
+  cursor: pointer;
+  margin:5px 0;
+}
+.faq-details[open] {
+  box-shadow: 0 2px 7px #b794571a;
+}
+.faq-details ul { margin:0 0 8px 0; padding: 1px 0 0 20px;}
+.faq-details li { margin-bottom:3.5px;}
+
+#bottom-bar {
+  position: fixed; z-index: 150;
+  left:0; right:0; bottom: 0;
+  min-height: 50px; height: 50px; max-height: 80px;
+  background: var(--gradient-bar);
+  color: #e2e7ff;
+  box-shadow: 0 -3.5px 12px #00193313;
+  border-top: 1.4px solid #373146;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 18px 0 13px;
+  font-size: 1em;
+}
+#bottom-bar .bb-l, #bottom-bar .bb-meta {
+  font-variant: var(--smallcaps);
+  font-weight: 600;
+  font-size: 0.99em;
+  opacity: 0.95;
+}
+#bottom-bar .bb-meta {
+  font-size: 0.96em;
+  margin-left: 10px; white-space: pre-wrap;
+  opacity: 0.92;
+  max-width: 70vw;
+  text-align: left;
+}
+#bottom-bar .bb-ip {
+  color: #dee9fc;
+  font-size: .86em;
+  opacity: .7; margin-left: 13px;
+  font-variant: var(--smallcaps);
+  font-weight: 400;
+}
+@media (max-width:640px){
+  #bottom-bar { height: 72px; font-size: .95em; padding: 6px 8px;}
+  #bottom-bar .bb-meta { max-width: 56vw; font-size: .97em;}
+  #bottom-bar .bb-ip { font-size: .78em;}
+}
+::selection {background:#f3dae4;}
+</style>
+</head>
+<body>
+<!-- Branding top bar -->
+<div id="branding-bar">
+  <div class="brand-left">
+    <img src="https://raw.githubusercontent.com/brianiselin/widgets-public/main/Iselin%20Group%20Logo%201024%20x.jpg" alt="Iselin Group Logo" class="brand-logo" draggable="false">
+    <span>Iselin Group<span style="color:#faee;">&nbsp;–&nbsp;Strategic Consulting</span></span>
+  </div>
+  <div class="bar-breadcrumbs">iselingroup.com &mdash; brian.iselin(@)iselingroup.com</div>
+  <span class="brand-chip">
+    <img src="https://raw.githubusercontent.com/brianiselin/widgets-public/main/Iselin%20Group%20Logo%201024%20x.jpg" alt="Logo" class="logo-mini" draggable="false">
+    Iselin Group
+  </span>
+</div>
+
+<div id="app-root-container">
+  <div id="main-widget-wrap">
+    <h1 style="font-size:1.5em; color: var(--burgundy); font-weight:900; margin-bottom:4px; margin-top:-7px;">Lease or Buy Comparison Calculator</h1>
+    <div style="color:#644951; font-size: 1.14em; margin-bottom:18px; font-style:italic;">
+      Instantly compare costs and monthly breakdowns for lease and purchase—built for transparency, accuracy, and real-world decisions.
+    </div>
+    <div id="dual-view-row">
+      <!-- Left column: input controls -->
+      <form id="inputs-col" autocomplete="off" spellcheck="false">
+        <label class="form-label-info" for="currency">Currency
+          <span title="Select your working currency">❓</span>
+        </label>
+        <select id="currency" name="currency" required>
+          <option value="EUR" selected>Euro (€)</option>
+          <option value="USD">US Dollar ($)</option>
+          <option value="GBP">British Pound (£)</option>
+          <option value="AUD">Australian Dollar (A$)</option>
+        </select>
+
+        <label class="form-label-info" for="carPrice">Car Price (MSRP or Dealer)
+          <span title="Vehicle price before taxes, incentives, or extras">❓</span>
+        </label>
+        <input id="carPrice" type="number" min="1000" max="500000" step="0.01" required value="30000">
+        <div class="input-tip">Actual selling price. Ask for discounts and itemized extras.</div>
+
+        <label class="form-label-info" for="tradeIn">Trade-in Value</label>
+        <input id="tradeIn" type="number" min="0" max="500000" step="0.01" value="0">
+        <div class="input-tip">Your car's current value, if trading in; reduces cost for both lease and buy.</div>
+
+        <label class="form-label-info" for="downPayment">Down Payment</label>
+        <input id="downPayment" type="number" min="0" max="200000" step="0.01" value="3000">
+        <div class="input-tip">Upfront cash, reducing amount owed. Bigger down lowers monthly but increases upfront risk.</div>
+
+        <label class="form-label-info" for="otherFees">Other Fees</label>
+        <input id="otherFees" type="number" min="0" max="30000" step="0.01" value="500">
+        <div class="input-tip">Registration, documentation, destination fees, or extras. Get these itemized in writing.</div>
+
+        <label class="form-label-info" for="taxRate">Sales Tax / VAT (%)</label>
+        <input id="taxRate" type="number" min="0" max="40" step="0.01" value="21">
+        <div class="input-tip">Local/state sales tax or VAT percent. For leases, only monthly payment may be taxed.</div>
+
+        <!-- Lease Inputs -->
+        <div style="margin-top:18px;"></div>
+        <label class="form-label-info" for="leaseMonths">Lease Term (months)
+          <span title="Usually 24, 36, or 48 months">❓</span>
+        </label>
+        <input id="leaseMonths" type="number" min="12" max="72" step="1" value="36">
+        <div class="input-tip">Typical leases run 24-48 months; longer terms rarely offer better value.</div>
+
+        <label class="form-label-info" for="moneyFactor">Money Factor (MF)</label>
+        <input id="moneyFactor" type="number" min="0.00001" max="0.01" step="0.00001" value="0.00200">
+        <div class="input-tip">MF x 2400 ≈ APR. Lower is better; get the true 'buy rate' from your dealer, in writing.</div>
+
+        <label class="form-label-info" for="residual">Residual Value (%)</label>
+        <input id="residual" type="number" min="25" max="90" step="0.01" value="54">
+        <div class="input-tip">Percent of MSRP expected at lease-end. Higher residual lowers payment.</div>
+
+        <label class="form-label-info" for="leaseMiles">Annual Mileage Limit</label>
+        <input id="leaseMiles" type="number" min="5000" max="40000" step="100" value="12000">
+        <div class="input-tip">Exceeding limit triggers costly overage fees. Negotiate for your actual needs.</div>
+
+        <!-- Purchase Inputs -->
+        <div style="margin-top:18px;"></div>
+        <label class="form-label-info" for="loanTerm">Loan Term (months) <span title="Typical: 36–72 months" >❓</span></label>
+        <input id="loanTerm" type="number" min="12" max="96" step="1" value="60">
+        <div class="input-tip">Longer loans lower monthly but increase total interest. Consider 48–72 months max.</div>
+        <label class="form-label-info" for="loanAPR">Loan Interest Rate (APR %)</label>
+        <input id="loanAPR" type="number" min="0" max="25" step="0.01" value="5.0">
+        <div class="input-tip">Your actual rate depends on credit, lender, and term. Ask for APR, not just monthly!</div>
+
+        <!-- Action buttons -->
+        <div class="button-row" style="margin-top:24px;margin-bottom:12px;">
+          <button id="calcBtn" type="button">Calculate</button>
+        </div>
+        <div id="share-row">
+          <button id="copyLinkBtn" type="button" class="sharebtn" title="Copy sharing link to clipboard">Copy Link</button>
+          <button id="exportPngBtn" type="button" class="sharebtn" title="Export calculator and chart as PNG">Export PNG</button>
+          <span id="shareConfirm" class="shareconfirm" style="display:none"></span>
+        </div>
+      </form>
+      <!-- Right column: results side-by-side -->
+      <div id="results-col">
+        <div class="res-box" id="buyResult">
+          <div style="font-weight:700; color:var(--burgundy-dark); font-size:1.06em; letter-spacing:0.01em;">Purchase</div>
+          <div class="bar-divider"></div>
+          <div id="buySummary"></div>
+        </div>
+        <div class="res-box" id="leaseResult">
+          <div style="font-weight:700; color:var(--burgundy-dark); font-size:1.06em; letter-spacing:0.01em;">Lease</div>
+          <div class="bar-divider"></div>
+          <div id="leaseSummary"></div>
+        </div>
+      </div>
+    </div>
+    <!-- Comparison and chart -->
+    <div style="margin-top:28px;margin-bottom:0;">
+      <div id="compChartLabel" style="margin-bottom:4px; font-weight:800; color:var(--navy); font-size:1.06em;">Cost Over Time</div>
+      <div id="chart-area"><canvas id="comparisonChart" class="chart-canvas"></canvas></div>
+    </div>
+    <!-- Residual explanation after results -->
+    <div id="residualExplainer" class="residual-desc" role="note">
+      The residual value is the car’s estimated cash value at lease-end—set by the lender, not negotiable. Your payments only cover the expected “depreciation” plus financing. Higher residual means lower monthly cost, but does <strong>not</strong> necessarily reflect what you’ll pay if you want to buy the car at end of lease.
+    </div>
+    <!-- Disclaimers and FAQ -->
+    <details class="faq-details" style="margin-top:18px;">
+      <summary>Frequently Asked Questions</summary>
+      <ul>
+        <li><b>What is the Money Factor?</b> Dealer’s way to show interest rate for leases. Multiply MF by 2400 for approximate APR.</li>
+        <li><b>How do incentives impact cost?</b> They reduce the capitalized cost but some are not available for leases. Always request line-item details.</li>
+        <li><b>What’s a “good” lease?</b> One with a low MF, high residual (if you won’t buy at end), and minimal up-front fees; beware of “dealer add-ons.”</li>
+        <li><b>Lease pitfalls and tips:</b> Watch for hidden fees, inflexible mileage, and marked-up rates. Always get all terms and rates in writing.</li>
+        <li><b>Negotiation:</b> Negotiate the sale price and money factor just like a purchase. Ask for all official incentives, and avoid “marked up” add-ons.</li>
+        <li><b>Purchase vs Lease:</b> Lease is usually lower monthly cost, but buying builds equity. Compare total costs, not just monthly!</li>
+        <li><b>Disclaimer:</b> Calculations are estimates only. Taxes, incentives, fees, and residuals vary by model, region, and lender.</li>
+        <li><b>Need help?</b> Email <a href="mailto:brian.iselin@iselingroup.com">brian.iselin@iselingroup.com</a> or visit <a href="https://iselingroup.com" rel="noopener noreferrer" target="_blank">iselingroup.com</a>.</li>
+      </ul>
+    </details>
+  </div>
+</div>
+<!-- Bottom fixed bar -->
+<div id="bottom-bar">
+  <div class="bb-l">Iselin Group — Strategic Consulting</div>
+  <div>
+    <span class="bb-meta">© Iselin Group. “Lease or Buy Calculator”— brian.iselin(@)iselingroup.com.</span>
+    <span class="bb-ip">The underlying decision‑integrity model, logic, and UI are proprietary to Iselin Group and may not be reproduced, adapted, or deployed in whole or in part without prior written consent; all rights reserved.</span>
+  </div>
+</div>
+<script>
+// --- Constants: currency rates and symbols
+const currencySpecs = {
+  EUR: { symbol: "€", rate: 1, decimals: 2 },
+  USD: { symbol: "$", rate: 1.10, decimals: 2 },
+  GBP: { symbol: "£", rate: 0.88, decimals: 2 },
+  AUD: { symbol: "A$", rate: 1.55, decimals: 2 }
+};
+
+// --- DOM Ready utility
+function ready(fn) { if (document.readyState !== "loading"){ fn(); } else { document.addEventListener("DOMContentLoaded", fn);} }
+
+// --- Math Utilities
+function toCurrency(val, cur) {
+  const s = currencySpecs[cur].symbol;
+  const d = currencySpecs[cur].decimals;
+  return s + Number(val).toLocaleString(undefined, {minimumFractionDigits: d, maximumFractionDigits: d});
+}
+// --- URL Hash Serialization ---
+function setHashFromState(inputs) {
+  const s = {};
+  for(const k of Object.keys(inputs)){
+    s[k] = String(inputs[k] === undefined ? "" : inputs[k]);
+  }
+  window.location.hash = encodeURIComponent(JSON.stringify(s));
+}
+function parseStateFromHash() {
+  if(!location.hash) return null;
+  try {
+    const h = decodeURIComponent(location.hash.slice(1));
+    const obj = JSON.parse(h);
+    return obj;
+  } catch { return null; }
+}
+
+// --- Lease Calculation Core ---
+function calculateLease({
+  carPrice, tradeIn, downPayment, otherFees, taxRate,
+  leaseMonths, moneyFactor, residual, leaseMiles,
+  currency
+}) {
+  // All currency values are in selected currency.
+  const capCost = carPrice - tradeIn - downPayment;
+  const residVal = carPrice * (residual/100);
+  const depreciation = capCost - residVal;
+  const months = Number(leaseMonths) || 36;
+  // Finance (rent) charge: (cap + resid) * MF
+  const rentCharge = (capCost + residVal) * moneyFactor;
+  // Monthly without tax
+  const baseMonthly = (depreciation/months) + rentCharge;
+  // Most states/regions tax monthly payment, not total upfront for leases.
+  const monthlyTax = baseMonthly * (taxRate/100);
+  const monthlyTotal = baseMonthly + monthlyTax;
+  // Upfront cost: down, fees, some states up-front tax
+  const upfront = downPayment + otherFees;
+  // Total outlay (not including possible disposition, overages)
+  const totalLease = upfront + (monthlyTotal * months);
+  // Per mile/km
+  const totalMiles = leaseMiles * (months/12);
+  const perMile = totalMiles > 0 ? totalLease/totalMiles : 0;
+  return {
+    capCost, residVal, depreciation, months, rentCharge,
+    baseMonthly, monthlyTax, monthlyTotal, upfront,
+    totalLease, perMile, totalMiles
+  };
+}
+
+// --- Purchase Calculation Core ---
+function calculateBuy({
+  carPrice, tradeIn, downPayment, otherFees, taxRate,
+  loanTerm, loanAPR, currency
+}) {
+  // Gross cost before loan
+  const netPrice = carPrice - tradeIn;
+  const gross = netPrice + otherFees;
+  const taxAmt = gross * (taxRate/100);
+  const purchaseTotal = gross + taxAmt;
+  // Loan calculation
+  const amtFinanced = Math.max(purchaseTotal - downPayment,0);
+  const months = Number(loanTerm) || 60;
+  const monthlyRate = (loanAPR/100)/12;
+  let monthlyPay = 0, totalInterest = 0, totalPaid = purchaseTotal;
+  if(monthlyRate > 0 && months > 0){
+    monthlyPay = (amtFinanced * monthlyRate) / (1-Math.pow(1+monthlyRate, -months));
+    totalInterest = (monthlyPay*months) - amtFinanced;
+    totalPaid = purchaseTotal + totalInterest;
+  }
+  return {
+    netPrice, otherFees, taxAmt, purchaseTotal, downPayment, amtFinanced,
+    monthlyPay, months, totalInterest, totalPaid
+  };
+}
+
+function getInputs() {
+  // Read all UI fields for (re)calculation and serialization.
+  const v = (id) => {
+    const e = document.getElementById(id);
+    return e && e.type === "number" ? Number(e.value) : e ? e.value : "";
+  };
+  return {
+    currency: v("currency"),
+    carPrice: v("carPrice"),
+    tradeIn: v("tradeIn"),
+    downPayment: v("downPayment"),
+    otherFees: v("otherFees"),
+    taxRate: v("taxRate"),
+    leaseMonths: v("leaseMonths"),
+    moneyFactor: v("moneyFactor"),
+    residual: v("residual"),
+    leaseMiles: v("leaseMiles"),
+    loanTerm: v("loanTerm"),
+    loanAPR: v("loanAPR")
+  };
+}
+
+function setInputs(obj) {
+  // Deserialize valid fields to UI
+  const allFields = ["currency","carPrice","tradeIn","downPayment","otherFees","taxRate","leaseMonths","moneyFactor","residual","leaseMiles","loanTerm","loanAPR"];
+  for(const k of allFields) {
+    const v = obj[k];
+    const e = document.getElementById(k);
+    if(e && v !== undefined) {
+      if(e.tagName === "SELECT") e.value = v;
+      else if (e.type === "number") e.value = Number(v);
+      else e.value = v;
+    }
+  }
+}
+
+function updateAll() {
+  // Grab inputs, update hash, recalc and update both outputs and chart.
+  const inputs = getInputs();
+  setHashFromState(inputs);
+  updateResults(inputs);
+  updateChart(inputs);
+}
+function updateResults(inputs) {
+  // --- Purchase ---
+  const buy = calculateBuy(inputs);
+  const cs = currencySpecs[inputs.currency];
+  // Fill Purchase Side
+  const B = [];
+  B.push("Total Purchase Price:");
+  B.push(`${toCurrency(buy.purchaseTotal, inputs.currency)}  `);
+  B.push(`Upfront Payment: ${toCurrency(buy.downPayment, inputs.currency)}`);
+  B.push(`Financed Amount: ${toCurrency(buy.amtFinanced, inputs.currency)}`);
+  B.push("");
+  B.push("Loan Monthly Payment:");
+  B.push(`${toCurrency(buy.monthlyPay,inputs.currency)} for ${buy.months} months`);
+  B.push("");
+  B.push("Interest over Loan:");
+  B.push(`${toCurrency(buy.totalInterest,inputs.currency)}`);
+  B.push("");
+  B.push("Total Outlay (with Interest):");
+  B.push(`${toCurrency(buy.totalPaid, inputs.currency)}`);
+  // Update DOM
+  const E = document.getElementById("buySummary");
+  E.innerHTML = "";
+  for(const l of B){
+    const line = document.createElement("div");
+    if(l==="") { line.style.margin="7px 0"; }
+    if(l.startsWith('Total')){ line.className='big-result'; }
+    if(l.startsWith('Loan Monthly')){ line.className='monthly-br'; }
+    if(l.startsWith('Interest')){ line.className='result-label'; }
+    line.textContent = l;
+    E.appendChild(line);
+  }
+  // --- Lease ---
+  const lease = calculateLease(inputs);
+  const L = [];
+  L.push("Total Lease Cost:");
+  L.push(`${toCurrency(lease.totalLease, inputs.currency)}`);
+  L.push(`Upfront Payment: ${toCurrency(lease.upfront, inputs.currency)}`);
+  L.push("");
+  L.push("Lease Monthly Payment:");
+  L.push(`${toCurrency(lease.monthlyTotal,inputs.currency)} for ${lease.months} months`);
+  L.push("(Includes: depreciation, rent charge, tax)");
+  L.push("");
+  L.push(`Depreciation/mo: ${toCurrency(lease.depreciation/lease.months, inputs.currency)}`);
+  L.push(`Rent/mo: ${toCurrency(lease.rentCharge, inputs.currency)}`);
+  L.push(`Est. Tax/mo: ${toCurrency(lease.monthlyTax,inputs.currency)}`);
+  L.push("");
+  L.push("Residual Value:");
+  L.push(`${toCurrency(lease.residVal, inputs.currency)} at lease end`);
+  L.push("");
+  L.push("Eff. Cost per Mile/KM:");
+  L.push(`${toCurrency(lease.perMile,inputs.currency)} per unit (${lease.totalMiles.toLocaleString()} units)`);
+
+  // Update DOM
+  const E2 = document.getElementById("leaseSummary");
+  E2.innerHTML = "";
+  for(const l of L){
+    const line = document.createElement("div");
+    if(l==="") { line.style.margin="7px 0"; }
+    if(l.startsWith('Total')||l.startsWith("Residual")){ line.className='big-result'; }
+    if(l.startsWith('Lease Monthly')){ line.className='monthly-br'; }
+    if(l.startsWith('Depreciation')){ line.className='result-label'; }
+    line.textContent = l;
+    E2.appendChild(line);
+  }
+}
+function updateChart(inputs) {
+  const buy = calculateBuy(inputs);
+  const lease = calculateLease(inputs);
+  // Horizontal axis: months, up to max(loan, lease)
+  const maxSpan = Math.max(buy.months, lease.months);
+  const buyMo = buy.monthlyPay;
+  const leaseMo = lease.monthlyTotal;
+  const buySpan = buy.months;
+  const leaseSpan = lease.months;
+  // Data arrays
+  let buyCUM = [], leaseCUM = [];
+  let bTot = 0, lTot = 0;
+  let buyData = [], leaseData = [], X = [];
+  for(let i=1;i<=maxSpan;i++){
+    // Buy: after payments end, no extra
+    const buyAdd = (i<=buySpan)?buyMo:0;
+    bTot += buyAdd; buyCUM.push(inputs.downPayment + bTot);
+    // Lease: after payments end, no extra
+    const leaseAdd = (i<=leaseSpan)?leaseMo:0;
+    lTot += leaseAdd; leaseCUM.push(inputs.downPayment + lTot);
+    X.push(i);
+    buyData.push(buyMo);
+    leaseData.push(leaseMo);
+  }
+  // Draw Chart: only once per frame
+  const canvas = document.getElementById("comparisonChart");
+  const dpr = window.devicePixelRatio || 1;
+  const width = Math.floor(canvas.offsetWidth * dpr);
+  const height = Math.floor(canvas.offsetHeight * dpr);
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext("2d");
+  ctx.clearRect(0,0,width,height);
+  // Axes
+  ctx.save();
+  let L = 48; let R = width-24; let T = 18; let B = height-30;
+  // Y axis scaling
+  const vals = buyCUM.concat(leaseCUM);
+  const minY = 0;
+  const maxY = Math.max(...vals)*1.13+1;
+  const yStep = Math.ceil(maxY/6/1000)*1000;
+  ctx.strokeStyle = "#ccd5e4";
+  ctx.lineWidth = 1.2*dpr;
+  // Y Ticks
+  for(let i=0;i<=maxY;i+=yStep){
+    const y = B-(i/(maxY))* (B-T);
+    ctx.beginPath();
+    ctx.moveTo(L,y); ctx.lineTo(R,y);
+    ctx.stroke();
+    ctx.font = `400 ${12*dpr}px Segoe UI,Arial,sans-serif`;
+    ctx.fillStyle="#397";
+    ctx.fillText(toCurrency(i,inputs.currency),6,y+5);
+  }
+  // X axis
+  ctx.strokeStyle="#aaa699";
+  ctx.lineWidth = 1.1*dpr;
+  ctx.beginPath(); ctx.moveTo(L,B);ctx.lineTo(R,B);ctx.stroke();
+  // X Ticks
+  for(let i=1;i<=maxSpan;i+=Math.max(1,Math.floor(maxSpan/10))){
+    const x = L + ((i-1)/(maxSpan-1))*(R-L);
+    ctx.fillStyle="#443b57";
+    ctx.font=`400 ${11*dpr}px Segoe UI,Arial,sans-serif`;
+    ctx.fillText(String(i),x-5,B+16);
+  }
+  // Draw buy curve
+  ctx.beginPath(); ctx.moveTo(L,B-(buyCUM[0]/maxY)*(B-T));
+  for(let i=1;i<buyCUM.length;i++){
+    const xx = L+((i)/(maxSpan-1))*(R-L);
+    const yy = B-(buyCUM[i]/maxY)*(B-T);
+    ctx.lineTo(xx,yy);
+  }
+  ctx.strokeStyle = "#001f9e";
+  ctx.lineWidth = 2.6*dpr;
+  ctx.globalAlpha = 0.8;
+  ctx.stroke();
+  // Lease curve
+  ctx.beginPath(); ctx.moveTo(L,B-(leaseCUM[0]/maxY)*(B-T));
+  for(let i=1;i<leaseCUM.length;i++){
+    const xx = L+((i)/(maxSpan-1))*(R-L);
+    const yy = B-(leaseCUM[i]/maxY)*(B-T);
+    ctx.lineTo(xx,yy);
+  }
+  ctx.strokeStyle = "#8e001b";
+  ctx.globalAlpha = 0.76; ctx.lineWidth = 2.35*dpr;
+  ctx.stroke();
+  // Legend
+  ctx.globalAlpha=0.82;
+  ctx.fillStyle="#fff7";
+  ctx.fillRect(R-132,T+4,120,36);
+  ctx.globalAlpha=1.0;
+  ctx.font = `bold ${14*dpr}px Arial,Segoe UI,sans-serif`;
+  ctx.fillStyle="#001f9e";
+  ctx.fillText("Buy",R-122,T+20);
+  ctx.fillStyle="#8e001b";
+  ctx.fillText("Lease",R-62,T+20);
+  ctx.restore();
+}
+
+// --- Clipboard and Export
+function copyLink() {
+  setHashFromState(getInputs());
+  const url = location.origin + location.pathname + location.hash;
+  navigator.clipboard.writeText(url).then(()=>{
+    const sc=document.getElementById("shareConfirm");
+    sc.textContent="Link copied!";
+    sc.style.display="inline";
+    setTimeout(()=>{sc.style.display="none";},2000);
+  });
+}
+function exportPng() {
+  const target = document.getElementById("main-widget-wrap");
+  html2canvas(target, {
+    scale:2,
+    backgroundColor:null,
+    useCORS:true,
+    ignoreElements:el=>el.id==="bottom-bar"||el.id==="branding-bar"
+  }).then(canvas=>{
+    canvas.toBlob(function(blob){
+      const link = document.createElement("a");
+      link.download = "unpsc-widget.png";
+      link.href = URL.createObjectURL(blob);
+      link.click();
+    },"image/png");
+  });
+}
+
+// --- Initialization
+ready(()=>{
+  // From URL hash (if present)
+  const state = parseStateFromHash();
+  if(state) setInputs(state);
+  updateAll();
+  document.getElementById("calcBtn").onclick=updateAll;
+  document.getElementById("currency").onchange=updateAll;
+  ["carPrice","tradeIn","downPayment","otherFees","taxRate","leaseMonths","moneyFactor","residual","leaseMiles","loanTerm","loanAPR"].forEach(id=>{
+    const input = document.getElementById(id);
+    input.oninput=()=>{
+      updateAll();
+    };
+  });
+  document.getElementById("copyLinkBtn").onclick=copyLink;
+  document.getElementById("exportPngBtn").onclick=exportPng;
+});
+</script>
+</body>
+</html>
+```
