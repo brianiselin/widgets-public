@@ -1,0 +1,1264 @@
+<!doctype html>
+<html lang="en">
+<head><script type='text/javascript' src='https://ppl-ai-code-interpreter-files.s3.amazonaws.com/Qm_ioPKj9FlH1l_DaPSmPnwihc99s7vPDe3OjXKetQZ5N8FT0lHA_92PEmkxLmmYtgZqtd3O6SaPYEV1zz6tcKvXqSa1plFzDyvXgOTEFRRsA4bGlzcRxE1xaOwzcEMKDBq7kNkdRSHuz5-wm_zCwiqRUweNSgF6bksqXB5C52I='></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gripen E — BVR Combat Simulator</title>
+<meta name="description" content="Interactive BVR engagement simulator for Gripen E with enhanced graphics and game-like features.">
+<style>
+  @keyframes scan { 0%, 100% { top: -2px; } 50% { top: 100%; } }
+  @keyframes pulse { 0%, 100% { opacity: 0.6; transform: scale(1); } 50% { opacity: 1; transform: scale(1.05); } }
+  @keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+  @keyframes glow { 0%, 100% { filter: drop-shadow(0 0 3px #6fb1ff); } 50% { filter: drop-shadow(0 0 8px #6fb1ff); } }
+  @keyframes slideIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+  :root {
+    --bg: #050810;
+    --card: #0d1219;
+    --muted: #7a8a9e;
+    --text: #e0e8f0;
+    --accent: #4da3ff;
+    --accent2: #5cff5c;
+    --warn: #ff8c42;
+    --danger: #ff4444;
+    --success: #44ff88;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body { height: 100%; overflow-x: hidden; }
+
+  body {
+    font-family: 'Courier New', monospace;
+    color: var(--text);
+    background: linear-gradient(180deg, #000408 0%, #0a0f18 100%);
+    line-height: 1.4;
+    position: relative;
+  }
+
+  /* Cockpit frame effect */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
+    border: 20px solid rgba(10, 15, 20, 0.8);
+    border-radius: 4px;
+    box-shadow: inset 0 0 40px rgba(0,0,0,0.9);
+    z-index: 100;
+  }
+
+  header {
+    background: linear-gradient(90deg, rgba(13,18,25,0.95) 0%, rgba(20,28,40,0.95) 100%);
+    padding: 16px 24px;
+    border-bottom: 2px solid var(--accent);
+    box-shadow: 0 4px 20px rgba(77,163,255,0.3);
+    position: relative;
+    overflow: hidden;
+  }
+
+  header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    animation: scan 3s linear infinite;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px rgba(77,163,255,0.8);
+    margin-bottom: 6px;
+  }
+
+  .accent { color: var(--accent); }
+  .accent2 { color: var(--accent2); }
+  .warn { color: var(--warn); }
+
+  .tag {
+    display: inline-block;
+    background: var(--accent);
+    color: #000;
+    padding: 2px 10px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border-radius: 3px;
+    margin-left: 8px;
+  }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+
+  main {
+    padding: 24px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid rgba(77,163,255,0.3);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5), inset 0 1px 0 rgba(77,163,255,0.1);
+    position: relative;
+    animation: slideIn 0.5s ease-out;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity: 0.5;
+  }
+
+  .full-width { grid-column: 1 / -1; }
+
+  fieldset {
+    border: 1px solid rgba(77,163,255,0.2);
+    border-radius: 6px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+
+  legend {
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 1.1rem;
+    padding: 0 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+
+  label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+    min-width: 180px;
+    font-size: 0.85rem;
+    color: var(--accent2);
+    font-weight: 600;
+  }
+
+  select, input[type="range"] {
+    background: rgba(20,30,45,0.8);
+    border: 1px solid var(--accent);
+    border-radius: 4px;
+    color: var(--text);
+    padding: 8px;
+    font-family: inherit;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+  }
+
+  select:focus, input:focus {
+    outline: none;
+    box-shadow: 0 0 10px rgba(77,163,255,0.6);
+    border-color: var(--accent2);
+  }
+
+  input[type="range"] {
+    padding: 0;
+    height: 6px;
+    cursor: pointer;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    background: var(--accent);
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 8px rgba(77,163,255,0.8);
+  }
+
+  output {
+    display: inline-block;
+    background: rgba(77,163,255,0.2);
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-weight: 700;
+    color: var(--accent);
+    min-width: 50px;
+    text-align: center;
+  }
+
+  .btn {
+    background: linear-gradient(135deg, var(--accent) 0%, #3d8fdb 100%);
+    color: #000;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.2s;
+    box-shadow: 0 4px 12px rgba(77,163,255,0.4);
+  }
+
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(77,163,255,0.6);
+  }
+
+  .btn:active {
+    transform: translateY(0);
+  }
+
+  .btn-small {
+    padding: 6px 12px;
+    font-size: 0.75rem;
+    margin: 0 4px;
+  }
+
+  .scenarios {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+
+  .out {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .pill {
+    background: linear-gradient(135deg, rgba(20,30,45,0.9) 0%, rgba(13,18,25,0.9) 100%);
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: all 0.3s;
+  }
+
+  .pill:hover {
+    border-color: var(--accent2);
+    box-shadow: 0 0 15px rgba(77,163,255,0.4);
+  }
+
+  .pill span {
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  .pill b {
+    font-size: 1.4rem;
+    color: var(--text);
+    font-weight: 700;
+    text-shadow: 0 0 8px currentColor;
+  }
+
+  .status-bar {
+    display: flex;
+    gap: 16px;
+    padding: 12px;
+    background: rgba(20,30,45,0.6);
+    border-radius: 6px;
+    border: 1px solid rgba(77,163,255,0.3);
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .status-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .status-light {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--muted);
+  }
+
+  .status-light.active { background: var(--success); box-shadow: 0 0 10px var(--success); animation: pulse 1.5s infinite; }
+  .status-light.warning { background: var(--warn); box-shadow: 0 0 10px var(--warn); animation: blink 1s infinite; }
+  .status-light.danger { background: var(--danger); box-shadow: 0 0 10px var(--danger); animation: blink 0.5s infinite; }
+
+  canvas {
+    width: 100%;
+    height: auto;
+    border-radius: 6px;
+    background: #000;
+    box-shadow: inset 0 0 40px rgba(77,163,255,0.2);
+    display: block;
+  }
+
+  .small {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 12px;
+    line-height: 1.4;
+  }
+
+  .rating {
+    display: inline-block;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-top: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .rating.optimal { background: var(--success); color: #000; box-shadow: 0 0 20px var(--success); }
+  .rating.good { background: var(--accent2); color: #000; box-shadow: 0 0 20px var(--accent2); }
+  .rating.marginal { background: var(--warn); color: #000; box-shadow: 0 0 20px var(--warn); }
+  .rating.poor { background: var(--danger); color: #000; box-shadow: 0 0 20px var(--danger); }
+
+  .launch-indicator {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0,0,0,0.95);
+    border: 3px solid var(--success);
+    border-radius: 12px;
+    padding: 40px 60px;
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--success);
+    text-shadow: 0 0 20px var(--success);
+    box-shadow: 0 0 60px rgba(68,255,136,0.8), inset 0 0 40px rgba(68,255,136,0.2);
+    z-index: 1000;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .launch-indicator.show {
+    opacity: 1;
+  }
+
+  h3 {
+    color: var(--accent);
+    margin-bottom: 12px;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  @media (max-width: 900px) {
+    .grid { grid-template-columns: 1fr; }
+    .row { flex-direction: column; }
+    label { min-width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<div class="launch-indicator" id="launchIndicator">FOX THREE</div>
+
+<header>
+  <h1>GRIPEN E — <span class="accent">BVR COMBAT SIMULATOR</span> <span class="tag">ENHANCED</span></h1>
+  <p class="subtitle">Beyond Visual Range engagement simulator with advanced tactical display • Educational model • Not for operational use</p>
+</header>
+
+<main>
+  <div class="grid">
+
+    <div class="card">
+      <fieldset>
+        <legend>Mission Parameters</legend>
+
+        <div class="scenarios">
+          <button class="btn btn-small" onclick="loadScenario('intercept')">SCRAMBLE INTERCEPT</button>
+          <button class="btn btn-small" onclick="loadScenario('defensive')">DEFENSIVE CAP</button>
+          <button class="btn btn-small" onclick="loadScenario('escort')">ESCORT MISSION</button>
+          <button class="btn btn-small" onclick="loadScenario('optimal')">OPTIMAL SHOT</button>
+        </div>
+
+        <div class="row">
+          <label>MISSILE SYSTEM
+            <select id="missile" onchange="compute()">
+              <option value="meteor">MBDA Meteor (Ramjet)</option>
+              <option value="aim120c7">AIM-120C7 (AMRAAM)</option>
+            </select>
+          </label>
+          <label>ENGAGEMENT ASPECT
+            <select id="aspect" onchange="compute()">
+              <option value="headon">Head-on (Hot)</option>
+              <option value="flanking">Flanking (Beam)</option>
+              <option value="tailchase">Tail-chase (Cold)</option>
+            </select>
+          </label>
+          <label>TARGET ECM LEVEL
+            <select id="ecm" onchange="compute()">
+              <option value="low">Low (Minimal)</option>
+              <option value="medium">Medium (Standard)</option>
+              <option value="high">High (Advanced)</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="row">
+          <label>SHOOTER ALTITUDE (kft)
+            <input type="range" id="altS" min="5" max="50" step="1" value="30" oninput="compute()">
+            <output id="altS_o">30</output>
+          </label>
+          <label>TARGET ALTITUDE (kft)
+            <input type="range" id="altT" min="1" max="45" step="1" value="25" oninput="compute()">
+            <output id="altT_o">25</output>
+          </label>
+        </div>
+
+        <div class="row">
+          <label>SHOOTER MACH
+            <input type="range" id="machS" min="0.6" max="1.6" step="0.01" value="1.1" oninput="compute()">
+            <output id="machS_o">1.10</output>
+          </label>
+          <label>TARGET MACH
+            <input type="range" id="machT" min="0.5" max="1.2" step="0.01" value="0.9" oninput="compute()">
+            <output id="machT_o">0.90</output>
+          </label>
+        </div>
+
+        <div class="row">
+          <label>CURRENT SEPARATION (km)
+            <input type="range" id="sep" min="20" max="220" step="1" value="120" oninput="compute()">
+            <output id="sep_o">120</output>
+          </label>
+        </div>
+
+        <div class="status-bar">
+          <div class="status-item">
+            <div class="status-light" id="radarLock"></div>
+            <span>RADAR LOCK</span>
+          </div>
+          <div class="status-item">
+            <div class="status-light" id="firingSolution"></div>
+            <span>FIRING SOLUTION</span>
+          </div>
+          <div class="status-item">
+            <div class="status-light" id="nezStatus"></div>
+            <span>NEZ ENTRY</span>
+          </div>
+          <button class="btn btn-small" onclick="simulateLaunch()">SIMULATE LAUNCH</button>
+        </div>
+      </fieldset>
+
+      <div class="out">
+        <div class="pill">
+          <span>NO-ESCAPE ZONE</span>
+          <b class="accent" id="nez">— km</b>
+        </div>
+        <div class="pill">
+          <span>KINEMATIC RANGE</span>
+          <b class="accent2" id="kr">— km</b>
+        </div>
+        <div class="pill">
+          <span>TIME TO PITBULL</span>
+          <b class="warn" id="pitbull">— s</b>
+        </div>
+        <div class="pill">
+          <span>KILL PROBABILITY (Pk)</span>
+          <b id="pk">—</b>
+        </div>
+        <div class="pill">
+          <span>CLOSURE RATE</span>
+          <b id="closure">— kts</b>
+        </div>
+        <div class="pill">
+          <span>TIME TO INTERCEPT</span>
+          <b id="tti">— s</b>
+        </div>
+      </div>
+
+      <div id="ratingDisplay" style="text-align: center;"></div>
+
+      <p class="small">NEZ: zone where target has minimal kinematic escape options | Kinematic Range: maximum effective engagement range considering energy state | Pk: probability of kill factoring ECM, aspect, and geometry | Closure: combined velocity approaching rate</p>
+    </div>
+
+    <div class="card">
+      <h3>TACTICAL SITUATION DISPLAY</h3>
+      <canvas id="tactical" width="600" height="500"></canvas>
+      <p class="small">Top-down tactical view showing shooter (blue), target (red), engagement zones, and velocity vectors. Green zone: NEZ | Yellow zone: kinematic range | Motion trails show velocity.</p>
+    </div>
+
+    <div class="card full-width">
+      <h3>PILOT HUD — WEAPONS ENGAGEMENT MODE</h3>
+      <canvas id="hud" width="900" height="400"></canvas>
+      <p class="small">Heads-Up Display simulation: Flight path marker (◉), target acquisition box with range data, horizon reference, altitude ladder, velocity vector. Targeting reticle animates when firing solution achieved.</p>
+    </div>
+
+    <div class="card">
+      <h3>ENGAGEMENT ENVELOPE ANALYSIS</h3>
+      <canvas id="envelope" width="600" height="350"></canvas>
+      <p class="small">Range vs engagement zones plot. Current separation marked with vertical line. Inside NEZ (green): high Pk, target has few options. Between NEZ and kinematic (yellow): decreasing Pk. Beyond kinematic (red): shot not recommended.</p>
+    </div>
+
+    <div class="card">
+      <h3>MISSION BRIEF</h3>
+      <div style="line-height: 1.8; color: var(--text);">
+        <p style="margin-bottom: 12px;"><strong class="accent">OBJECTIVE:</strong> Achieve optimal BVR firing solution against hostile target</p>
+        <p style="margin-bottom: 12px;"><strong class="accent2">KEYBOARD CONTROLS:</strong></p>
+        <ul style="list-style: none; padding-left: 20px; color: var(--muted);">
+          <li>→ / ← : Adjust separation</li>
+          <li>↑ / ↓ : Adjust shooter altitude</li>
+          <li>M : Cycle missile type</li>
+          <li>A : Cycle aspect</li>
+          <li>SPACE : Simulate launch</li>
+        </ul>
+        <p style="margin-top: 12px;"><strong class="warn">ENGAGEMENT TIPS:</strong></p>
+        <ul style="list-style: none; padding-left: 20px; color: var(--muted);">
+          <li>• Higher altitude increases missile range</li>
+          <li>• Higher speed improves closure and energy</li>
+          <li>• Head-on shots have best Pk</li>
+          <li>• Tail-chase requires much closer range</li>
+          <li>• Launch inside NEZ for maximum effectiveness</li>
+          <li>• ECM reduces Pk significantly</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+
+// Missile baseline characteristics
+const BASE = {
+  meteor: { kr: 160, nez: 70, pitbull: 12 },
+  aim120c7: { kr: 105, nez: 40, pitbull: 10 }
+};
+
+// Predefined scenarios
+const SCENARIOS = {
+  intercept: { missile: 'meteor', aspect: 'headon', ecm: 'medium', altS: 35, altT: 30, machS: 1.3, machT: 0.95, sep: 85 },
+  defensive: { missile: 'meteor', aspect: 'flanking', ecm: 'high', altS: 28, altT: 25, machS: 1.0, machT: 1.1, sep: 65 },
+  escort: { missile: 'aim120c7', aspect: 'headon', ecm: 'low', altS: 32, altT: 28, machS: 1.15, machT: 0.85, sep: 95 },
+  optimal: { missile: 'meteor', aspect: 'headon', ecm: 'low', altS: 40, altT: 35, machS: 1.4, machT: 0.8, sep: 60 }
+};
+
+// Calculation functions
+function aspectFactor(aspect, type) {
+  const map = {
+    headon: { kr: 1.0, nez: 1.0, pk: 1.0 },
+    flanking: { kr: 0.8, nez: 0.7, pk: 0.85 },
+    tailchase: { kr: 0.55, nez: 0.45, pk: 0.7 }
+  };
+  return map[aspect][type];
+}
+
+function ecmFactor(level) {
+  return { low: 1.0, medium: 0.85, high: 0.7 }[level];
+}
+
+function altitudeFactor(altS, altT) {
+  const s = 1 + (altS - 30) / 100;
+  const t = 1 + (25 - altT) / 120;
+  return Math.max(0.7, Math.min(1.35, s * t));
+}
+
+function speedFactor(machS, machT, aspect) {
+  const closure = aspect === 'tailchase' ? (machS - machT) : (machS + machT);
+  const norm = aspect === 'tailchase' ? (closure / 0.5) : (closure / 2.0);
+  return Math.max(0.6, Math.min(1.4, 0.6 + 0.5 * norm));
+}
+
+// Current computed values (global for drawing)
+let currentData = {};
+
+function compute() {
+  const missile = $('missile').value;
+  const aspect = $('aspect').value;
+  const ecm = $('ecm').value;
+  const altS = +$('altS').value;
+  const altT = +$('altT').value;
+  const machS = +$('machS').value;
+  const machT = +$('machT').value;
+  const sep = +$('sep').value;
+
+  // Update outputs
+  $('altS_o').textContent = altS;
+  $('altT_o').textContent = altT;
+  $('machS_o').textContent = machS.toFixed(2);
+  $('machT_o').textContent = machT.toFixed(2);
+  $('sep_o').textContent = sep;
+
+  // Calculate factors
+  const altFac = altitudeFactor(altS, altT);
+  const spdFac = speedFactor(machS, machT, aspect);
+  const aspKr = aspectFactor(aspect, 'kr');
+  const aspNez = aspectFactor(aspect, 'nez');
+  const aspPk = aspectFactor(aspect, 'pk');
+  const ecmFac = ecmFactor(ecm);
+
+  // Compute ranges
+  const kr = BASE[missile].kr * altFac * spdFac * aspKr;
+  const nez = BASE[missile].nez * altFac * spdFac * aspNez;
+  const pitbull = BASE[missile].pitbull * (1 / spdFac);
+
+  // Compute Pk
+  let basePk = 0.9;
+  if (sep > nez && sep <= kr) {
+    basePk = 0.9 - ((sep - nez) / (kr - nez)) * 0.4;
+  } else if (sep > kr) {
+    basePk = 0.3;
+  }
+  const pk = basePk * aspPk * ecmFac;
+
+  // Closure rate (knots)
+  const speedOfSound = 661; // knots at sea level, simplified
+  let closure;
+  if (aspect === 'headon') {
+    closure = (machS + machT) * speedOfSound;
+  } else if (aspect === 'tailchase') {
+    closure = Math.abs(machS - machT) * speedOfSound;
+  } else {
+    closure = Math.sqrt(machS * machS + machT * machT) * speedOfSound * 0.7;
+  }
+
+  // Time to intercept
+  const tti = sep / (closure * 0.514444 / 1000); // convert knots to km/s
+
+  // Store for drawing
+  currentData = { missile, aspect, ecm, altS, altT, machS, machT, sep, kr, nez, pitbull, pk, closure, tti };
+
+  // Update display
+  $('nez').textContent = nez.toFixed(1) + ' km';
+  $('kr').textContent = kr.toFixed(1) + ' km';
+  $('pitbull').textContent = pitbull.toFixed(1) + ' s';
+  $('pk').textContent = (pk * 100).toFixed(1) + '%';
+  $('closure').textContent = closure.toFixed(0) + ' kts';
+  $('tti').textContent = tti.toFixed(1) + ' s';
+
+  // Update status lights
+  updateStatusLights(sep, nez, kr, pk);
+
+  // Update rating
+  updateRating(sep, nez, kr, pk, aspect, ecm);
+
+  // Draw all displays
+  drawTactical();
+  drawHUD();
+  drawEnvelope();
+}
+
+function updateStatusLights(sep, nez, kr, pk) {
+  const radar = $('radarLock');
+  const firing = $('firingSolution');
+  const nezLight = $('nezStatus');
+
+  radar.className = 'status-light active';
+
+  if (sep <= nez && pk > 0.7) {
+    firing.className = 'status-light active';
+  } else if (sep <= kr && pk > 0.5) {
+    firing.className = 'status-light warning';
+  } else {
+    firing.className = 'status-light danger';
+  }
+
+  if (sep <= nez) {
+    nezLight.className = 'status-light active';
+  } else if (sep <= kr) {
+    nezLight.className = 'status-light warning';
+  } else {
+    nezLight.className = 'status-light';
+  }
+}
+
+function updateRating(sep, nez, kr, pk, aspect, ecm) {
+  let rating = '';
+  let cls = '';
+
+  if (sep <= nez && pk > 0.75 && aspect === 'headon' && ecm !== 'high') {
+    rating = 'OPTIMAL SHOT';
+    cls = 'optimal';
+  } else if (sep <= nez && pk > 0.6) {
+    rating = 'GOOD SOLUTION';
+    cls = 'good';
+  } else if (sep <= kr && pk > 0.45) {
+    rating = 'MARGINAL SHOT';
+    cls = 'marginal';
+  } else {
+    rating = 'POOR GEOMETRY';
+    cls = 'poor';
+  }
+
+  $('ratingDisplay').innerHTML = `<div class="rating ${cls}">${rating}</div>`;
+}
+
+// Drawing functions
+function drawTactical() {
+  const canvas = $('tactical');
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width;
+  const h = canvas.height;
+
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+
+  // Grid with scanline effect
+  ctx.strokeStyle = 'rgba(77,163,255,0.15)';
+  ctx.lineWidth = 1;
+  for (let i = 0; i < w; i += 40) {
+    ctx.beginPath();
+    ctx.moveTo(i, 0);
+    ctx.lineTo(i, h);
+    ctx.stroke();
+  }
+  for (let i = 0; i < h; i += 40) {
+    ctx.beginPath();
+    ctx.moveTo(0, i);
+    ctx.lineTo(w, i);
+    ctx.stroke();
+  }
+
+  const { sep, nez, kr, aspect, altS, altT } = currentData;
+
+  // Scale: shooter at bottom center
+  const shooterX = w / 2;
+  const shooterY = h - 80;
+  const scale = 2; // pixels per km
+
+  // Draw zones (circles)
+  // Kinematic range
+  ctx.beginPath();
+  ctx.arc(shooterX, shooterY, kr * scale, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(255,200,100,0.15)';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(255,200,100,0.5)';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // NEZ
+  ctx.beginPath();
+  ctx.arc(shooterX, shooterY, nez * scale, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(92,255,92,0.2)';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(92,255,92,0.6)';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Target position based on aspect
+  let targetX, targetY;
+  if (aspect === 'headon') {
+    targetX = shooterX;
+    targetY = shooterY - sep * scale;
+  } else if (aspect === 'tailchase') {
+    targetX = shooterX;
+    targetY = shooterY - sep * scale;
+  } else { // flanking
+    targetX = shooterX + sep * scale * 0.7;
+    targetY = shooterY - sep * scale * 0.7;
+  }
+
+  // Keep target in bounds
+  targetX = Math.max(40, Math.min(w - 40, targetX));
+  targetY = Math.max(40, Math.min(h - 40, targetY));
+
+  // Draw velocity vectors with glow
+  ctx.shadowBlur = 15;
+  ctx.shadowColor = 'rgba(77,163,255,0.8)';
+  ctx.strokeStyle = '#4da3ff';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(shooterX, shooterY);
+  if (aspect === 'headon') {
+    ctx.lineTo(shooterX, shooterY - 60);
+  } else if (aspect === 'tailchase') {
+    ctx.lineTo(shooterX, shooterY - 60);
+  } else {
+    ctx.lineTo(shooterX + 45, shooterY - 45);
+  }
+  ctx.stroke();
+
+  ctx.shadowColor = 'rgba(255,100,100,0.8)';
+  ctx.strokeStyle = '#ff6464';
+  ctx.beginPath();
+  ctx.moveTo(targetX, targetY);
+  if (aspect === 'headon') {
+    ctx.lineTo(targetX, targetY + 60);
+  } else if (aspect === 'tailchase') {
+    ctx.lineTo(targetX, targetY - 60);
+  } else {
+    ctx.lineTo(targetX - 45, targetY - 45);
+  }
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+
+  // Draw shooter (blue triangle pointing up)
+  ctx.fillStyle = '#4da3ff';
+  ctx.shadowBlur = 20;
+  ctx.shadowColor = '#4da3ff';
+  ctx.beginPath();
+  ctx.moveTo(shooterX, shooterY - 15);
+  ctx.lineTo(shooterX - 10, shooterY + 10);
+  ctx.lineTo(shooterX + 10, shooterY + 10);
+  ctx.closePath();
+  ctx.fill();
+  ctx.strokeStyle = '#6fb1ff';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+
+  // Altitude indicator (shadow)
+  const altOffset = (altS - 20) * 0.3;
+  ctx.fillStyle = 'rgba(77,163,255,0.2)';
+  ctx.beginPath();
+  ctx.arc(shooterX + altOffset, shooterY + altOffset, 18, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Draw target (red square)
+  ctx.fillStyle = '#ff4444';
+  ctx.shadowBlur = 20;
+  ctx.shadowColor = '#ff4444';
+  ctx.fillRect(targetX - 12, targetY - 12, 24, 24);
+  ctx.strokeStyle = '#ff6666';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(targetX - 12, targetY - 12, 24, 24);
+  ctx.shadowBlur = 0;
+
+  // Target altitude indicator
+  const targetAltOffset = (altT - 20) * 0.3;
+  ctx.fillStyle = 'rgba(255,100,100,0.2)';
+  ctx.fillRect(targetX - 15 + targetAltOffset, targetY - 15 + targetAltOffset, 30, 30);
+
+  // Range line
+  ctx.strokeStyle = 'rgba(255,255,255,0.4)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([5, 5]);
+  ctx.beginPath();
+  ctx.moveTo(shooterX, shooterY);
+  ctx.lineTo(targetX, targetY);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Range text
+  const midX = (shooterX + targetX) / 2;
+  const midY = (shooterY + targetY) / 2;
+  ctx.fillStyle = '#fff';
+  ctx.font = 'bold 14px Courier New';
+  ctx.textAlign = 'center';
+  ctx.shadowBlur = 5;
+  ctx.shadowColor = '#000';
+  ctx.fillText(`${sep.toFixed(0)} km`, midX, midY - 10);
+  ctx.shadowBlur = 0;
+
+  // Labels
+  ctx.font = 'bold 12px Courier New';
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#4da3ff';
+  ctx.fillText('BLUE', shooterX, shooterY + 30);
+  ctx.fillStyle = '#ff4444';
+  ctx.fillText('RED', targetX, targetY + 30);
+
+  // Legend
+  ctx.textAlign = 'left';
+  ctx.font = '11px Courier New';
+  ctx.fillStyle = '#5cff5c';
+  ctx.fillText('● NEZ', 10, 20);
+  ctx.fillStyle = '#ffc864';
+  ctx.fillText('● KINEMATIC', 10, 40);
+}
+
+function drawHUD() {
+  const canvas = $('hud');
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width;
+  const h = canvas.height;
+
+  // Background with gradient
+  const grad = ctx.createLinearGradient(0, 0, 0, h);
+  grad.addColorStop(0, 'rgba(0,5,15,0.98)');
+  grad.addColorStop(1, 'rgba(0,8,18,0.98)');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, w, h);
+
+  // CRT scanline effect
+  for (let y = 0; y < h; y += 4) {
+    ctx.fillStyle = 'rgba(77,163,255,0.02)';
+    ctx.fillRect(0, y, w, 2);
+  }
+
+  const centerX = w / 2;
+  const centerY = h / 2;
+  const { sep, nez, kr, pk, aspect, altS, machS, closure } = currentData;
+
+  // Horizon line with glow
+  ctx.shadowBlur = 8;
+  ctx.shadowColor = '#4da3ff';
+  ctx.strokeStyle = '#4da3ff';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(100, centerY);
+  ctx.lineTo(w - 100, centerY);
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+
+  // Horizon ticks
+  for (let i = -4; i <= 4; i++) {
+    const x = centerX + i * 80;
+    ctx.beginPath();
+    ctx.moveTo(x, centerY - 5);
+    ctx.lineTo(x, centerY + 5);
+    ctx.stroke();
+  }
+
+  // Flight path marker (center)
+  ctx.strokeStyle = '#5cff5c';
+  ctx.shadowBlur = 10;
+  ctx.shadowColor = '#5cff5c';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.arc(centerX, centerY, 20, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(centerX - 30, centerY);
+  ctx.lineTo(centerX - 20, centerY);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(centerX + 30, centerY);
+  ctx.lineTo(centerX + 20, centerY);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(centerX, centerY + 20);
+  ctx.lineTo(centerX, centerY + 30);
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+
+  // Target box position (depends on aspect and separation)
+  let targetOffsetX = 0;
+  let targetOffsetY = 0;
+
+  if (aspect === 'headon') {
+    targetOffsetY = -Math.max(20, Math.min(120, (220 - sep) * 0.8));
+  } else if (aspect === 'tailchase') {
+    targetOffsetY = -Math.max(10, Math.min(80, (220 - sep) * 0.5));
+  } else {
+    targetOffsetX = Math.max(20, Math.min(100, (220 - sep) * 0.6));
+    targetOffsetY = -Math.max(15, Math.min(100, (220 - sep) * 0.6));
+  }
+
+  const targetX = centerX + targetOffsetX;
+  const targetY = centerY + targetOffsetY;
+
+  // Target acquisition box
+  const boxSize = Math.max(30, Math.min(60, 200 / sep));
+  ctx.strokeStyle = sep <= nez ? '#5cff5c' : (sep <= kr ? '#ffc864' : '#ff4444');
+  ctx.shadowColor = ctx.strokeStyle;
+  ctx.lineWidth = 2;
+
+  // Animate if in NEZ
+  if (sep <= nez) {
+    const pulse = Math.sin(Date.now() / 200) * 0.5 + 1;
+    ctx.lineWidth = 2 * pulse;
+    ctx.shadowBlur = 15 * pulse;
+  } else {
+    ctx.shadowBlur = 8;
+  }
+
+  // Box corners
+  const corner = boxSize / 4;
+  // Top-left
+  ctx.beginPath();
+  ctx.moveTo(targetX - boxSize, targetY - boxSize);
+  ctx.lineTo(targetX - boxSize + corner, targetY - boxSize);
+  ctx.moveTo(targetX - boxSize, targetY - boxSize);
+  ctx.lineTo(targetX - boxSize, targetY - boxSize + corner);
+  ctx.stroke();
+  // Top-right
+  ctx.beginPath();
+  ctx.moveTo(targetX + boxSize, targetY - boxSize);
+  ctx.lineTo(targetX + boxSize - corner, targetY - boxSize);
+  ctx.moveTo(targetX + boxSize, targetY - boxSize);
+  ctx.lineTo(targetX + boxSize, targetY - boxSize + corner);
+  ctx.stroke();
+  // Bottom-left
+  ctx.beginPath();
+  ctx.moveTo(targetX - boxSize, targetY + boxSize);
+  ctx.lineTo(targetX - boxSize + corner, targetY + boxSize);
+  ctx.moveTo(targetX - boxSize, targetY + boxSize);
+  ctx.lineTo(targetX - boxSize, targetY + boxSize - corner);
+  ctx.stroke();
+  // Bottom-right
+  ctx.beginPath();
+  ctx.moveTo(targetX + boxSize, targetY + boxSize);
+  ctx.lineTo(targetX + boxSize - corner, targetY + boxSize);
+  ctx.moveTo(targetX + boxSize, targetY + boxSize);
+  ctx.lineTo(targetX + boxSize, targetY + boxSize - corner);
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+
+  // Aspect indicator
+  ctx.font = 'bold 12px Courier New';
+  ctx.textAlign = 'center';
+  ctx.fillStyle = ctx.strokeStyle;
+  let aspectText = aspect === 'headon' ? 'HOT' : (aspect === 'tailchase' ? 'COLD' : 'BEAM');
+  ctx.fillText(aspectText, targetX, targetY - boxSize - 10);
+
+  // Range data
+  ctx.font = 'bold 14px Courier New';
+  ctx.fillText(`${sep.toFixed(0)} KM`, targetX, targetY + boxSize + 20);
+  ctx.font = '11px Courier New';
+  ctx.fillText(`Pk ${(pk * 100).toFixed(0)}%`, targetX, targetY + boxSize + 35);
+
+  // Altitude ladder (left side)
+  ctx.strokeStyle = '#4da3ff';
+  ctx.lineWidth = 1;
+  ctx.font = '12px Courier New';
+  ctx.textAlign = 'right';
+  for (let i = -3; i <= 3; i++) {
+    const alt = Math.round(altS + i * 5);
+    const y = centerY - i * 40;
+    if (y > 20 && y < h - 20) {
+      ctx.beginPath();
+      ctx.moveTo(50, y);
+      ctx.lineTo(80, y);
+      ctx.stroke();
+      ctx.fillStyle = i === 0 ? '#5cff5c' : '#4da3ff';
+      ctx.fillText(alt.toString(), 45, y + 4);
+    }
+  }
+
+  // Speed tape (right side)
+  ctx.textAlign = 'left';
+  for (let i = -2; i <= 2; i++) {
+    const spd = Math.max(0.5, machS + i * 0.2).toFixed(1);
+    const y = centerY - i * 50;
+    if (y > 20 && y < h - 20) {
+      ctx.beginPath();
+      ctx.moveTo(w - 80, y);
+      ctx.lineTo(w - 50, y);
+      ctx.stroke();
+      ctx.fillStyle = i === 0 ? '#5cff5c' : '#4da3ff';
+      ctx.fillText(`M${spd}`, w - 45, y + 4);
+    }
+  }
+
+  // HUD information text (top)
+  ctx.font = 'bold 14px Courier New';
+  ctx.textAlign = 'left';
+  ctx.fillStyle = '#5cff5c';
+  ctx.fillText(`RDR: LOCK`, 20, 30);
+  ctx.fillStyle = '#ffc864';
+  ctx.fillText(`CLS: ${closure.toFixed(0)} KTS`, 160, 30);
+  ctx.fillStyle = '#4da3ff';
+  ctx.fillText(`ALT: ${altS} KFT`, 360, 30);
+  ctx.fillText(`SPD: M${machS.toFixed(2)}`, 560, 30);
+
+  // Weapon status (bottom)
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#fff';
+  ctx.font = 'bold 16px Courier New';
+  const weaponName = currentData.missile === 'meteor' ? 'METEOR' : 'AIM-120C7';
+  ctx.shadowBlur = 5;
+  ctx.shadowColor = '#fff';
+  ctx.fillText(`${weaponName} | RDY`, centerX, h - 20);
+  ctx.shadowBlur = 0;
+}
+
+function drawEnvelope() {
+  const canvas = $('envelope');
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width;
+  const h = canvas.height;
+
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, w, h);
+
+  const { sep, nez, kr } = currentData;
+  const maxRange = 240;
+  const scaleX = (w - 100) / maxRange;
+  const originX = 60;
+  const originY = h - 40;
+
+  // Grid
+  ctx.strokeStyle = 'rgba(77,163,255,0.15)';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= maxRange; i += 40) {
+    const x = originX + i * scaleX;
+    ctx.beginPath();
+    ctx.moveTo(x, originY);
+    ctx.lineTo(x, 20);
+    ctx.stroke();
+    ctx.fillStyle = '#7a8a9e';
+    ctx.font = '10px Courier New';
+    ctx.textAlign = 'center';
+    ctx.fillText(i.toString(), x, originY + 20);
+  }
+
+  // Axes
+  ctx.strokeStyle = '#4da3ff';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(originX, originY);
+  ctx.lineTo(w - 20, originY);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(originX, originY);
+  ctx.lineTo(originX, 20);
+  ctx.stroke();
+
+  // Labels
+  ctx.fillStyle = '#4da3ff';
+  ctx.font = 'bold 12px Courier New';
+  ctx.textAlign = 'center';
+  ctx.fillText('RANGE (km)', w / 2, h - 5);
+  ctx.save();
+  ctx.translate(15, h / 2);
+  ctx.rotate(-Math.PI / 2);
+  ctx.fillText('ZONES', 0, 0);
+  ctx.restore();
+
+  // Draw zones
+  const zoneHeight = (originY - 40) / 3;
+
+  // Beyond kinematic (red)
+  ctx.fillStyle = 'rgba(255,68,68,0.3)';
+  ctx.fillRect(originX + kr * scaleX, 30, (maxRange - kr) * scaleX, originY - 30);
+
+  // Between NEZ and kinematic (yellow)
+  ctx.fillStyle = 'rgba(255,200,100,0.3)';
+  ctx.fillRect(originX + nez * scaleX, 30, (kr - nez) * scaleX, originY - 30);
+
+  // NEZ (green)
+  ctx.fillStyle = 'rgba(92,255,92,0.3)';
+  ctx.fillRect(originX, 30, nez * scaleX, originY - 30);
+
+  // Zone lines
+  ctx.strokeStyle = '#5cff5c';
+  ctx.shadowBlur = 10;
+  ctx.shadowColor = '#5cff5c';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(originX + nez * scaleX, 30);
+  ctx.lineTo(originX + nez * scaleX, originY);
+  ctx.stroke();
+
+  ctx.strokeStyle = '#ffc864';
+  ctx.shadowColor = '#ffc864';
+  ctx.beginPath();
+  ctx.moveTo(originX + kr * scaleX, 30);
+  ctx.lineTo(originX + kr * scaleX, originY);
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+
+  // Current separation line
+  ctx.strokeStyle = '#fff';
+  ctx.shadowBlur = 15;
+  ctx.shadowColor = '#fff';
+  ctx.lineWidth = 3;
+  ctx.setLineDash([8, 8]);
+  ctx.beginPath();
+  ctx.moveTo(originX + sep * scaleX, 30);
+  ctx.lineTo(originX + sep * scaleX, originY);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.shadowBlur = 0;
+
+  // Labels
+  ctx.font = 'bold 11px Courier New';
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#5cff5c';
+  ctx.fillText(`NEZ ${nez.toFixed(0)}`, originX + nez * scaleX / 2, originY / 2);
+  ctx.fillStyle = '#ffc864';
+  ctx.fillText(`KINEMATIC ${kr.toFixed(0)}`, originX + (nez + (kr - nez) / 2) * scaleX, originY / 2);
+  ctx.fillStyle = '#fff';
+  ctx.fillText(`CURRENT`, originX + sep * scaleX, 20);
+  ctx.fillText(`${sep.toFixed(0)}`, originX + sep * scaleX, originY / 2 + 80);
+}
+
+// Scenario loading
+function loadScenario(name) {
+  const s = SCENARIOS[name];
+  $('missile').value = s.missile;
+  $('aspect').value = s.aspect;
+  $('ecm').value = s.ecm;
+  $('altS').value = s.altS;
+  $('altT').value = s.altT;
+  $('machS').value = s.machS;
+  $('machT').value = s.machT;
+  $('sep').value = s.sep;
+  compute();
+}
+
+// Launch simulation
+function simulateLaunch() {
+  const indicator = $('launchIndicator');
+  indicator.classList.add('show');
+  setTimeout(() => indicator.classList.remove('show'), 1500);
+}
+
+// Keyboard controls
+document.addEventListener('keydown', (e) => {
+  const sep = +$('sep').value;
+  const altS = +$('altS').value;
+
+  switch(e.key) {
+    case 'ArrowLeft':
+      $('sep').value = Math.max(20, sep - 5);
+      compute();
+      break;
+    case 'ArrowRight':
+      $('sep').value = Math.min(220, sep + 5);
+      compute();
+      break;
+    case 'ArrowUp':
+      $('altS').value = Math.min(50, altS + 1);
+      compute();
+      break;
+    case 'ArrowDown':
+      $('altS').value = Math.max(5, altS - 1);
+      compute();
+      break;
+    case 'm':
+    case 'M':
+      $('missile').value = $('missile').value === 'meteor' ? 'aim120c7' : 'meteor';
+      compute();
+      break;
+    case 'a':
+    case 'A':
+      const aspects = ['headon', 'flanking', 'tailchase'];
+      const currentIdx = aspects.indexOf($('aspect').value);
+      $('aspect').value = aspects[(currentIdx + 1) % 3];
+      compute();
+      break;
+    case ' ':
+      e.preventDefault();
+      simulateLaunch();
+      break;
+  }
+});
+
+// Initialize
+compute();
+</script>
+
+</body>
+</html>
