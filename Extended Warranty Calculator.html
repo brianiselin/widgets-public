@@ -1,0 +1,1655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Extended Warranty Calculator — Iselin Group Strategic Consulting</title>
+  <style>
+    :root {
+      --bar-bg: linear-gradient(90deg, #091a3acc 0%, #3f122fbc 100%);
+      --bar-border: #3f122f;
+      --bar-height: 46px;
+      --logo-size: 36px;
+      --chip-bg: #641c3f;
+      --chip-fg: #efdcdc;
+      --chip-br: 13px;
+      --chip-px: 14px;
+      --chip-py: 2px;
+      --body-bg: #faf8fa;
+      --shadow: 0 7px 36px rgba(63,18,47,0.21);
+      --container-bg: #fff;
+      --container-br: 10px;
+      --container-pd: 32px;
+      --container-mt: 80px;
+      --container-mb: 70px;
+      --container-maxw: 438px;
+      --navy: #041c47;
+      --burgundy: #7a1734;
+      --green: #2e7d54; /* Subtle accent green */
+      --info-fg: #6d235e;
+      --muted: #82506b;
+      --smallcaps: small-caps;
+      font-family: 'Segoe UI', 'Arial', 'Liberation Sans', sans-serif;
+      color-scheme: light;
+    }
+    body {
+      background: var(--body-bg);
+      margin: 0;
+      color: var(--navy);
+      min-height: 100vh;
+      font-size: 17px;
+    }
+    #ig-topbar {
+      position: fixed;
+      z-index: 1000;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: var(--bar-height);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bar-bg);
+      border-bottom: 1px solid var(--bar-border);
+      box-shadow: 0 1px 7px #3f122f2a;
+      font-size: 1rem;
+      letter-spacing: 0.02em;
+    }
+    #ig-topbar .igt-left {
+      margin-left: 28px;
+      font-weight: 500;
+      color: #e9dedd;
+      font-size: 1.08em;
+      letter-spacing: 0.05em;
+      font-variant: var(--smallcaps);
+      text-shadow: 0 0 6px #3f122f88;
+      white-space: nowrap;
+    }
+    #ig-topbar .igt-breadcrumbs {
+      flex: 1;
+      text-align: center;
+      color: #e6d5d7cc;
+      font-size: 0.97em;
+      font-family: 'Segoe UI', 'Arial', sans-serif;
+      opacity: 0.92;
+      font-variant: var(--smallcaps);
+      white-space: nowrap;
+      line-height: 1;
+      letter-spacing: 0.01em;
+      padding-right: 12px;
+    }
+    #ig-topbar .igt-brandchip {
+      display: flex;
+      align-items: center;
+      background: var(--chip-bg);
+      color: var(--chip-fg);
+      border-radius: var(--chip-br);
+      padding: var(--chip-py) var(--chip-px);
+      font-size: 0.95em;
+      margin-right: 20px;
+      gap: 8px;
+      font-variant: var(--smallcaps);
+      box-shadow: 0 0 7px #641c3f8a;
+    }
+    #ig-topbar .igt-logoimg {
+      display: block;
+      height: var(--logo-size);
+      width: var(--logo-size);
+      border-radius: 7px;
+      box-shadow: 0 0 10px #3f122fbb;
+      object-fit: contain;
+      margin-right: 6px;
+      background: #3f122f;
+    }
+    #main-container {
+      background: var(--container-bg);
+      max-width: var(--container-maxw);
+      margin: var(--container-mt) auto var(--container-mb) auto;
+      box-shadow: var(--shadow);
+      border-radius: var(--container-br);
+      padding: var(--container-pd);
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      position: relative;
+      z-index: 2;
+      min-width: 300px;
+    }
+    #main-container h2 {
+      margin: 0 0 1em 0;
+      font-size: 1.36em;
+      font-weight: 600;
+      color: var(--burgundy);
+      letter-spacing: 0.05em;
+      text-align: center;
+    }
+    #presets-row {
+      display: flex;
+      flex-wrap: wrap;
+      margin: 18px 0 14px 0;
+      gap: 10px 16px;
+      justify-content: center;
+    }
+    .ig-presetbtn {
+      cursor: pointer;
+      background: #efdcdc;
+      color: var(--burgundy);
+      font-variant: var(--smallcaps);
+      font-size: 0.91em;
+      border-radius: 8px;
+      border: 1px solid #c29899;
+      padding: 6px 22px;
+      line-height: 1.10;
+      font-weight: 500;
+      box-shadow: 0 0 8px #a050607a;
+      transition: background-color 0.14s, border 0.15s;
+      outline: none;
+      user-select: none;
+      white-space: nowrap;
+    }
+    .ig-presetbtn.selected {
+      background: var(--burgundy);
+      color: #f9dbd9;
+      border: 1.3px solid var(--burgundy);
+      box-shadow: 0 0 16px #7a1734cc;
+    }
+    #inputs-row {
+      margin: 0 0 18px 0;
+      display: grid;
+      gap: 19px;
+      grid-template-columns: 1fr 1fr;
+    }
+    .ig-fieldgroup {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+    .ig-fieldgroup label {
+      color: var(--navy);
+      font-size: 0.97em;
+      font-weight: 500;
+      font-variant: var(--smallcaps);
+      letter-spacing: 0.03em;
+      margin-bottom: 2px;
+    }
+    .ig-fieldgroup input[type="number"], .ig-fieldgroup input[type="text"] {
+      font-size: 1.04em;
+      padding: 8px 10px;
+      border-radius: 7px;
+      border: 1px solid #d4bcc2;
+      outline: none;
+      transition: border 0.18s;
+      font-family: inherit;
+      background: #fef9fa;
+      color: var(--navy);
+      user-select: text;
+    }
+    .ig-fieldgroup input:focus {
+      border: 1.5px solid var(--burgundy);
+    }
+    .ig-fieldgroup select {
+      font-size: 1.03em;
+      padding: 7px;
+      border-radius: 7px;
+      border: 1px solid #d4bcc2;
+      background: #fbf6f7;
+      color: var(--navy);
+    }
+    #btn-row {
+      display: flex;
+      gap: 17px;
+      justify-content: center;
+      margin: 6px 0;
+      flex-wrap: wrap;
+    }
+    #calc-btn, #export-btn {
+      background: var(--burgundy);
+      color: #f9dbd9;
+      border: none;
+      border-radius: 9px;
+      font-weight: 600;
+      font-variant: var(--smallcaps);
+      font-size: 1.07em;
+      padding: 9px 34px;
+      cursor: pointer;
+      box-shadow: 0 0 9px #7a1734dd;
+      margin-top: 0px;
+      transition: background 0.18s;
+      user-select: none;
+    }
+    #calc-btn:active, #export-btn:active {
+      background: #570f27;
+    }
+    #calc-btn:hover {
+      background: #7a1734;
+    }
+    #export-btn:hover {
+      background: #8e2349;
+    }
+    #result-section {
+      background: #fef9fa;
+      border-radius: 10px;
+      margin: 24px 0 0 0;
+      padding: 28px 24px 18px 24px;
+      box-shadow: 0 0 16px #7a17342b;
+      min-height: 160px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: background 0.13s;
+      position: relative;
+      color: var(--navy);
+      font-weight: 600;
+      user-select: none;
+    }
+    #result-main {
+      font-size: 1.22em;
+      font-weight: 650;
+      margin-bottom: 10px;
+      color: var(--burgundy);
+      text-align: center;
+      min-height: 1.4em;
+      letter-spacing: 0.03em;
+    }
+    #result-details {
+      font-size: 1em;
+      color: var(--muted);
+      text-align: center;
+      margin-bottom: 10px;
+      min-height: 1.4em;
+      font-weight: 500;
+      user-select: text;
+      white-space: pre-wrap;
+    }
+    #result-tip {
+      font-size: 0.97em;
+      color: var(--burgundy);
+      font-style: italic;
+      opacity: 0.88;
+      margin-top: 7px;
+      text-align: center;
+    }
+    #result-verdict {
+      font-size: 1.12em;
+      font-weight: 700;
+      color: var(--navy);
+      margin-top: 6px;
+      letter-spacing: 0.06em;
+      user-select: none;
+    }
+    #result-chart-container {
+      margin: 18px auto 6px auto;
+      display: flex;
+      justify-content: center;
+      width: 260px;
+      height: 108px;
+      align-items: center;
+      background: none;
+      position: relative;
+      user-select: none;
+    }
+    #result-chart {
+      background: #fff6f6;
+      border-radius: 8px;
+      border: 1px solid #d4bcc2;
+      box-shadow: 0 0 12px #7a173426;
+      width: 255px;
+      height: 92px;
+      display: block;
+      margin: auto;
+    }
+    .ig-disclaimer {
+      color: #9c7c89;
+      font-size: 0.97em;
+      margin-top: 17px;
+      margin-bottom: 2px;
+      text-align: center;
+      font-variant: var(--smallcaps);
+      opacity: 0.89;
+      user-select: text;
+    }
+    #ig-bottombar {
+      position: fixed;
+      left: 0; bottom: 0;
+      width: 100vw;
+      height: 54px;
+      background: var(--bar-bg);
+      box-shadow: 0 -2px 24px #3f122f55;
+      border-top: 1.5px solid var(--bar-border);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 1.04em;
+      letter-spacing: 0.010em;
+      padding: 0 24px 0 18px;
+      font-variant: var(--smallcaps);
+      color: #debdc1;
+      font-weight: 520;
+      user-select: none;
+    }
+    #ig-bottom-left {
+      font-size: 1.07em;
+      color: #e9d6db;
+      font-variant: var(--smallcaps);
+      letter-spacing: 0.025em;
+      white-space: nowrap;
+      align-items: center;
+      margin-right: 16px;
+    }
+    #ig-bottom-meta {
+      color: #e3c6cc;
+      opacity: 0.95;
+      font-size: 0.97em;
+      letter-spacing: 0.027em;
+      margin-left: 7px;
+      margin-right: 12px;
+      font-variant: var(--smallcaps);
+      white-space: nowrap;
+    }
+    #ig-bottom-ip {
+      color: #ac8d9b;
+      opacity: 0.83;
+      font-size: 0.90em;
+      font-variant: var(--smallcaps);
+      margin-left: 17px;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+      max-width: 41vw;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    @media (max-width: 600px) {
+      #main-container { max-width: 98vw; padding: 18px 8vw; }
+      #result-chart-container { width: 96vw; }
+      #result-chart { width: 95vw; }
+      #ig-topbar, #ig-bottombar { font-size: 0.98em; height: 43px;}
+      #ig-bottom-ip { font-size: 0.80em; display: block; }
+      #presets-row { gap: 10px 9px; }
+    }
+    ::selection { background: #7a173433; }
+    /* Hide spinner for number inputs */
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+      -webkit-appearance: none; margin: 0;
+    }
+    input[type=number] { -moz-appearance: textfield; }
+  </style>
+</head>
+<body>
+  <!-- Top Bar -->
+  <div id="ig-topbar" role="banner">
+    <div class="igt-left">Iselin Group - Strategic Consulting</div>
+    <div class="igt-breadcrumbs" aria-label="Contact and site info">iselingroup.com&nbsp;&nbsp;-&nbsp;&nbsp;brian.iselin(@)iselingroup.com</div>
+    <div class="igt-brandchip" title="Iselin Group">
+      <img
+        src="https://github.com/brianiselin/widgets-public/raw/main/Iselin%20Group%20Logo%201024%20x.jpg"
+        alt="Iselin Group logo" class="igt-logoimg" />
+      ISG
+    </div>
+  </div>
+  <main id="main-container" role="main" aria-label="Extended Warranty Calculator">
+    <h2>Is Your Extended Warranty Worth It?</h2>
+    <div id="presets-row" role="toolbar" aria-label="Select car brand presets">
+      <button class="ig-presetbtn" id="preset-honda" type="button" aria-pressed="false">Honda</button>
+      <button class="ig-presetbtn" id="preset-porsche" type="button" aria-pressed="false">Porsche</button>
+      <button class="ig-presetbtn" id="preset-bmw" type="button" aria-pressed="false">BMW</button>
+      <button class="ig-presetbtn" id="preset-vw" type="button" aria-pressed="false">VW</button>
+      <button class="ig-presetbtn" id="preset-tesla" type="button" aria-pressed="false">Tesla</button>
+      <button class="ig-presetbtn" id="preset-chevrolet" type="button" aria-pressed="false">Chevrolet</button>
+      <button class="ig-presetbtn" id="preset-opel" type="button" aria-pressed="false">Opel</button>
+      <button class="ig-presetbtn" id="preset-gm" type="button" aria-pressed="false">GM</button>
+      <button class="ig-presetbtn" id="preset-toyota" type="button" aria-pressed="false">Toyota</button>
+      <button class="ig-presetbtn" id="preset-mazda" type="button" aria-pressed="false">Mazda</button>
+      <button class="ig-presetbtn" id="preset-custom" type="button" aria-pressed="false">Custom</button>
+    </div>
+    <div id="inputs-row">
+      <div class="ig-fieldgroup">
+        <label for="input-brand">Brand</label>
+        <input
+          type="text"
+          id="input-brand"
+          autocomplete="off"
+          spellcheck="false"
+          placeholder="Honda, Porsche..."
+          required
+          aria-required="true"
+          aria-describedby="brandHint" />
+        <div id="brandHint" style="font-size:0.8em;color: var(--muted);margin-top:2px">
+          Type a custom brand if not in presets
+        </div>
+      </div>
+      <div class="ig-fieldgroup">
+        <label for="input-years">Years of Coverage</label>
+        <input type="number" id="input-years" min="1" max="10" step="1" value="5" required aria-required="true" />
+      </div>
+      <div class="ig-fieldgroup">
+        <label for="input-repair">Avg Annual Repairs ($)</label>
+        <input type="number" id="input-repair" min="0" max="10000" step="10" value="428" required aria-required="true" />
+      </div>
+      <div class="ig-fieldgroup">
+        <label for="input-warranty">Annual Warranty Premium ($)</label>
+        <input type="number" id="input-warranty" min="0" max="5000" step="10" value="1000" required aria-required="true" />
+      </div>
+    </div>
+    <div id="btn-row">
+      <button id="calc-btn" type="button" aria-label="Calculate extended warranty worth">Calculate</button>
+      <button id="export-btn" type="button" title="Export results chart as PNG" aria-label="Export results chart as PNG">
+        Export PNG
+      </button>
+    </div>
+    <section id="result-section" aria-live="polite" aria-atomic="true" aria-relevant="additions removals text" tabindex="-1">
+      <div id="result-main"></div>
+      <div id="result-details"></div>
+      <div id="result-tip"></div>
+      <div id="result-verdict"></div>
+      <div id="result-chart-container">
+        <canvas id="result-chart" width="255" height="92" aria-label="Repairs vs Warranty Cost Chart" role="img"></canvas>
+      </div>
+      <div class="ig-disclaimer">
+        Decision logic and UI &copy; Iselin Group. For consulting and analytics &mdash; brian.iselin(@)iselingroup.com
+      </div>
+    </section>
+  </main>
+  <!-- Bottom Bar -->
+  <footer id="ig-bottombar" role="contentinfo">
+    <div id="ig-bottom-left">Iselin Group - Strategic Consulting</div>
+    <div id="ig-bottom-meta">
+      &copy; Iselin Group. “Extended Warranty Calculator”— brian.iselin(@)iselingroup.com.
+    </div>
+    <div id="ig-bottom-ip">
+      The underlying decision‑integrity model, logic, and UI are proprietary to Iselin Group and may not be
+      reproduced, adapted, or deployed in whole or in part without prior written consent; all rights reserved.
+    </div>
+  </footer>
+  <!-- Cloudflare Web Analytics -->
+  <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "22466d27b8c14ef98293d50b38526660"}'></script>
+  <!-- html2canvas CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" defer></script>
+  <script>
+    window.addEventListener("load", function () {
+      // Extended formula brand data with reliability benchmarks (approximate average repair cost per year)
+      const presets = {
+        honda: {
+          brand: "Honda",
+          years: 5,
+          repair: 428,
+          warranty: 1000,
+        },
+        porsche: {
+          brand: "Porsche",
+          years: 5,
+          repair: 1192,
+          warranty: 1000,
+        },
+        bmw: {
+          brand: "BMW",
+          years: 5,
+          repair: 1030,
+          warranty: 1100,
+        },
+        vw: {
+          brand: "Volkswagen",
+          years: 5,
+          repair: 860,
+          warranty: 1050,
+        },
+        tesla: {
+          brand: "Tesla",
+          years: 5,
+          repair: 670,
+          warranty: 1200,
+        },
+        chevrolet: {
+          brand: "Chevrolet",
+          years: 5,
+          repair: 790,
+          warranty: 1000,
+        },
+        opel: {
+          brand: "Opel",
+          years: 5,
+          repair: 810,
+          warranty: 950,
+        },
+        gm: {
+          brand: "GM",
+          years: 5,
+          repair: 800,
+          warranty: 1000,
+        },
+        toyota: {
+          brand: "Toyota",
+          years: 5,
+          repair: 460,
+          warranty: 980,
+        },
+        mazda: {
+          brand: "Mazda",
+          years: 5,
+          repair: 440,
+          warranty: 920,
+        }
+      };
+      // Custom brand logic: If repair data missing or custom, use average of 750 and warranty as input (or user input)
+      // GM and Opel relationship note: GM used to own Opel; treat independently.
+
+      const presetBtns = {
+        honda: document.getElementById("preset-honda"),
+        porsche: document.getElementById("preset-porsche"),
+        bmw: document.getElementById("preset-bmw"),
+        vw: document.getElementById("preset-vw"),
+        tesla: document.getElementById("preset-tesla"),
+        chevrolet: document.getElementById("preset-chevrolet"),
+        opel: document.getElementById("preset-opel"),
+        gm: document.getElementById("preset-gm"),
+        toyota: document.getElementById("preset-toyota"),
+        mazda: document.getElementById("preset-mazda"),
+        custom: document.getElementById("preset-custom")
+      };
+
+      const inputBrand = document.getElementById("input-brand");
+      const inputYears = document.getElementById("input-years");
+      const inputRepair = document.getElementById("input-repair");
+      const inputWarranty = document.getElementById("input-warranty");
+      const calcBtn = document.getElementById("calc-btn");
+      const exportBtn = document.getElementById("export-btn");
+      const resultMain = document.getElementById("result-main");
+      const resultDetails = document.getElementById("result-details");
+      const resultTip = document.getElementById("result-tip");
+      const resultVerdict = document.getElementById("result-verdict");
+      const resultChart = document.getElementById("result-chart");
+
+      function stateToHash(state) {
+        let sBrand = encodeURIComponent(state.brand).replace(/[^a-zA-Z0-9%\-\.]/g, '');
+        let sYears = Number(state.years);
+        let sRepair = Number(state.repair);
+        let sWarranty = Number(state.warranty);
+        return `brand=${sBrand}&years=${sYears}&repair=${sRepair}&warranty=${sWarranty}`;
+      }
+      function hashToState(hash) {
+        let s = {};
+        hash.split("&").forEach(kv => {
+          let [k, v] = kv.split("=");
+          if (["years", "repair", "warranty"].indexOf(k) >= 0) s[k] = Number(v);
+          else if (k === "brand") s[k] = decodeURIComponent(v || "");
+        });
+        if (!s.brand || !s.years || !s.repair || !s.warranty) return null;
+        return s;
+      }
+      function updateURLHash(state) {
+        let h = stateToHash(state);
+        if (window.location.hash !== "#" + h) window.location.hash = "#" + h;
+      }
+      function loadStateFromHash() {
+        let h = window.location.hash.substr(1);
+        if (!h) return null;
+        return hashToState(h);
+      }
+
+      // Set inputs and update ARIA pressed for presets
+      function setInputsFromState(state, fromPreset) {
+        inputBrand.value = state.brand || "";
+        inputYears.value = state.years || "";
+        inputRepair.value = state.repair || "";
+        inputWarranty.value = state.warranty || "";
+        if (fromPreset) {
+          for (const k in presetBtns) {
+            presetBtns[k].classList.remove("selected");
+            presetBtns[k].setAttribute("aria-pressed", "false");
+          }
+          const brandLower = (state.brand || "").toLowerCase();
+          let matched = false;
+          for (const k in presets) {
+            if (brandLower.includes(k)) {
+              presetBtns[k]?.classList.add("selected");
+              presetBtns[k]?.setAttribute("aria-pressed", "true");
+              matched = true;
+              break;
+            }
+          }
+          if (!matched) {
+            presetBtns.custom?.classList.add("selected");
+            presetBtns.custom?.setAttribute("aria-pressed", "true");
+          }
+        }
+      }
+
+      // Verdict logic comparison
+      function getVerdict(delta) {
+        const margin = 0.1; // 10% margin for line ball
+        if (Math.abs(delta) < 50) return "Line Ball Call";
+        if (delta < -50) return "Worth It";
+        if (delta > 50) return "Not Worth It";
+        return "Line Ball Call";
+      }
+
+      // Decision and text logic per article with verdict included
+      function runAnalysis(state) {
+        let years = Math.max(1, Number(state.years) || 1);
+        let repair = Math.max(0, Number(state.repair) || 0);
+        let warranty = Math.max(0, Number(state.warranty) || 0);
+        let totalRepairs = years * repair;
+        let totalWarranty = years * warranty;
+        let result = {};
+        result.brand = state.brand;
+        result.years = years;
+        result.repair = repair;
+        result.warranty = warranty;
+        result.totalRepairs = totalRepairs;
+        result.totalWarranty = totalWarranty;
+        result.delta = totalWarranty - totalRepairs;
+
+        // Determine verdict string
+        const verdictText = getVerdict(result.delta);
+        result.verdict = verdictText;
+
+        // Threshold explanation
+        let tip = "";
+        let worth = "";
+        if (verdictText === "Not Worth It") {
+          worth = "No, self-insure — extended warranty likely loses money on average.";
+          tip = "Brands with low repair costs (< $800/year) generally save more by banking cash.";
+        } else if (verdictText === "Worth It") {
+          worth = "Yes — extended warranty can cap large unexpected costs and is likely worthwhile.";
+          tip = "Higher repair costs (> $1,200/year) favor extended warranty purchase.";
+        } else {
+          // Line Ball Call category on narrow difference
+          worth = "Maybe — warranty could hedge big surprise repairs if planning long-term ownership.";
+          tip = "Evaluate personal usage and risk tolerance before deciding.";
+        }
+
+        let details = `${result.brand} | ${years} yr${years > 1 ? "s" : ""}: Expected repairs $${totalRepairs.toLocaleString()}, warranty cost $${totalWarranty.toLocaleString()}.\n${Math.abs(result.delta) > 50 ? (result.delta < 0 ? "Warranty saves" : "Warranty loses") : "Break-even."} ${Math.abs(result.delta) > 50 ? "$" + Math.abs(result.delta).toLocaleString() : ""}`;
+        result.details = details;
+        result.worth = worth;
+        result.tip = tip;
+        return result;
+      }
+
+      // Render textual and chart results including verdict
+      function renderResult(res) {
+        resultMain.textContent = res.worth;
+        resultDetails.textContent = res.details;
+        resultTip.textContent = res.tip;
+        resultVerdict.textContent = "Verdict: " + res.verdict;
+        drawChart(res);
+        const rs = document.getElementById("result-section");
+        rs.focus();
+      }
+
+      // Draw bar chart Repairs vs Warranty Cost
+      function drawChart(res) {
+        const ctx = resultChart.getContext("2d");
+        ctx.clearRect(0, 0, resultChart.width, resultChart.height);
+
+        const labels = ["Repairs", "Warranty"];
+        const values = [res.totalRepairs, res.totalWarranty];
+        const navy = getComputedStyle(document.documentElement).getPropertyValue("--navy").trim();
+        const burgundy = getComputedStyle(document.documentElement).getPropertyValue("--burgundy").trim();
+        const green = getComputedStyle(document.documentElement).getPropertyValue("--green").trim();
+
+        const repairsColor = res.totalRepairs > res.totalWarranty ? burgundy : green;
+        const warrantyColor = navy;
+
+        const colors = [repairsColor, warrantyColor];
+
+        const barWidth = 57;
+        const gap = 32;
+        const baseX = 28;
+        const baseY = 64;
+
+        const maxVal = Math.max(...values, 100);
+        const scale = maxVal > 0 ? 44 / maxVal : 1;
+
+        ctx.save();
+
+        // Grid lines + labels
+        ctx.globalAlpha = 0.14;
+        ctx.strokeStyle = "#b17e8b";
+        ctx.fillStyle = "#b17e8b";
+        ctx.font = "14px Arial";
+        for (let i = 0; i <= 2; i++) {
+          let y = baseY - i * 22;
+          ctx.beginPath();
+          ctx.moveTo(6, y);
+          ctx.lineTo(resultChart.width - 6, y);
+          ctx.stroke();
+
+          let gridVal = Math.round((i * maxVal) / 2).toLocaleString();
+          ctx.fillText("$" + gridVal, 6, y - 7);
+        }
+
+        ctx.globalAlpha = 1;
+
+        // Bars
+        for (let i = 0; i < 2; i++) {
+          const height = values[i] * scale;
+          ctx.fillStyle = colors[i];
+          ctx.shadowColor = burgundy + "60";
+          ctx.shadowBlur = 8;
+          ctx.fillRect(baseX + i * (barWidth + gap), baseY - height, barWidth, height);
+          ctx.shadowBlur = 0;
+          ctx.font = "14px Arial";
+          ctx.fillStyle = navy;
+          ctx.textAlign = "center";
+          ctx.fillText(labels[i], baseX + i * (barWidth + gap) + barWidth / 2, baseY + 17);
+        }
+
+        // Delta display at top-right
+        const delta = values[1] - values[0];
+        ctx.font = "15px Arial";
+        ctx.textAlign = "right";
+        ctx.fillStyle = delta >= 0 ? burgundy : green;
+        const sign = delta >= 0 ? "-" : "+";
+        ctx.fillText(
+          sign +
+            "$" +
+            Math.abs(Math.round(delta)).toLocaleString(),
+          resultChart.width - 12,
+          22
+        );
+
+        ctx.restore();
+      }
+
+      // Export button for PNG
+      exportBtn.addEventListener("click", function () {
+        html2canvas(document.getElementById("result-chart-container"), {
+          backgroundColor: null,
+          scale: 2,
+          useCORS: true,
+        }).then(function (canvas) {
+          const link = document.createElement("a");
+          link.download = "warranty_calc_chart.png";
+          link.href = canvas.toDataURL();
+          link.click();
+        });
+      });
+
+      // Preset button event handlers
+      Object.entries(presetBtns).forEach(([key, btn]) => {
+        btn.addEventListener("click", () => {
+          if (key === "custom") {
+            // Custom selected: no preset override, keep current inputs
+            setInputsFromState(getCurrentInputs(), true);
+            renderDeterministic(getCurrentInputs());
+            updateURLHash(getCurrentInputs());
+            return;
+          }
+          const preset = presets[key];
+          if (preset) {
+            setInputsFromState(preset, true);
+            renderDeterministic(preset);
+            updateURLHash(preset);
+          }
+        });
+      });
+
+      // Input changes deselect presets and set custom button
+      [inputBrand, inputYears, inputRepair, inputWarranty].forEach((input) => {
+        input.addEventListener("change", () => {
+          for (const k in presetBtns) {
+            presetBtns[k].classList.remove("selected");
+            presetBtns[k].setAttribute("aria-pressed", "false");
+          }
+          presetBtns.custom.classList.add("selected");
+          presetBtns.custom.setAttribute("aria-pressed", "true");
+          renderDeterministic(getCurrentInputs());
+          updateURLHash(getCurrentInputs());
+        });
+      });
+
+      // Calculate button handler
+      calcBtn.addEventListener("click", () => {
+        const state = getCurrentInputs();
+        renderDeterministic(state);
+        updateURLHash(state);
+      });
+
+      // Gather inputs as state
+      function getCurrentInputs() {
+        return {
+          brand: inputBrand.value.trim(),
+          years: Number(inputYears.value),
+          repair: Number(inputRepair.value),
+          warranty: Number(inputWarranty.value),
+        };
+      }
+
+      // Render output and focus the results for accessibility
+      function renderDeterministic(state) {
+        // If custom input with no repair value or zero, use estimates for "line ball" logic:
+        // Provide a simple fallback to avoid empty or zero repairs
+        if (
+          !state.repair ||
+          state.repair === 0 ||
+          !state.years ||
+          state.years <= 0
+        ) {
+          state.repair = 750; // default average repair estimate
+          if (!state.years || state.years <= 0) state.years = 5;
+        }
+        // Warranty premium fallback if zero: use 1000 for estimate
+        if (!state.warranty || state.warranty === 0) state.warranty = 1000;
+
+        // Always upper-case first letter of brand for polish in results
+        if (typeof state.brand === "string") {
+          state.brand = state.brand
+            .trim()
+            .replace(/\b\w/g, (ch) => ch.toUpperCase());
+        }
+
+        const result = runAnalysis(state);
+        renderResult(result);
+      }
+
+      // Initial load from URL hash or default preset Honda
+      function initialLoad() {
+        const hashState = loadStateFromHash();
+        if (hashState) {
+          const brandLower = (hashState.brand || "").toLowerCase();
+          const matchPreset = Object.entries(presets).find(([k, v]) =>
+            brandLower.includes(k)
+          );
+          if (matchPreset) {
+            setInputsFromState(matchPreset[1], true);
+            renderDeterministic(matchPreset[1]);
+            updateURLHash(matchPreset[1]);
+          } else {
+            setInputsFromState(hashState, true);
+            renderDeterministic(hashState);
+            updateURLHash(hashState);
+          }
+        } else {
+          setInputsFromState(presets.honda, true);
+          renderDeterministic(presets.honda);
+          updateURLHash(presets.honda);
+        }
+      }
+
+      // Listen for URL hash changes and update UI accordingly
+      window.addEventListener("hashchange", () => {
+        const hashState = loadStateFromHash();
+        if (hashState) {
+          const brandLower = (hashState.brand || "").toLowerCase();
+          const matchPreset = Object.entries(presets).find(([k, v]) =>
+            brandLower.includes(k)
+          );
+          if (matchPreset) {
+            setInputsFromState(matchPreset[1], true);
+            renderDeterministic(matchPreset[1]);
+          } else {
+            setInputsFromState(hashState, true);
+            renderDeterministic(hashState);
+          }
+        }
+      });
+
+      initialLoad();
+    });
+  </script>
+</body>
+</html>
+``````html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Extended Warranty Calculator — Iselin Group Strategic Consulting</title>
+  <style>
+    :root {
+      --bar-bg: linear-gradient(90deg, #091a3acc 0%, #3f122fbc 100%);
+      --bar-border: #3f122f;
+      --bar-height: 46px;
+      --logo-size: 36px;
+      --chip-bg: #641c3f;
+      --chip-fg: #efdcdc;
+      --chip-br: 13px;
+      --chip-px: 14px;
+      --chip-py: 2px;
+      --body-bg: #faf8fa;
+      --shadow: 0 7px 36px rgba(63,18,47,0.21);
+      --container-bg: #fff;
+      --container-br: 10px;
+      --container-pd: 32px;
+      --container-mt: 80px;
+      --container-mb: 70px;
+      --container-maxw: 438px;
+      --navy: #041c47;
+      --burgundy: #7a1734;
+      --green: #2e7d54; /* Subtle accent green */
+      --info-fg: #6d235e;
+      --muted: #82506b;
+      --smallcaps: small-caps;
+      font-family: 'Segoe UI', 'Arial', 'Liberation Sans', sans-serif;
+      color-scheme: light;
+    }
+    body {
+      background: var(--body-bg);
+      margin: 0;
+      color: var(--navy);
+      min-height: 100vh;
+      font-size: 17px;
+    }
+    #ig-topbar {
+      position: fixed;
+      z-index: 1000;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: var(--bar-height);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bar-bg);
+      border-bottom: 1px solid var(--bar-border);
+      box-shadow: 0 1px 7px #3f122f2a;
+      font-size: 1rem;
+      letter-spacing: 0.02em;
+    }
+    #ig-topbar .igt-left {
+      margin-left: 28px;
+      font-weight: 500;
+      color: #e9dedd;
+      font-size: 1.08em;
+      letter-spacing: 0.05em;
+      font-variant: var(--smallcaps);
+      text-shadow: 0 0 6px #3f122f88;
+      white-space: nowrap;
+    }
+    #ig-topbar .igt-breadcrumbs {
+      flex: 1;
+      text-align: center;
+      color: #e6d5d7cc;
+      font-size: 0.97em;
+      font-family: 'Segoe UI', 'Arial', sans-serif;
+      opacity: 0.92;
+      font-variant: var(--smallcaps);
+      white-space: nowrap;
+      line-height: 1;
+      letter-spacing: 0.01em;
+      padding-right: 12px;
+    }
+    #ig-topbar .igt-brandchip {
+      display: flex;
+      align-items: center;
+      background: var(--chip-bg);
+      color: var(--chip-fg);
+      border-radius: var(--chip-br);
+      padding: var(--chip-py) var(--chip-px);
+      font-size: 0.95em;
+      margin-right: 20px;
+      gap: 8px;
+      font-variant: var(--smallcaps);
+      box-shadow: 0 0 7px #641c3f8a;
+    }
+    #ig-topbar .igt-logoimg {
+      display: block;
+      height: var(--logo-size);
+      width: var(--logo-size);
+      border-radius: 7px;
+      box-shadow: 0 0 10px #3f122fbb;
+      object-fit: contain;
+      margin-right: 6px;
+      background: #3f122f;
+    }
+    #main-container {
+      background: var(--container-bg);
+      max-width: var(--container-maxw);
+      margin: var(--container-mt) auto var(--container-mb) auto;
+      box-shadow: var(--shadow);
+      border-radius: var(--container-br);
+      padding: var(--container-pd);
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      position: relative;
+      z-index: 2;
+      min-width: 300px;
+    }
+    #main-container h2 {
+      margin: 0 0 1em 0;
+      font-size: 1.36em;
+      font-weight: 600;
+      color: var(--burgundy);
+      letter-spacing: 0.05em;
+      text-align: center;
+    }
+    #presets-row {
+      display: flex;
+      flex-wrap: wrap;
+      margin: 18px 0 14px 0;
+      gap: 10px 16px;
+      justify-content: center;
+    }
+    .ig-presetbtn {
+      cursor: pointer;
+      background: #efdcdc;
+      color: var(--burgundy);
+      font-variant: var(--smallcaps);
+      font-size: 0.91em;
+      border-radius: 8px;
+      border: 1px solid #c29899;
+      padding: 6px 22px;
+      line-height: 1.10;
+      font-weight: 500;
+      box-shadow: 0 0 8px #a050607a;
+      transition: background-color 0.14s, border 0.15s;
+      outline: none;
+      user-select: none;
+      white-space: nowrap;
+    }
+    .ig-presetbtn.selected {
+      background: var(--burgundy);
+      color: #f9dbd9;
+      border: 1.3px solid var(--burgundy);
+      box-shadow: 0 0 16px #7a1734cc;
+    }
+    #inputs-row {
+      margin: 0 0 18px 0;
+      display: grid;
+      gap: 19px;
+      grid-template-columns: 1fr 1fr;
+    }
+    .ig-fieldgroup {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+    .ig-fieldgroup label {
+      color: var(--navy);
+      font-size: 0.97em;
+      font-weight: 500;
+      font-variant: var(--smallcaps);
+      letter-spacing: 0.03em;
+      margin-bottom: 2px;
+    }
+    .ig-fieldgroup input[type="number"], .ig-fieldgroup input[type="text"] {
+      font-size: 1.04em;
+      padding: 8px 10px;
+      border-radius: 7px;
+      border: 1px solid #d4bcc2;
+      outline: none;
+      transition: border 0.18s;
+      font-family: inherit;
+      background: #fef9fa;
+      color: var(--navy);
+      user-select: text;
+    }
+    .ig-fieldgroup input:focus {
+      border: 1.5px solid var(--burgundy);
+    }
+    .ig-fieldgroup select {
+      font-size: 1.03em;
+      padding: 7px;
+      border-radius: 7px;
+      border: 1px solid #d4bcc2;
+      background: #fbf6f7;
+      color: var(--navy);
+    }
+    #btn-row {
+      display: flex;
+      gap: 17px;
+      justify-content: center;
+      margin: 6px 0;
+      flex-wrap: wrap;
+    }
+    #calc-btn, #export-btn {
+      background: var(--burgundy);
+      color: #f9dbd9;
+      border: none;
+      border-radius: 9px;
+      font-weight: 600;
+      font-variant: var(--smallcaps);
+      font-size: 1.07em;
+      padding: 9px 34px;
+      cursor: pointer;
+      box-shadow: 0 0 9px #7a1734dd;
+      margin-top: 0px;
+      transition: background 0.18s;
+      user-select: none;
+    }
+    #calc-btn:active, #export-btn:active {
+      background: #570f27;
+    }
+    #calc-btn:hover {
+      background: #7a1734;
+    }
+    #export-btn:hover {
+      background: #8e2349;
+    }
+    #result-section {
+      background: #fef9fa;
+      border-radius: 10px;
+      margin: 24px 0 0 0;
+      padding: 28px 24px 18px 24px;
+      box-shadow: 0 0 16px #7a17342b;
+      min-height: 160px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: background 0.13s;
+      position: relative;
+      color: var(--navy);
+      font-weight: 600;
+      user-select: none;
+    }
+    #result-main {
+      font-size: 1.22em;
+      font-weight: 650;
+      margin-bottom: 10px;
+      color: var(--burgundy);
+      text-align: center;
+      min-height: 1.4em;
+      letter-spacing: 0.03em;
+    }
+    #result-details {
+      font-size: 1em;
+      color: var(--muted);
+      text-align: center;
+      margin-bottom: 10px;
+      min-height: 1.4em;
+      font-weight: 500;
+      user-select: text;
+      white-space: pre-wrap;
+    }
+    #result-tip {
+      font-size: 0.97em;
+      color: var(--burgundy);
+      font-style: italic;
+      opacity: 0.88;
+      margin-top: 7px;
+      text-align: center;
+    }
+    #result-verdict {
+      font-size: 1.12em;
+      font-weight: 700;
+      color: var(--navy);
+      margin-top: 6px;
+      letter-spacing: 0.06em;
+      user-select: none;
+    }
+    #result-chart-container {
+      margin: 18px auto 6px auto;
+      display: flex;
+      justify-content: center;
+      width: 260px;
+      height: 108px;
+      align-items: center;
+      background: none;
+      position: relative;
+      user-select: none;
+    }
+    #result-chart {
+      background: #fff6f6;
+      border-radius: 8px;
+      border: 1px solid #d4bcc2;
+      box-shadow: 0 0 12px #7a173426;
+      width: 255px;
+      height: 92px;
+      display: block;
+      margin: auto;
+    }
+    .ig-disclaimer {
+      color: #9c7c89;
+      font-size: 0.97em;
+      margin-top: 17px;
+      margin-bottom: 2px;
+      text-align: center;
+      font-variant: var(--smallcaps);
+      opacity: 0.89;
+      user-select: text;
+    }
+    #ig-bottombar {
+      position: fixed;
+      left: 0; bottom: 0;
+      width: 100vw;
+      height: 54px;
+      background: var(--bar-bg);
+      box-shadow: 0 -2px 24px #3f122f55;
+      border-top: 1.5px solid var(--bar-border);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 1.04em;
+      letter-spacing: 0.010em;
+      padding: 0 24px 0 18px;
+      font-variant: var(--smallcaps);
+      color: #debdc1;
+      font-weight: 520;
+      user-select: none;
+    }
+    #ig-bottom-left {
+      font-size: 1.07em;
+      color: #e9d6db;
+      font-variant: var(--smallcaps);
+      letter-spacing: 0.025em;
+      white-space: nowrap;
+      align-items: center;
+      margin-right: 16px;
+    }
+    #ig-bottom-meta {
+      color: #e3c6cc;
+      opacity: 0.95;
+      font-size: 0.97em;
+      letter-spacing: 0.027em;
+      margin-left: 7px;
+      margin-right: 12px;
+      font-variant: var(--smallcaps);
+      white-space: nowrap;
+    }
+    #ig-bottom-ip {
+      color: #ac8d9b;
+      opacity: 0.83;
+      font-size: 0.90em;
+      font-variant: var(--smallcaps);
+      margin-left: 17px;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+      max-width: 41vw;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    @media (max-width: 600px) {
+      #main-container { max-width: 98vw; padding: 18px 8vw; }
+      #result-chart-container { width: 96vw; }
+      #result-chart { width: 95vw; }
+      #ig-topbar, #ig-bottombar { font-size: 0.98em; height: 43px;}
+      #ig-bottom-ip { font-size: 0.80em; display: block; }
+      #presets-row { gap: 10px 9px; }
+    }
+    ::selection { background: #7a173433; }
+    /* Hide spinner for number inputs */
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+      -webkit-appearance: none; margin: 0;
+    }
+    input[type=number] { -moz-appearance: textfield; }
+  </style>
+</head>
+<body>
+  <!-- Top Bar -->
+  <div id="ig-topbar" role="banner">
+    <div class="igt-left">Iselin Group - Strategic Consulting</div>
+    <div class="igt-breadcrumbs" aria-label="Contact and site info">iselingroup.com&nbsp;&nbsp;-&nbsp;&nbsp;brian.iselin(@)iselingroup.com</div>
+    <div class="igt-brandchip" title="Iselin Group">
+      <img
+        src="https://github.com/brianiselin/widgets-public/raw/main/Iselin%20Group%20Logo%201024%20x.jpg"
+        alt="Iselin Group logo" class="igt-logoimg" />
+      ISG
+    </div>
+  </div>
+  <main id="main-container" role="main" aria-label="Extended Warranty Calculator">
+    <h2>Is Your Extended Warranty Worth It?</h2>
+    <div id="presets-row" role="toolbar" aria-label="Select car brand presets">
+      <button class="ig-presetbtn" id="preset-honda" type="button" aria-pressed="false">Honda</button>
+      <button class="ig-presetbtn" id="preset-porsche" type="button" aria-pressed="false">Porsche</button>
+      <button class="ig-presetbtn" id="preset-bmw" type="button" aria-pressed="false">BMW</button>
+      <button class="ig-presetbtn" id="preset-vw" type="button" aria-pressed="false">VW</button>
+      <button class="ig-presetbtn" id="preset-tesla" type="button" aria-pressed="false">Tesla</button>
+      <button class="ig-presetbtn" id="preset-chevrolet" type="button" aria-pressed="false">Chevrolet</button>
+      <button class="ig-presetbtn" id="preset-opel" type="button" aria-pressed="false">Opel</button>
+      <button class="ig-presetbtn" id="preset-gm" type="button" aria-pressed="false">GM</button>
+      <button class="ig-presetbtn" id="preset-toyota" type="button" aria-pressed="false">Toyota</button>
+      <button class="ig-presetbtn" id="preset-mazda" type="button" aria-pressed="false">Mazda</button>
+      <button class="ig-presetbtn" id="preset-custom" type="button" aria-pressed="false">Custom</button>
+    </div>
+    <div id="inputs-row">
+      <div class="ig-fieldgroup">
+        <label for="input-brand">Brand</label>
+        <input
+          type="text"
+          id="input-brand"
+          autocomplete="off"
+          spellcheck="false"
+          placeholder="Honda, Porsche..."
+          required
+          aria-required="true"
+          aria-describedby="brandHint" />
+        <div id="brandHint" style="font-size:0.8em;color: var(--muted);margin-top:2px">
+          Type a custom brand if not in presets
+        </div>
+      </div>
+      <div class="ig-fieldgroup">
+        <label for="input-years">Years of Coverage</label>
+        <input type="number" id="input-years" min="1" max="10" step="1" value="5" required aria-required="true" />
+      </div>
+      <div class="ig-fieldgroup">
+        <label for="input-repair">Avg Annual Repairs ($)</label>
+        <input type="number" id="input-repair" min="0" max="10000" step="10" value="428" required aria-required="true" />
+      </div>
+      <div class="ig-fieldgroup">
+        <label for="input-warranty">Annual Warranty Premium ($)</label>
+        <input type="number" id="input-warranty" min="0" max="5000" step="10" value="1000" required aria-required="true" />
+      </div>
+    </div>
+    <div id="btn-row">
+      <button id="calc-btn" type="button" aria-label="Calculate extended warranty worth">Calculate</button>
+      <button id="export-btn" type="button" title="Export results chart as PNG" aria-label="Export results chart as PNG">
+        Export PNG
+      </button>
+    </div>
+    <section id="result-section" aria-live="polite" aria-atomic="true" aria-relevant="additions removals text" tabindex="-1">
+      <div id="result-main"></div>
+      <div id="result-details"></div>
+      <div id="result-tip"></div>
+      <div id="result-verdict"></div>
+      <div id="result-chart-container">
+        <canvas id="result-chart" width="255" height="92" aria-label="Repairs vs Warranty Cost Chart" role="img"></canvas>
+      </div>
+      <div class="ig-disclaimer">
+        Decision logic and UI &copy; Iselin Group. For consulting and analytics &mdash; brian.iselin(@)iselingroup.com
+      </div>
+    </section>
+  </main>
+  <!-- Bottom Bar -->
+  <footer id="ig-bottombar" role="contentinfo">
+    <div id="ig-bottom-left">Iselin Group - Strategic Consulting</div>
+    <div id="ig-bottom-meta">
+      &copy; Iselin Group. “Extended Warranty Calculator”— brian.iselin(@)iselingroup.com.
+    </div>
+    <div id="ig-bottom-ip">
+      The underlying decision‑integrity model, logic, and UI are proprietary to Iselin Group and may not be
+      reproduced, adapted, or deployed in whole or in part without prior written consent; all rights reserved.
+    </div>
+  </footer>
+  <!-- Cloudflare Web Analytics -->
+  <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "22466d27b8c14ef98293d50b38526660"}'></script>
+  <!-- html2canvas CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" defer></script>
+  <script>
+    window.addEventListener("load", function () {
+      const presets = {
+        honda: { brand: "Honda", years: 5, repair: 428, warranty: 1000 },
+        porsche: { brand: "Porsche", years: 5, repair: 1192, warranty: 1000 },
+        bmw: { brand: "BMW", years: 5, repair: 1030, warranty: 1100 },
+        vw: { brand: "Volkswagen", years: 5, repair: 860, warranty: 1050 },
+        tesla: { brand: "Tesla", years: 5, repair: 670, warranty: 1200 },
+        chevrolet: { brand: "Chevrolet", years: 5, repair: 790, warranty: 1000 },
+        opel: { brand: "Opel", years: 5, repair: 810, warranty: 950 },
+        gm: { brand: "GM", years: 5, repair: 800, warranty: 1000 },
+        toyota: { brand: "Toyota", years: 5, repair: 460, warranty: 980 },
+        mazda: { brand: "Mazda", years: 5, repair: 440, warranty: 920 }
+      };
+      const presetBtns = {
+        honda: document.getElementById("preset-honda"),
+        porsche: document.getElementById("preset-porsche"),
+        bmw: document.getElementById("preset-bmw"),
+        vw: document.getElementById("preset-vw"),
+        tesla: document.getElementById("preset-tesla"),
+        chevrolet: document.getElementById("preset-chevrolet"),
+        opel: document.getElementById("preset-opel"),
+        gm: document.getElementById("preset-gm"),
+        toyota: document.getElementById("preset-toyota"),
+        mazda: document.getElementById("preset-mazda"),
+        custom: document.getElementById("preset-custom")
+      };
+      const inputBrand = document.getElementById("input-brand");
+      const inputYears = document.getElementById("input-years");
+      const inputRepair = document.getElementById("input-repair");
+      const inputWarranty = document.getElementById("input-warranty");
+      const calcBtn = document.getElementById("calc-btn");
+      const exportBtn = document.getElementById("export-btn");
+      const resultMain = document.getElementById("result-main");
+      const resultDetails = document.getElementById("result-details");
+      const resultTip = document.getElementById("result-tip");
+      const resultVerdict = document.getElementById("result-verdict");
+      const resultChart = document.getElementById("result-chart");
+      function stateToHash(state) {
+        let sBrand = encodeURIComponent(state.brand).replace(/[^a-zA-Z0-9%\-\.]/g, '');
+        let sYears = Number(state.years);
+        let sRepair = Number(state.repair);
+        let sWarranty = Number(state.warranty);
+        return `brand=${sBrand}&years=${sYears}&repair=${sRepair}&warranty=${sWarranty}`;
+      }
+      function hashToState(hash) {
+        let s = {};
+        hash.split("&").forEach(kv => {
+          let [k, v] = kv.split("=");
+          if (["years", "repair", "warranty"].indexOf(k) >= 0) s[k] = Number(v);
+          else if (k === "brand") s[k] = decodeURIComponent(v || "");
+        });
+        if (!s.brand || !s.years || !s.repair || !s.warranty) return null;
+        return s;
+      }
+      function updateURLHash(state) {
+        let h = stateToHash(state);
+        if (window.location.hash !== "#" + h) window.location.hash = "#" + h;
+      }
+      function loadStateFromHash() {
+        let h = window.location.hash.substr(1);
+        if (!h) return null;
+        return hashToState(h);
+      }
+      function setInputsFromState(state, fromPreset) {
+        inputBrand.value = state.brand || "";
+        inputYears.value = state.years || "";
+        inputRepair.value = state.repair || "";
+        inputWarranty.value = state.warranty || "";
+        if (fromPreset) {
+          for (const k in presetBtns) {
+            presetBtns[k].classList.remove("selected");
+            presetBtns[k].setAttribute("aria-pressed", "false");
+          }
+          const brandLower = (state.brand || "").toLowerCase();
+          let matched = false;
+          for (const k in presets) {
+            if (brandLower.includes(k)) {
+              presetBtns[k]?.classList.add("selected");
+              presetBtns[k]?.setAttribute("aria-pressed", "true");
+              matched = true;
+              break;
+            }
+          }
+          if (!matched) {
+            presetBtns.custom?.classList.add("selected");
+            presetBtns.custom?.setAttribute("aria-pressed", "true");
+          }
+        }
+      }
+      function getVerdict(delta) {
+        if (Math.abs(delta) < 50) return "Line Ball Call";
+        if (delta < -50) return "Worth It";
+        if (delta > 50) return "Not Worth It";
+        return "Line Ball Call";
+      }
+      function runAnalysis(state) {
+        let years = Math.max(1, Number(state.years) || 1);
+        let repair = Math.max(0, Number(state.repair) || 0);
+        let warranty = Math.max(0, Number(state.warranty) || 0);
+        let totalRepairs = years * repair;
+        let totalWarranty = years * warranty;
+        let result = {};
+        result.brand = state.brand;
+        result.years = years;
+        result.repair = repair;
+        result.warranty = warranty;
+        result.totalRepairs = totalRepairs;
+        result.totalWarranty = totalWarranty;
+        result.delta = totalWarranty - totalRepairs;
+        const verdictText = getVerdict(result.delta);
+        result.verdict = verdictText;
+        let tip = "";
+        let worth = "";
+        if (verdictText === "Not Worth It") {
+          worth = "No, self-insure — extended warranty likely loses money on average.";
+          tip = "Brands with low repair costs (< $800/year) generally save more by banking cash.";
+        } else if (verdictText === "Worth It") {
+          worth = "Yes — extended warranty can cap large unexpected costs and is likely worthwhile.";
+          tip = "Higher repair costs (> $1,200/year) favor extended warranty purchase.";
+        } else {
+          worth = "Maybe — warranty could hedge big surprise repairs if planning long-term ownership.";
+          tip = "Evaluate personal usage and risk tolerance before deciding.";
+        }
+        let details = `${result.brand} | ${years} yr${years > 1 ? "s" : ""}: Expected repairs $${totalRepairs.toLocaleString()}, warranty cost $${totalWarranty.toLocaleString()}.\n${Math.abs(result.delta) > 50 ? (result.delta < 0 ? "Warranty saves" : "Warranty loses") : "Break-even."} ${Math.abs(result.delta) > 50 ? "$" + Math.abs(result.delta).toLocaleString() : ""}`;
+        result.details = details;
+        result.worth = worth;
+        result.tip = tip;
+        return result;
+      }
+      function renderResult(res) {
+        resultMain.textContent = res.worth;
+        resultDetails.textContent = res.details;
+        resultTip.textContent = res.tip;
+        resultVerdict.textContent = "Verdict: " + res.verdict;
+        drawChart(res);
+        const rs = document.getElementById("result-section");
+        rs.focus();
+      }
+      function drawChart(res) {
+        const ctx = resultChart.getContext("2d");
+        ctx.clearRect(0, 0, resultChart.width, resultChart.height);
+        const labels = ["Repairs", "Warranty"];
+        const values = [res.totalRepairs, res.totalWarranty];
+        const navy = getComputedStyle(document.documentElement).getPropertyValue("--navy").trim();
+        const burgundy = getComputedStyle(document.documentElement).getPropertyValue("--burgundy").trim();
+        const green = getComputedStyle(document.documentElement).getPropertyValue("--green").trim();
+        const repairsColor = res.totalRepairs > res.totalWarranty ? burgundy : green;
+        const warrantyColor = navy;
+        const colors = [repairsColor, warrantyColor];
+        const barWidth = 57;
+        const gap = 32;
+        const baseX = 28;
+        const baseY = 64;
+        const maxVal = Math.max(...values, 100);
+        const scale = maxVal > 0 ? 44 / maxVal : 1;
+        ctx.save();
+        ctx.globalAlpha = 0.14;
+        ctx.strokeStyle = "#b17e8b";
+        ctx.fillStyle = "#b17e8b";
+        ctx.font = "14px Arial";
+        for (let i = 0; i <= 2; i++) {
+          let y = baseY - i * 22;
+          ctx.beginPath();
+          ctx.moveTo(6, y);
+          ctx.lineTo(resultChart.width - 6, y);
+          ctx.stroke();
+          let gridVal = Math.round((i * maxVal) / 2).toLocaleString();
+          ctx.fillText("$" + gridVal, 6, y - 7);
+        }
+        ctx.globalAlpha = 1;
+        for (let i = 0; i < 2; i++) {
+          const height = values[i] * scale;
+          ctx.fillStyle = colors[i];
+          ctx.shadowColor = burgundy + "60";
+          ctx.shadowBlur = 8;
+          ctx.fillRect(baseX + i * (barWidth + gap), baseY - height, barWidth, height);
+          ctx.shadowBlur = 0;
+          ctx.font = "14px Arial";
+          ctx.fillStyle = navy;
+          ctx.textAlign = "center";
+          ctx.fillText(labels[i], baseX + i * (barWidth + gap) + barWidth / 2, baseY + 17);
+        }
+        const delta = values[1] - values[0];
+        ctx.font = "15px Arial";
+        ctx.textAlign = "right";
+        ctx.fillStyle = delta >= 0 ? burgundy : green;
+        const sign = delta >= 0 ? "-" : "+";
+        ctx.fillText(sign + "$" + Math.abs(Math.round(delta)).toLocaleString(), resultChart.width - 12, 22);
+        ctx.restore();
+      }
+      exportBtn.addEventListener("click", function () {
+        html2canvas(document.getElementById("result-chart-container"), {
+          backgroundColor: null,
+          scale: 2,
+          useCORS: true,
+        }).then(function (canvas) {
+          const link = document.createElement("a");
+          link.download = "warranty_calc_chart.png";
+          link.href = canvas.toDataURL();
+          link.click();
+        });
+      });
+      Object.entries(presetBtns).forEach(([key, btn]) => {
+        btn.addEventListener("click", () => {
+          if (key === "custom") {
+            setInputsFromState(getCurrentInputs(), true);
+            renderDeterministic(getCurrentInputs());
+            updateURLHash(getCurrentInputs());
+            return;
+          }
+          const preset = presets[key];
+          if (preset) {
+            setInputsFromState(preset, true);
+            renderDeterministic(preset);
+            updateURLHash(preset);
+          }
+        });
+      });
+      [inputBrand, inputYears, inputRepair, inputWarranty].forEach((input) => {
+        input.addEventListener("change", () => {
+          for (const k in presetBtns) {
+            presetBtns[k].classList.remove("selected");
+            presetBtns[k].setAttribute("aria-pressed", "false");
+          }
+          presetBtns.custom.classList.add("selected");
+          presetBtns.custom.setAttribute("aria-pressed", "true");
+          renderDeterministic(getCurrentInputs());
+          updateURLHash(getCurrentInputs());
+        });
+      });
+      calcBtn.addEventListener("click", () => {
+        const state = getCurrentInputs();
+        renderDeterministic(state);
+        updateURLHash(state);
+      });
+      function getCurrentInputs() {
+        return {
+          brand: inputBrand.value.trim(),
+          years: Number(inputYears.value),
+          repair: Number(inputRepair.value),
+          warranty: Number(inputWarranty.value),
+        };
+      }
+      function renderDeterministic(state) {
+        if (!state.repair || state.repair === 0) state.repair = 750;
+        if (!state.years || state.years <= 0) state.years = 5;
+        if (!state.warranty || state.warranty === 0) state.warranty = 1000;
+        if (typeof state.brand === "string") {
+          state.brand = state.brand.trim().replace(/\b\w/g, (ch) => ch.toUpperCase());
+        }
+        const result = runAnalysis(state);
+        renderResult(result);
+      }
+      function initialLoad() {
+        const hashState = loadStateFromHash();
+        if (hashState) {
+          const brandLower = (hashState.brand || "").toLowerCase();
+          const matchPreset = Object.entries(presets).find(([k, v]) => brandLower.includes(k));
+          if (matchPreset) {
+            setInputsFromState(matchPreset[1], true);
+            renderDeterministic(matchPreset[1]);
+            updateURLHash(matchPreset[1]);
+          } else {
+            setInputsFromState(hashState, true);
+            renderDeterministic(hashState);
+            updateURLHash(hashState);
+          }
+        } else {
+          setInputsFromState(presets.honda, true);
+          renderDeterministic(presets.honda);
+          updateURLHash(presets.honda);
+        }
+      }
+      window.addEventListener("hashchange", () => {
+        const hashState = loadStateFromHash();
+        if (hashState) {
+          const brandLower = (hashState.brand || "").toLowerCase();
+          const matchPreset = Object.entries(presets).find(([k, v]) => brandLower.includes(k));
+          if (matchPreset) {
+            setInputsFromState(matchPreset[1], true);
+            renderDeterministic(matchPreset[1]);
+          } else {
+            setInputsFromState(hashState, true);
+            renderDeterministic(hashState);
+          }
+        }
+      });
+      initialLoad();
+    });
+  </script>
+</body>
+</html>
+```
