@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Musk 2025 Optionality Index | Iselin Group</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: #F8F9FA;
+            color: #1F2937;
+            line-height: 1.6;
+        }
+        
+        /* TOP BAR */
+        .top-bar {
+            background: linear-gradient(135deg, rgba(20,30,48,0.95), rgba(30,20,40,0.95));
+            height: 60px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            align-items: center;
+            padding: 0 20px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .top-bar-left {
+            font-size: 16px;
+            font-weight: 600;
+            color: #E8E8E8;
+        }
+        
+        .top-bar-center {
+            font-size: 13px;
+            color: #B0B0B0;
+            text-align: center;
+        }
+        
+        .top-bar-right {
+            display: flex;
+            justify-content: flex-end;
+        }
+        
+        .brand-chip {
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            padding: 6px 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .brand-chip img {
+            height: 40px;
+            width: auto;
+        }
+        
+        .brand-chip span {
+            font-size: 12px;
+            color: #E8E8E8;
+        }
+        
+        /* MAIN CONTENT */
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .title-section {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .title-section h1 {
+            font-size: 36px;
+            font-weight: bold;
+            color: #1A1A2E;
+            margin-bottom: 8px;
+        }
+        
+        .subtitle {
+            font-size: 18px;
+            color: #6B7280;
+            margin-bottom: 8px;
+        }
+        
+        .last-updated {
+            display: inline-block;
+            font-size: 12px;
+            color: #9CA3AF;
+            background: rgba(156,163,175,0.1);
+            padding: 4px 12px;
+            border-radius: 12px;
+        }
+        
+        /* OVERALL INDEX */
+        .overall-index {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            padding: 32px;
+            margin-bottom: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .index-dial {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin-bottom: 16px;
+        }
+        
+        .index-score {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+        
+        .index-score-number {
+            font-size: 48px;
+            font-weight: bold;
+            color: #1A1A2E;
+        }
+        
+        .index-score-grade {
+            font-size: 24px;
+            font-weight: 600;
+            color: #6B7280;
+        }
+        
+        .index-label {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1A1A2E;
+            margin-bottom: 4px;
+        }
+        
+        .index-sublabel {
+            font-size: 14px;
+            color: #6B7280;
+        }
+        
+        /* COMPANY GRID */
+        .company-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+        
+        .company-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            padding: 24px;
+        }
+        
+        .company-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #1A1A2E;
+            margin-bottom: 16px;
+        }
+        
+        .weight-badge {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 600;
+            color: #6B7280;
+            background: #F3F4F6;
+            padding: 2px 8px;
+            border-radius: 8px;
+            margin-left: 8px;
+        }
+        
+        .promise-chip {
+            background: rgba(59,130,246,0.1);
+            border-left: 4px solid #3B82F6;
+            padding: 12px;
+            margin-bottom: 16px;
+            font-size: 13px;
+            font-style: italic;
+            color: #374151;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .promise-chip:hover {
+            background: rgba(59,130,246,0.15);
+        }
+        
+        .promise-full {
+            margin-top: 8px;
+            display: none;
+        }
+        
+        .promise-full.open {
+            display: block;
+        }
+        
+        .company-dial-container {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            margin-bottom: 16px;
+        }
+        
+        .company-dial {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            flex-shrink: 0;
+        }
+        
+        .company-score {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+        
+        .company-score-number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #1A1A2E;
+        }
+        
+        .company-score-grade {
+            font-size: 16px;
+            font-weight: 600;
+            color: #6B7280;
+        }
+        
+        .status-text {
+            font-size: 14px;
+            color: #4B5563;
+            flex: 1;
+        }
+        
+        .toggle-evidence {
+            background: #F3F4F6;
+            color: #374151;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background 0.2s;
+            width: 100%;
+            text-align: left;
+            font-weight: 500;
+        }
+        
+        .toggle-evidence:hover {
+            background: #E5E7EB;
+        }
+        
+        .evidence-drawer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-in-out;
+        }
+        
+        .evidence-drawer.open {
+            max-height: 500px;
+            margin-top: 12px;
+        }
+        
+        .evidence-list {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .evidence-list li {
+            font-size: 12px;
+            color: #6B7280;
+            margin-bottom: 6px;
+            padding-left: 16px;
+            position: relative;
+        }
+        
+        .evidence-list li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #3B82F6;
+        }
+        
+        .evidence-list a {
+            color: #3B82F6;
+            text-decoration: none;
+        }
+        
+        .evidence-list a:hover {
+            text-decoration: underline;
+        }
+        
+        /* PORTFOLIO CHART */
+        .portfolio-chart-section {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            padding: 32px;
+            margin-bottom: 40px;
+        }
+        
+        .portfolio-chart-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1A1A2E;
+            margin-bottom: 8px;
+        }
+        
+        .portfolio-chart-subtitle {
+            font-size: 14px;
+            color: #6B7280;
+            margin-bottom: 24px;
+        }
+        
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 400px;
+        }
+        
+        /* BOTTOM BAR */
+        .bottom-bar {
+            background: #1A1A2E;
+            padding: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            min-height: 80px;
+        }
+        
+        .footer-line-1 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #E8E8E8;
+            margin-bottom: 8px;
+        }
+        
+        .footer-line-2 {
+            font-size: 12px;
+            color: #9CA3AF;
+            margin-bottom: 12px;
+        }
+        
+        .footer-line-3 {
+            font-size: 10px;
+            font-variant: small-caps;
+            color: #6B7280;
+            max-width: 1000px;
+            opacity: 0.8;
+            line-height: 1.4;
+        }
+        
+        /* RESPONSIVE */
+        @media (max-width: 1024px) {
+            .company-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .top-bar {
+                grid-template-columns: 1fr;
+                height: auto;
+                padding: 12px 20px;
+            }
+            
+            .top-bar-center {
+                display: none;
+            }
+            
+            .top-bar-right {
+                justify-content: center;
+                margin-top: 8px;
+            }
+            
+            .title-section h1 {
+                font-size: 28px;
+            }
+            
+            .subtitle {
+                font-size: 16px;
+            }
+            
+            .company-dial-container {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .chart-container {
+                height: 300px;
+            }
+            
+            .bottom-bar {
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- TOP BAR -->
+    <header class="top-bar">
+        <div class="top-bar-left">Iselin Group – Strategic Consulting</div>
+        <div class="top-bar-center">iselingroup.com • brian.iselin@iselingroup.com</div>
+        <div class="top-bar-right">
+            <div class="brand-chip">
+                <img src="https://brianiselin.github.io/widgets-public/Iselin_Group_Logo_1024%20x.jpg" alt="Iselin Group Logo">
+                <span>Iselin Group</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <div class="title-section">
+            <h1>Musk 2025 Optionality Index</h1>
+            <p class="subtitle">SpaceX to xAI — What's Real and What's Rhetoric</p>
+            <span class="last-updated">Updated: 11 October 2025</span>
+        </div>
+
+        <!-- OVERALL INDEX -->
+        <div class="overall-index">
+            <div class="index-dial" id="index-dial">
+                <svg width="200" height="200"></svg>
+                <div class="index-score">
+                    <div class="index-score-number" id="index-number">52</div>
+                    <div class="index-score-grade" id="index-grade">F</div>
+                </div>
+            </div>
+            <div class="index-label">Musk Optionality Index</div>
+            <div class="index-sublabel">Equal-Weighted Across 5 Companies</div>
+        </div>
+
+        <!-- COMPANY GRID -->
+        <div class="company-grid" id="company-grid"></div>
+
+        <!-- PORTFOLIO CHART -->
+        <div class="portfolio-chart-section">
+            <h2 class="portfolio-chart-title">Musk Portfolio Performance 2025</h2>
+            <p class="portfolio-chart-subtitle">Individual company scores vs overall index (equal-weighted)</p>
+            <div class="chart-container">
+                <canvas id="portfolio-chart"></canvas>
+            </div>
+        </div>
+    </main>
+
+    <!-- BOTTOM BAR -->
+    <footer class="bottom-bar">
+        <div class="footer-line-1">Iselin Group – Strategic Consulting</div>
+        <div class="footer-line-2">© Iselin Group. "Musk 2025 Optionality Index" — brian.iselin@iselingroup.com</div>
+        <div class="footer-line-3">The underlying decision-integrity model, logic, and UI are proprietary to Iselin Group and may not be reproduced, adapted, or deployed in whole or in part without prior written consent; all rights reserved.</div>
+    </footer>
+
+    <script>
+        // EMBEDDED DATA
+        const data = {
+            "lastUpdated": "2025-10-11",
+            "overallIndex": {
+                "score": 52,
+                "grade": "F",
+                "equalWeighted": 52.0
+            },
+            "companies": [
+                {
+                    "id": "spacex",
+                    "title": "SpaceX / Starlink",
+                    "weight": 20,
+                    "score": 85,
+                    "grade": "B",
+                    "promise": "100+ Falcon 9 launches in 2025; Starship pushing towards reusability; Starlink clears 5+ million subscribers; direct-to-cell goes live at national scale.",
+                    "promiseSource": "SpaceX public statements, January 2025",
+                    "status": "SpaceX crossed 100 Falcon 9 missions by late summer. Starlink: 8,000+ satellites, ~7M subs by Aug. T-Mobile direct-to-cell beta live (texting, outdoors). Industrial reliability, not pitch deck.",
+                    "evidence": [
+                        {"text": "SpaceX launch manifest 2025", "url": "#"},
+                        {"text": "Starlink subscriber estimates (Aug 2025)", "url": "#"},
+                        {"text": "T-Mobile direct-to-cell beta announcement (Feb 2025)", "url": "#"},
+                        {"text": "UK Ofcom satellite-to-device framework", "url": "#"}
+                    ]
+                },
+                {
+                    "id": "xai",
+                    "title": "xAI",
+                    "weight": 20,
+                    "score": 55,
+                    "grade": "D",
+                    "promise": "Grok-3 by mid-2025, competitive with top-tier models; named enterprise deals; march towards $1 billion annualised revenue.",
+                    "promiseSource": "xAI announcements, January 2025",
+                    "status": "Grok-3 launched Feb. Massive GPU buys, Colossus 2 data center, $20B raise reported. Public benchmarks sparse; named Fortune-500 clients thin on record. Capital ≠ revenue proof.",
+                    "evidence": [
+                        {"text": "Grok-3 launch announcement (Feb 2025)", "url": "#"},
+                        {"text": "xAI $20B funding reports (2025)", "url": "#"},
+                        {"text": "Colossus 2 Memphis data center reports", "url": "#"},
+                        {"text": "xAI enterprise client disclosures (limited)", "url": "#"}
+                    ]
+                },
+                {
+                    "id": "neuralink",
+                    "title": "Neuralink",
+                    "weight": 20,
+                    "score": 45,
+                    "grade": "F",
+                    "promise": "Human trials in 2025; first commercial brain-computer interface for paralysis by 2026; 'thousands' of implants within five years.",
+                    "promiseSource": "Neuralink announcements, 2024-2025",
+                    "status": "PRIME first-in-human early feasibility study registered, enrolling. No peer-reviewed clinical outcomes published. FDA pathway measured in years; 2026 commercial product optimistic.",
+                    "evidence": [
+                        {"text": "Neuralink PRIME study registration", "url": "#"},
+                        {"text": "FDA Class III implant approval pathway", "url": "#"},
+                        {"text": "Neuralink company updates (non-peer-reviewed)", "url": "#"},
+                        {"text": "Competitor landscape: Synchron, Blackrock Neurotech", "url": "#"}
+                    ]
+                },
+                {
+                    "id": "boring",
+                    "title": "The Boring Company",
+                    "weight": 20,
+                    "score": 35,
+                    "grade": "F",
+                    "promise": "Vegas Loop: 68 miles, 100+ stations; cheaper, faster tunneling; new projects in Texas and Florida.",
+                    "promiseSource": "Boring Company announcements, 2024-2025",
+                    "status": "Clark County approved grand plan; operational tunnels ~3.5 miles across handful of stations (Convention Center, resorts). Works for events; not city network. Other states lack permits/mileage.",
+                    "evidence": [
+                        {"text": "Clark County Vegas Loop approval documents", "url": "#"},
+                        {"text": "Operational tunnel mileage (Oct 2025)", "url": "#"},
+                        {"text": "Worker injury investigations and reports", "url": "#"},
+                        {"text": "Texas/Florida project status (announcements only)", "url": "#"}
+                    ]
+                },
+                {
+                    "id": "x",
+                    "title": "X (formerly Twitter)",
+                    "weight": 20,
+                    "score": 40,
+                    "grade": "F",
+                    "promise": "Cash-flow positive by mid-2025; subscriptions replace ad reliance; user growth returns; brand safety improves.",
+                    "promiseSource": "X leadership statements, 2024-2025",
+                    "status": "Third-party estimates: ~$2.26B ad revenue 2025 (up YoY, below 2021), ~$2.9B total. X Premium live but minor slice. Threads gained momentum. Brand-safety concerns persist.",
+                    "evidence": [
+                        {"text": "Third-party X revenue estimates 2025", "url": "#"},
+                        {"text": "X Premium subscription metrics (limited)", "url": "#"},
+                        {"text": "Threads user growth reports (2025)", "url": "#"},
+                        {"text": "Advertiser brand-safety concerns", "url": "#"}
+                    ]
+                }
+            ]
+        };
+
+        // HELPER FUNCTIONS
+        function getScoreColor(score) {
+            if (score < 40) return '#DC2626';
+            if (score < 70) return '#F59E0B';
+            return '#10B981';
+        }
+
+        function renderDial(svg, score, size = 200) {
+            const cx = size / 2;
+            const cy = size / 2;
+            const radius = (size / 2) - 15;
+            const circumference = 2 * Math.PI * radius;
+            const offset = circumference - (score / 100) * circumference;
+
+            svg.innerHTML = `
+                <circle cx="${cx}" cy="${cy}" r="${radius}" 
+                    fill="none" stroke="#E5E7EB" stroke-width="12"/>
+                <circle cx="${cx}" cy="${cy}" r="${radius}" 
+                    fill="none" stroke="${getScoreColor(score)}" stroke-width="12"
+                    stroke-dasharray="${circumference}" 
+                    stroke-dashoffset="${offset}"
+                    stroke-linecap="round"
+                    transform="rotate(-90 ${cx} ${cy})"
+                    style="transition: stroke-dashoffset 1s ease-in-out"/>
+            `;
+        }
+
+        // RENDER OVERALL INDEX
+        const indexSvg = document.querySelector('#index-dial svg');
+        renderDial(indexSvg, data.overallIndex.score, 200);
+
+        // RENDER COMPANY CARDS
+        const companyGrid = document.getElementById('company-grid');
+        data.companies.forEach(company => {
+            const card = document.createElement('div');
+            card.className = 'company-card';
+            card.innerHTML = `
+                <div class="company-title">
+                    ${company.title}
+                    <span class="weight-badge">${company.weight}% weight</span>
+                </div>
+                <div class="promise-chip" onclick="this.querySelector('.promise-full').classList.toggle('open')">
+                    <div><strong>Promise:</strong> "${company.promise.substring(0, 80)}..."</div>
+                    <div class="promise-full">
+                        <strong>Full promise:</strong> "${company.promise}"
+                        <br><em>— ${company.promiseSource}</em>
+                    </div>
+                </div>
+                <div class="company-dial-container">
+                    <div class="company-dial">
+                        <svg width="120" height="120"></svg>
+                        <div class="company-score">
+                            <div class="company-score-number">${company.score}</div>
+                            <div class="company-score-grade">${company.grade}</div>
+                        </div>
+                    </div>
+                    <div class="status-text">${company.status}</div>
+                </div>
+                <button class="toggle-evidence" onclick="toggleEvidence(this)">
+                    View Evidence Sources
+                </button>
+                <div class="evidence-drawer">
+                    <ul class="evidence-list">
+                        ${company.evidence.map(e => `<li><a href="${e.url}" target="_blank">${e.text}</a></li>`).join('')}
+                    </ul>
+                </div>
+            `;
+            companyGrid.appendChild(card);
+
+            const svg = card.querySelector('.company-dial svg');
+            renderDial(svg, company.score, 120);
+        });
+
+        function toggleEvidence(button) {
+            const drawer = button.nextElementSibling;
+            drawer.classList.toggle('open');
+            button.textContent = drawer.classList.contains('open') 
+                ? 'Hide Evidence Sources' 
+                : 'View Evidence Sources';
+        }
+
+        // RENDER PORTFOLIO CHART
+        const canvas = document.getElementById('portfolio-chart');
+        const ctx = canvas.getContext('2d');
+        const container = canvas.parentElement;
+        
+        function resizeChart() {
+            canvas.width = container.offsetWidth;
+            canvas.height = 400;
+            drawChart();
+        }
+
+        function drawChart() {
+            const width = canvas.width;
+            const height = canvas.height;
+            const padding = 80;
+            const chartWidth = width - (padding * 2);
+            const chartHeight = height - (padding * 2);
+            const barHeight = 50;
+            const barGap = 20;
+
+            ctx.clearRect(0, 0, width, height);
+
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(0, 0, width, height);
+
+            // Draw bars
+            data.companies.forEach((company, i) => {
+                const y = padding + (i * (barHeight + barGap));
+                const barWidth = (company.score / 100) * chartWidth;
+                const color = getScoreColor(company.score);
+
+                // Bar
+                ctx.fillStyle = color;
+                ctx.fillRect(padding, y, barWidth, barHeight);
+
+                // Company name
+                ctx.fillStyle = '#1F2937';
+                ctx.font = '14px Inter, sans-serif';
+                ctx.textAlign = 'right';
+                ctx.fillText(company.title, padding - 10, y + barHeight / 2 + 5);
+
+                // Score
+                ctx.fillStyle = '#FFFFFF';
+                ctx.textAlign = 'left';
+                ctx.font = 'bold 16px Inter, sans-serif';
+                ctx.fillText(company.score.toString(), padding + barWidth + 10, y + barHeight / 2 + 5);
+            });
+
+            // Index line
+            const indexX = padding + (data.overallIndex.score / 100) * chartWidth;
+            ctx.strokeStyle = '#9CA3AF';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            ctx.moveTo(indexX, padding);
+            ctx.lineTo(indexX, height - padding);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Index label
+            ctx.fillStyle = '#6B7280';
+            ctx.font = '12px Inter, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(`Index: ${data.overallIndex.score}`, indexX, padding - 10);
+        }
+
+        window.addEventListener('resize', resizeChart);
+        resizeChart();
+    </script>
+
+    <!-- Cloudflare Web Analytics -->
+    <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "22466d27b8c14ef98293d50b38526660"}'></script>
+    <!-- End Cloudflare Web Analytics -->
+</body>
+</html>
