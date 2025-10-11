@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tesla 2025 Scorecard | Iselin Group</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: #F8F9FA;
+            color: #1F2937;
+            line-height: 1.6;
+        }
+            <!-- Cloudflare Web Analytics -->
+    <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "22466d27b8c14ef98293d50b38526660"}'></script>
+    <!-- End Cloudflare Web Analytics -->
+</body>
+</html>
+
+        /* TOP BAR */
+        .top-bar {
+            background: linear-gradient(135deg, rgba(20,30,48,0.95), rgba(30,20,40,0.95));
+            height: 60px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            align-items: center;
+            padding: 0 20px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .top-bar-left {
+            font-size: 16px;
+            font-weight: 600;
+            color: #E8E8E8;
+        }
+        
+        .top-bar-center {
+            font-size: 13px;
+            color: #B0B0B0;
+            text-align: center;
+        }
+        
+        .top-bar-right {
+            display: flex;
+            justify-content: flex-end;
+        }
+        
+        .brand-chip {
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            padding: 6px 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .brand-chip img {
+            height: 40px;
+            width: auto;
+        }
+        
+        .brand-chip span {
+            font-size: 12px;
+            color: #E8E8E8;
+        }
+        
+        /* MAIN CONTENT */
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .title-section {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .title-section h1 {
+            font-size: 36px;
+            font-weight: bold;
+            color: #1A1A2E;
+            margin-bottom: 8px;
+        }
+        
+        .subtitle {
+            font-size: 18px;
+            color: #6B7280;
+            margin-bottom: 8px;
+        }
+        
+        .last-updated {
+            display: inline-block;
+            font-size: 12px;
+            color: #9CA3AF;
+            background: rgba(156,163,175,0.1);
+            padding: 4px 12px;
+            border-radius: 12px;
+        }
+        
+        /* OVERALL GPA */
+        .overall-gpa {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            padding: 32px;
+            margin-bottom: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .gpa-dial {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin-bottom: 16px;
+        }
+        
+        .gpa-score {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+        
+        .gpa-score-number {
+            font-size: 48px;
+            font-weight: bold;
+            color: #1A1A2E;
+        }
+        
+        .gpa-score-grade {
+            font-size: 24px;
+            font-weight: 600;
+            color: #6B7280;
+        }
+        
+        .gpa-label {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1A1A2E;
+            margin-bottom: 4px;
+        }
+        
+        .gpa-sublabel {
+            font-size: 14px;
+            color: #6B7280;
+        }
+        
+        /* METRIC GRID */
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+        
+        .metric-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            padding: 24px;
+        }
+        
+        .metric-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #1A1A2E;
+            margin-bottom: 16px;
+        }
+        
+        .weight-badge {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 600;
+            color: #6B7280;
+            background: #F3F4F6;
+            padding: 2px 8px;
+            border-radius: 8px;
+            margin-left: 8px;
+        }
+        
+        .promise-chip {
+            background: rgba(59,130,246,0.1);
+            border-left: 4px solid #3B82F6;
+            padding: 12px;
+            margin-bottom: 16px;
+            font-size: 13px;
+            font-style: italic;
+            color: #374151;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .promise-chip:hover {
+            background: rgba(59,130,246,0.15);
+        }
+        
+        .promise-full {
+            margin-top: 8px;
+            display: none;
+        }
+        
+        .promise-full.open {
+            display: block;
+        }
+        
+        .metric-dial-container {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            margin-bottom: 16px;
+        }
+        
+        .metric-dial {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            flex-shrink: 0;
+        }
+        
+        .metric-score {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+        
+        .metric-score-number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #1A1A2E;
+        }
+        
+        .metric-score-grade {
+            font-size: 16px;
+            font-weight: 600;
+            color: #6B7280;
+        }
+        
+        .status-text {
+            font-size: 14px;
+            color: #4B5563;
+            flex: 1;
+        }
+        
+        .toggle-evidence {
+            background: #F3F4F6;
+            color: #374151;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background 0.2s;
+            width: 100%;
+            text-align: left;
+            font-weight: 500;
+        }
+        
+        .toggle-evidence:hover {
+            background: #E5E7EB;
+        }
+        
+        .evidence-drawer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-in-out;
+        }
+        
+        .evidence-drawer.open {
+            max-height: 500px;
+            margin-top: 12px;
+        }
+        
+        .evidence-list {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .evidence-list li {
+            font-size: 12px;
+            color: #6B7280;
+            margin-bottom: 6px;
+            padding-left: 16px;
+            position: relative;
+        }
+        
+        .evidence-list li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #3B82F6;
+        }
+        
+        .evidence-list a {
+            color: #3B82F6;
+            text-decoration: none;
+        }
+        
+        .evidence-list a:hover {
+            text-decoration: underline;
+        }
+        
+        /* STOCK CHART */
+        .stock-chart-section {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            padding: 32px;
+            margin-bottom: 40px;
+        }
+        
+        .stock-chart-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1A1A2E;
+            margin-bottom: 8px;
+        }
+        
+        .stock-chart-subtitle {
+            font-size: 14px;
+            color: #6B7280;
+            margin-bottom: 24px;
+        }
+        
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 400px;
+        }
+        
+        .chart-legend {
+            display: flex;
+            gap: 24px;
+            justify-content: center;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #4B5563;
+        }
+        
+        .legend-line {
+            width: 32px;
+            height: 2px;
+        }
+        
+        /* BOTTOM BAR */
+        .bottom-bar {
+            background: #1A1A2E;
+            padding: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            min-height: 80px;
+        }
+        
+        .footer-line-1 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #E8E8E8;
+            margin-bottom: 8px;
+        }
+        
+        .footer-line-2 {
+            font-size: 12px;
+            color: #9CA3AF;
+            margin-bottom: 12px;
+        }
+        
+        .footer-line-3 {
+            font-size: 10px;
+            font-variant: small-caps;
+            color: #6B7280;
+            max-width: 1000px;
+            opacity: 0.8;
+            line-height: 1.4;
+        }
+        
+        /* RESPONSIVE */
+        @media (max-width: 1024px) {
+            .metric-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .top-bar {
+                grid-template-columns: 1fr;
+                height: auto;
+                padding: 12px 20px;
+            }
+            
+            .top-bar-center {
+                display: none;
+            }
+            
+            .top-bar-right {
+                justify-content: center;
+                margin-top: 8px;
+            }
+            
+            .title-section h1 {
+                font-size: 28px;
+            }
+            
+            .subtitle {
+                font-size: 16px;
+            }
+            
+            .metric-dial-container {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .chart-container {
+                height: 300px;
+            }
+            
+            .bottom-bar {
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- TOP BAR -->
+    <header class="top-bar">
+        <div class="top-bar-left">Iselin Group – Strategic Consulting</div>
+        <div class="top-bar-center">iselingroup.com • brian.iselin@iselingroup.com</div>
+        <div class="top-bar-right">
+            <div class="brand-chip">
+                <img src="https://brianiselin.github.io/widgets-public/Iselin_Group_Logo_1024%20x.jpg" alt="Iselin Group Logo">
+
+                <span>Iselin Group</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <div class="title-section">
+            <h1>Tesla 2025 Scorecard</h1>
+            <p class="subtitle">Promises vs Reality: Grading Tesla's 2025 Performance</p>
+            <span class="last-updated">Updated: 11 October 2025</span>
+        </div>
+
+        <!-- OVERALL GPA -->
+        <div class="overall-gpa">
+            <div class="gpa-dial" id="gpa-dial">
+                <svg width="200" height="200"></svg>
+                <div class="gpa-score">
+                    <div class="gpa-score-number" id="gpa-number">58</div>
+                    <div class="gpa-score-grade" id="gpa-grade">D+</div>
+                </div>
+            </div>
+            <div class="gpa-label">Overall GPA</div>
+            <div class="gpa-sublabel">Weighted Average Across 7 Pillars</div>
+        </div>
+
+        <!-- METRIC GRID -->
+        <div class="metric-grid" id="metric-grid"></div>
+
+        <!-- STOCK CHART -->
+        <div class="stock-chart-section">
+            <h2 class="stock-chart-title">TSLA Stock Performance 2025 (YTD)</h2>
+            <p class="stock-chart-subtitle">Total return vs benchmarks with key event annotations</p>
+            <div class="chart-legend">
+                <div class="legend-item">
+                    <div class="legend-line" style="background: #3B82F6;"></div>
+                    <span>TSLA</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-line" style="background: #9CA3AF; border-top: 2px dashed #9CA3AF; background: transparent;"></div>
+                    <span>S&amp;P 500</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-line" style="background: #6B7280; border-top: 2px dotted #6B7280; background: transparent;"></div>
+                    <span>Nasdaq-100</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-line" style="background: #F59E0B;"></div>
+                    <span>BYD</span>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="stock-chart"></canvas>
+            </div>
+        </div>
+    </main>
+
+    <!-- BOTTOM BAR -->
+    <footer class="bottom-bar">
+        <div class="footer-line-1">Iselin Group – Strategic Consulting</div>
+        <div class="footer-line-2">© Iselin Group. "Tesla 2025 Scorecard" — brian.iselin@iselingroup.com</div>
+        <div class="footer-line-3">The underlying decision-integrity model, logic, and UI are proprietary to Iselin Group and may not be reproduced, adapted, or deployed in whole or in part without prior written consent; all rights reserved.</div>
+    </footer>
+
+    <script>
+        // EMBEDDED DATA
+     const data = {
+    "lastUpdated": "2025-10-11",
+    "overallGPA": {
+        "score": 58,
+        "grade": "D",
+        "weightedAverage": 58.0
+    },
+    "metrics": [
+        {
+            "id": "robotaxi",
+            "title": "Robotaxi/FSD Deployment",
+            "weight": 30,
+            "score": 45,
+            "grade": "F",
+            "promise": "We will have unsupervised Full Self-Driving operating in multiple cities by the end of 2025, and robotaxis will be earning income for Tesla owners.",
+            "promiseAuthor": "Elon Musk",
+            "promiseDate": "2025-01-29",
+            "status": "Austin robotaxi app launched early September 2025, invite-only with inconsistent access. CPUC confirmed Tesla hasn't applied for paid autonomous rides permit in San Francisco. NHTSA opened investigation (9 Oct 2025) into 2.9M Teslas over FSD red-light running and unsafe lane changes.",
+            "evidence": [
+                {"text": "Autoweek: Musk promises unsupervised FSD (30 Jan 2025)", "url": "https://www.autoweek.com/news/a63619843/tesla-musk-unsupervised-fsd-robotaxis/"},
+                {"text": "Electrek: Tesla Robotaxi app downloads (4 Sep 2025)", "url": "https://electrek.co/2025/09/04/tesla-robotaxi-anyone-with-iphone-can-now-download-app-join-waitlist/"},
+                {"text": "Business Insider: Robotaxi access removed for users (Sep 2025)", "url": "https://www.businessinsider.com/tesla-robotaxi-app-access-removed-for-some-users-waitlist-2025-9"},
+                {"text": "ABC7: California regulators say no approval (25 Jul 2025)", "url": "https://abc7news.com/post/tesla-plans-roll-robotaxi-service-san-francisco-bay-area-weekend-report-says/17290394/"},
+                {"text": "Reuters: NHTSA FSD Investigation (9 Oct 2025)", "url": "https://www.reuters.com/business/autos-transportation/us-opens-probe-into-28-million-tesla-vehicles-over-traffic-violations-when-using-2025-10-09/"}
+            ]
+        },
+        {
+            "id": "semi",
+            "title": "Semi: Production & Deliveries",
+            "weight": 20,
+            "score": 55,
+            "grade": "D",
+            "promise": "High-volume production of Tesla Semi begins this year, with deliveries ramping to hundreds per quarter.",
+            "promiseAuthor": "Elon Musk",
+            "promiseDate": "2025-01-29",
+            "status": "Nevada factory construction continues; industry reporting indicates late-2025 into 2026 for volume. Uber Freight announced subsidised Semi programme (Sep 2025). Pepsi pilot fleet continues. No evidence of hundreds-per-quarter shipments.",
+            "evidence": [
+                {"text": "FreightWaves: Semi deliveries delayed (11 Apr 2025)", "url": "https://www.freightwaves.com/news/tesla-semi-deliveries-delayed-again"},
+                {"text": "Uber Freight: EV Fleet Accelerator with Tesla (16 Sep 2025)", "url": "https://www.uberfreight.com/blog/introducing-uber-freights-dedicated-ev-fleet-accelerator-program-in-partnership-with-tesla/"},
+                {"text": "TruckingDive: Uber-Tesla Semi subsidies (23 Sep 2025)", "url": "https://www.truckingdive.com/news/uber-freight-tesla-semi-ev-accelerator-program/760693/"},
+                {"text": "Tesla Oracle: Semi factory update, 2026 volume production (30 Apr 2025)", "url": "https://www.teslaoracle.com/2025/05/01/head-of-tesla-semi-program-factory-update-46-new-megachargers-volume-production-to-start-in-2026/"}
+            ]
+        },
+        {
+            "id": "deliveries",
+            "title": "Vehicle Deliveries & Model Mix",
+            "weight": 15,
+            "score": 68,
+            "grade": "C",
+            "promise": "2 million deliveries in 2025, growth across all lines, Cybertruck reaching positive gross margin.",
+            "promiseAuthor": "Tesla Investor Relations",
+            "promiseDate": "2025-01-29",
+            "status": "Q1: 336k, Q2: 384k, Q3: 497k (record). Nine-month total: 1.22M. 2M full-year target requires extraordinary Q4. Model 3/Y dominate mix. October 2025: cheaper 'Standard' variants launched (Europe & U.S.) to shore up demand. Cybertruck profitability unconfirmed.",
+            "evidence": [
+                {"text": "Tesla Q1 2025 Deliveries (2 Apr 2025)", "url": "https://ir.tesla.com/press-release/tesla-first-quarter-2025-production-deliveries-and-deployments"},
+                {"text": "Tesla Q2 2025 Deliveries (2 Jul 2025)", "url": "https://ir.tesla.com/press-release/tesla-second-quarter-2025-production-deliveries-deployments"},
+                {"text": "Tesla Q3 2025 Deliveries (2 Oct 2025)", "url": "https://ir.tesla.com/press-release/tesla-third-quarter-2025-production-deliveries-deployments"},
+                {"text": "Reuters: Model Y Standard launch Europe (10 Oct 2025)", "url": "https://www.reuters.com/business/retail-consumer/tesla-prices-standard-model-y-41700-norway-its-website-shows-2025-10-10/"}
+            ]
+        },
+        {
+            "id": "margins",
+            "title": "Auto Gross Margin (ex-credits)",
+            "weight": 10,
+            "score": 45,
+            "grade": "F",
+            "promise": "Stabilise or grow auto gross margins above 20%, demonstrate pricing power.",
+            "promiseAuthor": "Tesla CFO",
+            "promiseDate": "2025-01-29",
+            "status": "Mid-teens gross margins ex-credits persist through 2025. No evidence of 20%+ recovery. October 2025 launch of cheaper 'Standard' Model Y/3 trims indicates demand pressure, not pricing power. Margins remain compressed.",
+            "evidence": [
+                {"text": "Tesla Q1 2025 10-Q (31 Mar 2025)", "url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828025018911/tsla-20250331.htm"},
+                {"text": "Tesla Q2 2025 Update Deck (23 Jul 2025)", "url": "https://www.tesla.com/sites/default/files/downloads/TSLA-Q2-2025-Update.pdf"},
+                {"text": "Reuters: Model Y Standard pricing (10 Oct 2025)", "url": "https://www.reuters.com/business/retail-consumer/tesla-prices-standard-model-y-41700-norway-its-website-shows-2025-10-10/"}
+            ]
+        },
+        {
+            "id": "cashflow",
+            "title": "Cash Flow & CapEx Discipline",
+            "weight": 5,
+            "score": 68,
+            "grade": "B",
+            "promise": "Maintain strong free cash flow, CapEx discipline aligned with growth.",
+            "promiseAuthor": "Tesla CFO",
+            "promiseDate": "2025-01-29",
+            "status": "Q2 2025: Operating cash flow positive; free cash flow slim but positive. Heavy CapEx on AI, energy, manufacturing broadly within guidance. Liquidity remains strong with large cash reserves.",
+            "evidence": [
+                {"text": "Tesla Q2 2025 Update Deck (23 Jul 2025)", "url": "https://www.tesla.com/sites/default/files/downloads/TSLA-Q2-2025-Update.pdf"},
+                {"text": "Tesla Q1 2025 10-Q (31 Mar 2025)", "url": "https://www.sec.gov/Archives/edgar/data/1318605/000162828025018911/tsla-20250331.htm"}
+            ]
+        },
+        {
+            "id": "energy",
+            "title": "Energy Storage & Deployments",
+            "weight": 10,
+            "score": 85,
+            "grade": "B",
+            "promise": "Energy becomes a genuine growth engine in 2025.",
+            "promiseAuthor": "Elon Musk",
+            "promiseDate": "2024-10-23",
+            "status": "Q1: 10.4 GWh, Q2: 9.6 GWh, Q3: 12.5 GWh—clear deployment ramp (+40% YoY). Energy gross margin improved vs 2024. Lathrop Megafactory output strong; first Shanghai Megafactory Megapacks delivered. Strong backlog.",
+            "evidence": [
+                {"text": "Tesla Q1 2025 Deliveries & Deployments (2 Apr 2025)", "url": "https://ir.tesla.com/press-release/tesla-first-quarter-2025-production-deliveries-and-deployments"},
+                {"text": "Tesla Q2 2025 Deliveries & Deployments (2 Jul 2025)", "url": "https://ir.tesla.com/press-release/tesla-second-quarter-2025-production-deliveries-deployments"},
+                {"text": "Tesla Q3 2025 Deliveries & Deployments (2 Oct 2025)", "url": "https://ir.tesla.com/press-release/tesla-third-quarter-2025-production-deliveries-deployments"},
+                {"text": "Tesla Q2 2025 Update Deck (23 Jul 2025)", "url": "https://www.tesla.com/sites/default/files/downloads/TSLA-Q2-2025-Update.pdf"}
+            ]
+        },
+        {
+            "id": "services",
+            "title": "Services: Insurance, FSD, Supercharging",
+            "weight": 10,
+            "score": 68,
+            "grade": "C",
+            "promise": "Services revenue growth, Tesla Insurance expansion, Supercharger profitability.",
+            "promiseAuthor": "Tesla Investor Relations",
+            "promiseDate": "2025-01-29",
+            "status": "Services revenue +18% YoY. California Dept of Insurance launched enforcement actions (3 Oct 2025) over Tesla Insurance claims-handling. FSD subscriptions remain opaque (bundled in Services). Supercharger network expanding (NACS rollout to Ford, GM continues).",
+            "evidence": [
+                {"text": "California DOI: Enforcement actions vs Tesla (3 Oct 2025)", "url": "https://www.insurance.ca.gov/0400-news/0100-press-releases/2025/release064-2025.cfm"},
+                {"text": "Tesla Q2 2025 Update Deck (23 Jul 2025)", "url": "https://www.tesla.com/sites/default/files/downloads/TSLA-Q2-2025-Update.pdf"},
+                {"text": "Tesla NACS Information", "url": "https://www.tesla.com/NACS"},
+                {"text": "Ford: NACS Fast Charging Adapter", "url": "https://www.ford.com/support/how-tos/electric-vehicles/public-charging/how-do-i-get-a-fast-charging-adapter-nacs/"}
+            ]
+        }
+    ],
+    "stockChart": {
+        "dataPoints": [
+            {"date": "2025-01-02", "TSLA": 0, "SP500": 0, "Nasdaq100": 0, "BYD": 0},
+            {"date": "2025-02-01", "TSLA": 8, "SP500": 3, "Nasdaq100": 4, "BYD": 12},
+            {"date": "2025-03-01", "TSLA": 5, "SP500": 5, "Nasdaq100": 6, "BYD": 18},
+            {"date": "2025-04-01", "TSLA": -2, "SP500": 6, "Nasdaq100": 7, "BYD": 22},
+            {"date": "2025-05-01", "TSLA": -8, "SP500": 8, "Nasdaq100": 9, "BYD": 28},
+            {"date": "2025-06-01", "TSLA": -12, "SP500": 10, "Nasdaq100": 11, "BYD": 35},
+            {"date": "2025-07-01", "TSLA": -10, "SP500": 12, "Nasdaq100": 13, "BYD": 40},
+            {"date": "2025-08-01", "TSLA": -6, "SP500": 14, "Nasdaq100": 15, "BYD": 45},
+            {"date": "2025-09-01", "TSLA": -15, "SP500": 16, "Nasdaq100": 17, "BYD": 50},
+            {"date": "2025-10-11", "TSLA": -18, "SP500": 17, "Nasdaq100": 18, "BYD": 55}
+        ],
+        "annotations": [
+            {"date": "2025-01-29", "label": "Q4 Earnings: Musk promises robotaxis"},
+            {"date": "2025-04-15", "label": "Model Y/3 incentives announced"},
+            {"date": "2025-09-04", "label": "Austin robotaxi app launches"},
+            {"date": "2025-10-09", "label": "NHTSA FSD probe opens"},
+            {"date": "2025-10-10", "label": "Model Y Standard launch (Europe)"}
+        ]
+    }
+};
+
+
+        // HELPER FUNCTIONS
+        function getScoreColor(score) {
+            if (score < 40) return '#DC2626';
+            if (score < 70) return '#F59E0B';
+            return '#10B981';
+        }
+
+        function renderDial(svg, score, size = 200) {
+            const cx = size / 2;
+            const cy = size / 2;
+            const radius = (size / 2) - 15;
+            const circumference = 2 * Math.PI * radius;
+            const offset = circumference - (score / 100) * circumference;
+
+            svg.innerHTML = `
+                <circle cx="${cx}" cy="${cy}" r="${radius}" 
+                    fill="none" stroke="#E5E7EB" stroke-width="12"/>
+                <circle cx="${cx}" cy="${cy}" r="${radius}" 
+                    fill="none" stroke="${getScoreColor(score)}" stroke-width="12"
+                    stroke-dasharray="${circumference}" 
+                    stroke-dashoffset="${offset}"
+                    stroke-linecap="round"
+                    transform="rotate(-90 ${cx} ${cy})"
+                    style="transition: stroke-dashoffset 1s ease-in-out"/>
+            `;
+        }
+
+        // RENDER OVERALL GPA
+        const gpaSvg = document.querySelector('#gpa-dial svg');
+        renderDial(gpaSvg, data.overallGPA.score, 200);
+
+        // RENDER METRIC CARDS
+        const metricGrid = document.getElementById('metric-grid');
+        data.metrics.forEach(metric => {
+            const card = document.createElement('div');
+            card.className = 'metric-card';
+            card.innerHTML = `
+                <div class="metric-title">
+                    ${metric.title}
+                    <span class="weight-badge">${metric.weight}% weight</span>
+                </div>
+                <div class="promise-chip" onclick="this.querySelector('.promise-full').classList.toggle('open')">
+                    <div><strong>Promise:</strong> "${metric.promise.substring(0, 80)}..."</div>
+                    <div class="promise-full">
+                        <strong>Full promise:</strong> "${metric.promise}"
+                        <br><em>— ${metric.promiseAuthor}, ${metric.promiseDate}</em>
+                    </div>
+                </div>
+                <div class="metric-dial-container">
+                    <div class="metric-dial">
+                        <svg width="120" height="120"></svg>
+                        <div class="metric-score">
+                            <div class="metric-score-number">${metric.score}</div>
+                            <div class="metric-score-grade">${metric.grade}</div>
+                        </div>
+                    </div>
+                    <div class="status-text">${metric.status}</div>
+                </div>
+                <button class="toggle-evidence" onclick="toggleEvidence(this)">
+                    View Evidence Sources
+                </button>
+                <div class="evidence-drawer">
+                    <ul class="evidence-list">
+                        ${metric.evidence.map(e => `<li><a href="${e.url}" target="_blank">${e.text}</a></li>`).join('')}
+                    </ul>
+                </div>
+            `;
+            metricGrid.appendChild(card);
+
+            // Render dial for this metric
+            const svg = card.querySelector('.metric-dial svg');
+            renderDial(svg, metric.score, 120);
+        });
+
+        function toggleEvidence(button) {
+            const drawer = button.nextElementSibling;
+            drawer.classList.toggle('open');
+            button.textContent = drawer.classList.contains('open') 
+                ? 'Hide Evidence Sources' 
+                : 'View Evidence Sources';
+        }
+
+        // RENDER STOCK CHART
+        const canvas = document.getElementById('stock-chart');
+        const ctx = canvas.getContext('2d');
+        const container = canvas.parentElement;
+        
+        function resizeChart() {
+            canvas.width = container.offsetWidth;
+            canvas.height = 400;
+            drawChart();
+        }
+
+        function drawChart() {
+            const width = canvas.width;
+            const height = canvas.height;
+            const padding = 60;
+            const chartWidth = width - (padding * 2);
+            const chartHeight = height - (padding * 2);
+
+            ctx.clearRect(0, 0, width, height);
+
+            // Background
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(0, 0, width, height);
+
+            // Grid lines
+            ctx.strokeStyle = '#E5E7EB';
+            ctx.lineWidth = 1;
+            for (let i = 0; i <= 5; i++) {
+                const y = padding + (chartHeight / 5) * i;
+                ctx.beginPath();
+                ctx.moveTo(padding, y);
+                ctx.lineTo(width - padding, y);
+                ctx.stroke();
+            }
+
+            // Y-axis labels
+            ctx.fillStyle = '#6B7280';
+            ctx.font = '12px Inter, sans-serif';
+            ctx.textAlign = 'right';
+            for (let i = 0; i <= 5; i++) {
+                const value = 60 - (i * 24);
+                const y = padding + (chartHeight / 5) * i;
+                ctx.fillText(`${value}%`, padding - 10, y + 4);
+            }
+
+            // X-axis labels
+            ctx.textAlign = 'center';
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'];
+            months.forEach((month, i) => {
+                const x = padding + (chartWidth / 9) * i;
+                ctx.fillText(month, x, height - padding + 20);
+            });
+
+            // Draw lines
+            const points = data.stockChart.dataPoints;
+            const drawLine = (key, color, lineStyle = 'solid', width = 2) => {
+                ctx.strokeStyle = color;
+                ctx.lineWidth = width;
+                
+                if (lineStyle === 'dashed') {
+                    ctx.setLineDash([5, 5]);
+                } else if (lineStyle === 'dotted') {
+                    ctx.setLineDash([2, 3]);
+                } else {
+                    ctx.setLineDash([]);
+                }
+
+                ctx.beginPath();
+                points.forEach((point, i) => {
+                    const x = padding + (chartWidth / 9) * i;
+                    const yPercent = (point[key] + 20) / 80; // Scale -20 to 60 into 0-1
+                    const y = height - padding - (yPercent * chartHeight);
+                    
+                    if (i === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                });
+                ctx.stroke();
+                ctx.setLineDash([]);
+            };
+
+            drawLine('BYD', '#F59E0B', 'solid', 2);
+            drawLine('Nasdaq100', '#6B7280', 'dotted', 2);
+            drawLine('SP500', '#9CA3AF', 'dashed', 2);
+            drawLine('TSLA', '#3B82F6', 'solid', 3);
+
+            // Annotations
+            ctx.font = 'bold 10px Inter, sans-serif';
+            ctx.textAlign = 'left';
+            data.stockChart.annotations.forEach((ann, i) => {
+                const monthMatch = ann.date.match(/2025-(\d{2})/);
+                if (monthMatch) {
+                    const monthIndex = parseInt(monthMatch[1]) - 1;
+                    const x = padding + (chartWidth / 9) * monthIndex;
+                    const y = padding + 20 + (i * 15);
+                    
+                    ctx.fillStyle = '#3B82F6';
+                    ctx.beginPath();
+                    ctx.arc(x, y - 5, 3, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    ctx.fillStyle = '#374151';
+                    ctx.fillText(ann.label.substring(0, 30), x + 8, y);
+                }
+            });
+        }
+
+        window.addEventListener('resize', resizeChart);
+        resizeChart();
+    </script>
+</body>
+</html>
