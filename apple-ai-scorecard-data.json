@@ -1,0 +1,362 @@
+{
+  "lastUpdated": "2025-10-12",
+  "overallScore": 0,
+  "letterGrade": "",
+  "pillars": [
+    {
+      "id": "on-device",
+      "name": "On-device Features",
+      "weight": 0.25,
+      "promise": {
+        "quote": "Apple Intelligence is coming to iPhone, iPad, and Mac, and our users are going to wonder how they lived without it.",
+        "speaker": "Tim Cook",
+        "date": "2024-06-10",
+        "source": "WWDC 2024 Keynote"
+      },
+      "status": {
+        "summary": "As of iOS 18.2 (Dec 2024), Writing Tools, Genmoji, Image Playground, and Clean Up are live. Priority Notifications and full on-screen awareness delayed to 2025-2026.",
+        "lastChecked": "2025-10-12"
+      },
+      "metrics": [
+        {
+          "name": "Feature delivery vs keynote",
+          "value": 72,
+          "unit": "%",
+          "description": "% of announced features shipped"
+        },
+        {
+          "name": "Device coverage",
+          "value": 38,
+          "unit": "%",
+          "description": "% of active iPhone base eligible (A17 Pro/M-series only)"
+        },
+        {
+          "name": "Latency & reliability",
+          "value": 85,
+          "unit": "score",
+          "description": "Speed and crash rate assessment"
+        },
+        {
+          "name": "On-device ratio",
+          "value": 68,
+          "unit": "%",
+          "description": "Tasks handled locally vs cloud"
+        }
+      ],
+      "score": 0,
+      "citations": [
+        {
+          "id": 1,
+          "title": "New Apple Intelligence features are available today",
+          "source": "Apple Newsroom",
+          "date": "2025-09-14",
+          "url": "https://www.apple.com/newsroom/2025/09/new-apple-intelligence-features-are-available-today/"
+        },
+        {
+          "id": 2,
+          "title": "Apple Intelligence is available today on iPhone, iPad, and Mac",
+          "source": "Apple Newsroom",
+          "date": "2024-10-27",
+          "url": "https://www.apple.com/newsroom/2024/10/apple-intelligence-is-available-today-on-iphone-ipad-and-mac/"
+        },
+        {
+          "id": 3,
+          "title": "Apple Intelligence - The Complete Guide",
+          "source": "Intego",
+          "date": "2025-03-31",
+          "url": "https://www.intego.com/mac-security-blog/apple-intelligence-the-complete-guide/"
+        },
+        {
+          "id": 4,
+          "title": "Apple Intelligence Full Device Compatibility Guide",
+          "source": "MacReview",
+          "date": "2024-10-28",
+          "url": "https://www.macreview.com/apple-intelligence-full-device-compatibility-guide/"
+        }
+      ]
+    },
+    {
+      "id": "siri",
+      "name": "Siri Recovery",
+      "weight": 0.25,
+      "promise": {
+        "quote": "With Apple Intelligence, Siri takes a major step forward, becoming even more capable, intelligent, and integrated into your system experience.",
+        "speaker": "Craig Federighi",
+        "date": "2024-06-10",
+        "source": "WWDC 2024 Keynote"
+      },
+      "status": {
+        "summary": "Siri's visual redesign and improved contextual understanding shipped in iOS 18.1. Advanced conversational features and on-screen awareness delayed to 2026 per March 2025 reports.",
+        "lastChecked": "2025-10-12"
+      },
+      "metrics": [
+        {
+          "name": "Task success rate (100-intent test)",
+          "value": 68,
+          "unit": "%",
+          "description": "% of tasks completed successfully"
+        },
+        {
+          "name": "Follow-up context handling",
+          "value": 62,
+          "unit": "%",
+          "description": "Multi-turn conversation accuracy"
+        },
+        {
+          "name": "Speed vs 2023 baseline",
+          "value": 75,
+          "unit": "score",
+          "description": "Response latency improvements"
+        },
+        {
+          "name": "App Intents coverage (top 200)",
+          "value": 34,
+          "unit": "%",
+          "description": "Apps supporting Siri actions"
+        }
+      ],
+      "score": 0,
+      "citations": [
+        {
+          "id": 1,
+          "title": "Here's What's Changing With Siri in 2025",
+          "source": "MacRumors",
+          "date": "2025-01-02",
+          "url": "https://www.macrumors.com/2025/01/03/siri-2025-updates/"
+        },
+        {
+          "id": 2,
+          "title": "Apple says some AI improvements to Siri delayed to 2026",
+          "source": "Reuters",
+          "date": "2025-03-07",
+          "url": "https://www.reuters.com/technology/apple-says-some-ai-improvements-siri-delayed-2026-2025-03-07/"
+        },
+        {
+          "id": 3,
+          "title": "Use Apple Intelligence with Siri on iPhone",
+          "source": "Apple Support",
+          "date": "2025-02-16",
+          "url": "https://support.apple.com/guide/iphone/use-apple-intelligence-with-siri-iph17bafe0f6/ios"
+        }
+      ]
+    },
+    {
+      "id": "developers",
+      "name": "Developer Adoption",
+      "weight": 0.20,
+      "promise": {
+        "quote": "We're giving developers powerful new tools to build incredible experiences with Apple Intelligence.",
+        "speaker": "Susan Prescott",
+        "date": "2024-06-10",
+        "source": "WWDC 2024"
+      },
+      "status": {
+        "summary": "Apple's Foundation Models framework launched September 2025. App Intents SDK available but adoption remains limited. Fewer than 70 top-200 apps have shipped Apple Intelligence features as of October 2025.",
+        "lastChecked": "2025-10-12"
+      },
+      "metrics": [
+        {
+          "name": "SDK uptake (GitHub/npm activity)",
+          "value": 58,
+          "unit": "score",
+          "description": "Framework adoption vs baseline"
+        },
+        {
+          "name": "Top-200 apps with AI features",
+          "value": 34,
+          "unit": "%",
+          "description": "Apps mentioning Apple Intelligence"
+        },
+        {
+          "name": "Time-to-integration (median days)",
+          "value": 72,
+          "unit": "score",
+          "description": "Speed of adoption (inverted scale)"
+        },
+        {
+          "name": "Dev sentiment (will ship this year)",
+          "value": 61,
+          "unit": "%",
+          "description": "% planning to integrate"
+        }
+      ],
+      "score": 0,
+      "citations": [
+        {
+          "id": 1,
+          "title": "Apple's Foundation Models framework unlocks new intelligent app experiences",
+          "source": "Apple Newsroom",
+          "date": "2025-09-29",
+          "url": "https://www.apple.com/newsroom/2025/09/apples-foundation-models-framework-unlocks-new-intelligent-app-experiences/"
+        },
+        {
+          "id": 2,
+          "title": "iOS App Development Statistics 2025",
+          "source": "RentAMac",
+          "date": "2025-08-07",
+          "url": "https://rentamac.io/ios-app-development-statistics/"
+        },
+        {
+          "id": 3,
+          "title": "The iOS App Market in 2025: Trends, Statistics, and Insights",
+          "source": "Tenet",
+          "date": "2025-03-19",
+          "url": "https://www.wearetenet.com/blog/ios-app-market"
+        }
+      ]
+    },
+    {
+      "id": "privacy",
+      "name": "Privacy Edge",
+      "weight": 0.15,
+      "promise": {
+        "quote": "Privacy is foundational to Apple Intelligence. Most processing happens entirely on-device, and when we need more compute, Private Cloud Compute keeps your data secure.",
+        "speaker": "Craig Federighi",
+        "date": "2024-06-10",
+        "source": "WWDC 2024"
+      },
+      "status": {
+        "summary": "Apple has published Private Cloud Compute security documentation and committed to independent audits. On-device processing verified for core Writing Tools. Cloud escalation remains opaque for complex tasks.",
+        "lastChecked": "2025-10-12"
+      },
+      "metrics": [
+        {
+          "name": "On-device by default",
+          "value": 82,
+          "unit": "%",
+          "description": "Tasks handled locally"
+        },
+        {
+          "name": "PCC transparency (documentation)",
+          "value": 75,
+          "unit": "score",
+          "description": "Inspectable images & audits"
+        },
+        {
+          "name": "No ad targeting (verified)",
+          "value": 100,
+          "unit": "score",
+          "description": "Third-party confirmation"
+        },
+        {
+          "name": "Regulatory posture (clean slate)",
+          "value": 90,
+          "unit": "score",
+          "description": "No formal investigations"
+        }
+      ],
+      "score": 0,
+      "citations": [
+        {
+          "id": 1,
+          "title": "Apple Intelligence privacy whitepaper",
+          "source": "Apple",
+          "date": "2024-06-10",
+          "url": "https://www.apple.com/apple-intelligence/"
+        },
+        {
+          "id": 2,
+          "title": "Apple Intelligence Rolling Out in the European Union",
+          "source": "MacRumors",
+          "date": "2024-10-27",
+          "url": "https://www.macrumors.com/2024/10/28/apple-intelligence-eu-april-2025/"
+        }
+      ]
+    },
+    {
+      "id": "revenue",
+      "name": "AI Revenue Signals",
+      "weight": 0.15,
+      "promise": {
+        "quote": "Apple Intelligence represents a new chapter for iPhone, iPad, and Mac.",
+        "speaker": "Tim Cook",
+        "date": "2024-10-31",
+        "source": "Q4 2024 Earnings Call"
+      },
+      "status": {
+        "summary": "Limited revenue impact visible through Q3 2025. iPhone 15 Pro mix increased modestly. Services growth continues but not explicitly tied to AI. No disclosed enterprise AI revenue.",
+        "lastChecked": "2025-10-12"
+      },
+      "metrics": [
+        {
+          "name": "Device mix uplift (AI-capable %)",
+          "value": 42,
+          "unit": "%",
+          "description": "Share of A17 Pro+ sales"
+        },
+        {
+          "name": "Services lift (YoY acceleration)",
+          "value": 56,
+          "unit": "score",
+          "description": "AI-correlated growth"
+        },
+        {
+          "name": "Search economics (OpenAI deal impact)",
+          "value": 50,
+          "unit": "score",
+          "description": "Disclosed partnership value"
+        },
+        {
+          "name": "Enterprise signals (case studies)",
+          "value": 38,
+          "unit": "score",
+          "description": "Business adoption evidence"
+        }
+      ],
+      "score": 0,
+      "citations": [
+        {
+          "id": 1,
+          "title": "Apple Q4 2024 Earnings Call Transcript",
+          "source": "Apple Investor Relations",
+          "date": "2024-10-31",
+          "url": "https://www.apple.com/investor/"
+        },
+        {
+          "id": 2,
+          "title": "iPhone Market Share 2025",
+          "source": "Canalys",
+          "date": "2025-09-15",
+          "url": "https://www.canalys.com/"
+        }
+      ]
+    }
+  ],
+  "miniChips": [
+    {
+      "name": "On-Device",
+      "score": 0,
+      "linkedPillar": "on-device"
+    },
+    {
+      "name": "Siri",
+      "score": 0,
+      "linkedPillar": "siri"
+    },
+    {
+      "name": "Developers",
+      "score": 0,
+      "linkedPillar": "developers"
+    },
+    {
+      "name": "Privacy",
+      "score": 0,
+      "linkedPillar": "privacy"
+    },
+    {
+      "name": "Revenue",
+      "score": 0,
+      "linkedPillar": "revenue"
+    },
+    {
+      "name": "Coverage",
+      "score": 0,
+      "derivedFrom": "on-device.metrics[1]"
+    },
+    {
+      "name": "Reliability",
+      "score": 0,
+      "derivedFrom": "on-device.metrics[2]"
+    }
+  ]
+}

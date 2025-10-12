@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apple AI 2025 Scorecard: On-Device Genius or Just PR?</title>
+  <meta name="description" content="Grading Apple Intelligence feature by feature: Siri upgrades, on-device AI, developer adoption, privacy, and revenue signals. Updated Oct 2025.">
+  <meta name="keywords" content="Apple Intelligence, on-device AI, Siri upgrade 2025, App Intents, Private Cloud Compute, Apple AI privacy, iPhone A17 Pro, Apple AI revenue">
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content="Apple AI 2025 Scorecard">
+  <meta property="og:description" content="Siri's comeback? Grading Apple Intelligence across 5 pillars. Last updated Oct 12, 2025.">
+  <meta property="og:type" content="website">
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Apple AI Scorecard 2025">
+  <meta name="twitter:description" content="On-device features, Siri recovery, privacy—how does Apple stack up?">
+  
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+</head>
+<body>
+  
+  <!-- Top Navigation Bar -->
+  <header id="top-bar">
+    <div class="container">
+      <div class="left-section">
+        <span class="company-name">Iselin Group - <span class="small-caps">Strategic Consulting</span></span>
+      </div>
+      <div class="center-section">
+        <a href="https://iselingroup.com" class="breadcrumb">iselingroup.com</a>
+        <span class="separator">-</span>
+        <a href="mailto:brian.iselin@iselingroup.com" class="breadcrumb">brian.iselin@iselingroup.com</a>
+      </div>
+      <div class="right-section">
+        <div class="brand-chip">
+          <img src="https://brianiselin.github.io/widgets-public/Iselin_Group_Logo_1024 x.jpg" alt="Iselin Group" class="logo">
+        </div>
+      </div>
+    </div>
+  </header>
+  
+  <!-- Hero Section -->
+  <section id="hero">
+    <h1>Apple AI 2025 Scorecard</h1>
+    <h2>Private, On-Device, or Just PR?</h2>
+    
+    <div id="overall-score-container">
+      <div id="overall-score-dial">
+        <canvas id="scoreGauge"></canvas>
+      </div>
+      <div id="score-label">
+        <span id="score-number">—</span><span class="score-suffix"> / 100</span>
+        <div id="letter-grade">—</div>
+      </div>
+    </div>
+    
+    <div id="mini-chips">
+      <!-- Dynamically populated -->
+    </div>
+    
+    <div id="action-buttons">
+      <button id="refresh-btn" class="action-btn">
+        <span class="icon">↻</span> Refresh Scores
+      </button>
+      <button id="share-btn" class="action-btn">
+        <span class="icon">⤴</span> Share
+      </button>
+    </div>
+    
+    <p id="last-updated">Last updated: <span id="update-date">—</span></p>
+  </section>
+  
+  <!-- Quick-Start Rubric -->
+  <section id="rubric" class="collapsible">
+    <button id="rubric-toggle" class="toggle-btn">
+      How is this scored? <span class="toggle-icon">▼</span>
+    </button>
+    <div id="rubric-content" class="hidden">
+      <div class="rubric-grid">
+        <div class="rubric-section">
+          <h3>Rubric (per pillar)</h3>
+          <ul class="rubric-tiers">
+            <li><code>0</code> = No progress</li>
+            <li><code>25</code> = Demo-only</li>
+            <li><code>50</code> = Live but narrow</li>
+            <li><code>75</code> = Scaled rollout</li>
+            <li><code>100</code> = Delivered as promised, on time</li>
+          </ul>
+        </div>
+        <div class="rubric-section">
+          <h3>Weights</h3>
+          <ul class="rubric-weights">
+            <li><strong>On-device features:</strong> 25%</li>
+            <li><strong>Siri recovery:</strong> 25%</li>
+            <li><strong>Developer adoption:</strong> 20%</li>
+            <li><strong>Privacy edge:</strong> 15%</li>
+            <li><strong>AI revenue signals:</strong> 15%</li>
+            <li class="note">(Coverage + Reliability: derived from Pillars 1 & 2)</li>
+          </ul>
+        </div>
+        <div class="rubric-section">
+          <h3>Overall Score</h3>
+          <p class="formula">Overall GPA = Σ(Pillar Score × Weight)</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Pillar Cards -->
+  <section id="pillars">
+    <!-- Dynamically populated -->
+  </section>
+  
+  <!-- Footer Mini-Charts -->
+  <section id="footer-charts">
+    <h2>Key Metrics at a Glance</h2>
+    <div class="charts-grid">
+      <div class="chart-container">
+        <canvas id="deviceChart"></canvas>
+      </div>
+      <div class="chart-container">
+        <canvas id="siriTrendChart"></canvas>
+      </div>
+      <div class="chart-container">
+        <canvas id="appAdoptionChart"></canvas>
+      </div>
+    </div>
+  </section>
+  
+  <!-- Bottom Footer Bar -->
+  <footer id="bottom-bar">
+    <div class="container">
+      <div class="footer-content">
+        <p class="company-line">
+          Iselin Group - <span class="small-caps">Strategic Consulting</span>
+        </p>
+        <p class="copyright-line">
+          &copy; Iselin Group. "Apple AI 2025 Scorecard"
+        </p>
+        <p class="ip-notice">
+          The underlying decision-integrity model, logic, and UI are <span class="small-caps">proprietary</span> to Iselin Group and may not be reproduced, adapted, or deployed in whole or in part without prior written consent; <span class="small-caps">all rights reserved</span>.
+        </p>
+      </div>
+    </div>
+  </footer>
+  
+  <script src="script.js"></script>
+  <script src="chart-config.js"></script>
+</body>
+</html>
