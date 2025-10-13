@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Social Platform Privacy & Invasiveness Scoring</title>
+<style>
+  :root{--bg:#0b0e12;--panel:#111723;--muted:#6e7a8a;--text:#e8eef7;--accent:#4ea1ff;--accent2:#8bd1ff}
+  html,body{height:100%}
+  body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,Noto Sans;background:linear-gradient(160deg,#0b0e12,#0d1520);color:var(--text)}
+  .shell{max-width:1100px;margin:32px auto;padding:24px}
+  header{display:flex;gap:16px;align-items:center;justify-content:space-between;margin-bottom:16px}
+  header .title{font-size:1.25rem;font-weight:700}
+  header .subtitle{font-size:.9rem;color:var(--muted)}
+  .row{display:flex;gap:16px;flex-wrap:wrap}
+  .card{background:rgba(255,255,255,.04);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:16px;box-shadow:0 6px 24px rgba(0,0,0,.25)}
+  .card h3{margin:.2rem 0 1rem;font-size:1rem}
+  .controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  select,button{background:#0f1724;color:var(--text);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:10px 12px;font-size:.95rem}
+  button.primary{background:linear-gradient(180deg,var(--accent),var(--accent2));color:#051220;border:0;font-weight:700;cursor:pointer}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .metric{padding:10px 12px;border:1px dashed rgba(255,255,255,.08);border-radius:12px}
+  .metric label{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:.92rem}
+  .metric .val{min-width:2ch;text-align:right;font-variant-numeric:tabular-nums}
+  input[type=range]{width:100%}
+  .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .kpi{padding:12px;border-radius:14px;text-align:center;background:#0f1724;border:1px solid rgba(255,255,255,.08)}
+  .kpi .big{font-size:1.6rem;font-weight:800}
+  .sep{height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);margin:14px 0}
+  .hint{color:var(--muted);font-size:.85rem}
+</style>
+</head>
+<body>
+<div class="shell">
+  <header>
+    <div>
+      <div class="title">Platform Privacy Pulse (P³)</div>
+      <div class="subtitle">Adjust sliders per metric. Presets are real-ish placeholders you can overwrite. 0–5 scale.</div>
+    </div>
+    <div class="controls">
+      <label>Region <select id="regionSelect"></select></label>
+      <label>Platform <select id="platformSelect"></select></label>
+      <button class="primary" id="saveBtn">Save</button>
+      <button id="exportBtn">Export JSON</button>
+      <button id="importBtn">Import JSON</button>
+    </div>
+  </header>
+
+  <div id="errorBox"></div>
+
+  <div class="row">
+    <div class="card" style="min-width:280px">
+      <h3>Scores</h3>
+      <div class="kpis">
+        <div class="kpi"><div>Invasiveness (higher=worse)</div><div class="big" id="invScore">–</div></div>
+        <div class="kpi"><div>Privacy & Safety (higher=better)</div><div class="big" id="psScore">–</div></div>
+        <div class="kpi"><div>Overall</div><div class="big" id="overallScore">–</div></div>
+      </div>
+      <div class="hint" style="margin-top:8px">Overall = 60% Privacy/Safety + 40% (5 − Invasiveness)</div>
+    </div>
+
+    <div class="card" style="flex:1">
+      <h3>Invasiveness Metrics</h3>
+      <div class="grid" id="invasiveBox"></div>
+    </div>
+
+    <div class="card" style="flex:1">
+      <h3>Privacy & Safety Metrics</h3>
+      <div class="grid" id="psBox"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// === METRICS ===
+const INVASIVE_METRICS = [
+  {key:'scope', label:'Scope of data collected'},
+  {key:'offsite', label:'Off-platform tracking'},
+  {key:'linkage', label:'Identifiers & linkage'},
+  {key:'personalization', label:'Personalization intensity'},
+  {key:'retention', label:'Retention & deletion friction'},
+  {key:'ads', label:'Ads & data sharing/sales'}
+];
+const PS_METRICS = [
+  {key:'minimization', label:'Data minimization by default'},
+  {key:'security', label:'Security posture'},
+  {key:'controls', label:'User controls & rights'},
+  {key:'transparency', label:'Transparency & auditability'},
+  {key:'youth', label:'Child/teen protections'},
+  {key:'trust', label:'Trust & Safety effectiveness'},
+  {key:'regulatory', label:'Regulatory posture'}
+];
+
+// === WEIGHTS ===
+const DEFAULT_WEIGHTS = {
+  invasiveness:{scope:20,offsite:20,linkage:15,personalization:15,retention:15,ads:15},
+  ps:{minimization:15,security:15,controls:15,transparency:15,youth:15,trust:15,regulatory:10},
+  blend:{psWeight:60,invInverseWeight:40}
+};
+
+// === PRESETS (same values we tried to insert) ===
+const PRESETS = {
+  EU:{
+    TikTok:{invasiveness:{scope:4.0,offsite:3.5,linkage:3.8,personalization:3.8,retention:3.0,ads:3.2},ps:{minimization:2.8,security:3.5,controls:3.0,transparency:2.3,youth:3.2,trust:2.8,regulatory:2.5}},
+    Instagram:{invasiveness:{scope:3.8,offsite:3.2,linkage:3.2,personalization:3.2,retention:3.0,ads:3.8},ps:{minimization:2.8,security:4.0,controls:3.2,transparency:3.0,youth:3.0,trust:3.0,regulatory:3.0}},
+    YouTube:{invasiveness:{scope:2.7,offsite:2.2,linkage:2.5,personalization:2.6,retention:2.5,ads:2.7},ps:{minimization:3.4,security:4.0,controls:4.0,transparency:3.6,youth:3.8,trust:4.0,regulatory:3.8}},
+    X:{invasiveness:{scope:3.2,offsite:3.0,linkage:3.0,personalization:3.0,retention:3.0,ads:3.0},ps:{minimization:2.2,security:3.0,controls:2.8,transparency:2.0,youth:2.0,trust:2.3,regulatory:2.3}},
+    Facebook:{invasiveness:{scope:4.2,offsite:3.8,linkage:4.0,personalization:3.2,retention:3.0,ads:4.0},ps:{minimization:2.5,security:3.5,controls:3.0,transparency:3.0,youth:3.0,trust:3.0,regulatory:2.5}},
+    Snapchat:{invasiveness:{scope:3.0,offsite:2.5,linkage:2.5,personalization:2.5,retention:2.5,ads:2.6},ps:{minimization:2.8,security:3.0,controls:3.0,transparency:2.5,youth:3.2,trust:3.0,regulatory:2.8}},
+    Reddit:{invasiveness:{scope:2.2,offsite:1.7,linkage:2.0,personalization:1.8,retention:2.0,ads:1.8},ps:{minimization:3.4,security:3.5,controls:3.2,transparency:3.6,youth:3.0,trust:3.2,regulatory:3.4}},
+    LinkedIn:{invasiveness:{scope:2.8,offsite:2.2,linkage:2.8,personalization:2.6,retention:2.2,ads:2.3},ps:{minimization:2.8,security:4.0,controls:3.3,transparency:3.3,youth:2.5,trust:3.3,regulatory:2.7}},
+    Pinterest:{invasiveness:{scope:2.5,offsite:2.0,linkage:2.0,personalization:2.0,retention:2.0,ads:2.0},ps:{minimization:3.6,security:3.5,controls:3.2,transparency:3.4,youth:3.5,trust:3.2,regulatory:3.5}}
+  },
+  US:{
+    TikTok:{invasiveness:{scope:4.0,offsite:3.7,linkage:3.8,personalization:3.8,retention:3.0,ads:3.2},ps:{minimization:2.5,security:3.5,controls:3.0,transparency:2.2,youth:3.0,trust:2.7,regulatory:2.0}},
+    Instagram:{invasiveness:{scope:3.8,offsite:3.5,linkage:3.2,personalization:3.2,retention:3.0,ads:3.8},ps:{minimization:2.5,security:4.0,controls:3.0,transparency:3.0,youth:3.0,trust:3.0,regulatory:2.0}},
+    YouTube:{invasiveness:{scope:2.7,offsite:2.5,linkage:2.5,personalization:2.6,retention:2.5,ads:2.7},ps:{minimization:3.2,security:4.0,controls:3.8,transparency:3.5,youth:3.6,trust:3.8,regulatory:3.5}},
+    X:{invasiveness:{scope:3.2,offsite:3.0,linkage:3.0,personalization:3.0,retention:3.0,ads:3.0},ps:{minimization:2.0,security:3.0,controls:2.8,transparency:1.8,youth:2.0,trust:2.2,regulatory:2.0}},
+    Facebook:{invasiveness:{scope:4.2,offsite:3.8,linkage:4.0,personalization:3.2,retention:3.0,ads:4.0},ps:{minimization:2.3,security:3.5,controls:3.0,transparency:3.0,youth:3.0,trust:3.0,regulatory:2.0}},
+    Snapchat:{invasiveness:{scope:3.0,offsite:3.0,linkage:2.5,personalization:2.5,retention:2.5,ads:2.6},ps:{minimization:2.6,security:3.0,controls:3.0,transparency:2.5,youth:3.0,trust:3.0,regulatory:2.3}},
+    Reddit:{invasiveness:{scope:2.2,offsite:2.0,linkage:2.0,personalization:1.8,retention:2.0,ads:1.8},ps:{minimization:3.2,security:3.5,controls:3.0,transparency:3.4,youth:3.0,trust:3.0,regulatory:2.8}},
+    LinkedIn:{invasiveness:{scope:2.8,offsite:2.2,linkage:2.8,personalization:2.6,retention:2.2,ads:2.3},ps:{minimization:2.6,security:4.0,controls:3.2,transparency:3.2,youth:2.3,trust:3.2,regulatory:2.2}},
+    Pinterest:{invasiveness:{scope:2.5,offsite:2.5,linkage:2.0,personalization:2.0,retention:2.0,ads:2.0},ps:{minimization:3.2,security:3.5,controls:3.0,transparency:3.2,youth:3.2,trust:3.0,regulatory:3.0}}
+  }
+};
+
+// === STATE ===
+let state = {
+  region:'EU',
+  platform:'TikTok',
+  weights: JSON.parse(localStorage.getItem('weights')||'null') || DEFAULT_WEIGHTS,
+  data: (function(){
+    const raw = localStorage.getItem('platformData');
+    if(!raw) return JSON.parse(JSON.stringify(PRESETS));
+    try{ const parsed = JSON.parse(raw); return Object.keys(parsed||{}).length? parsed : JSON.parse(JSON.stringify(PRESETS)); }
+    catch(e){ return JSON.parse(JSON.stringify(PRESETS)); }
+  })()
+};
+
+// === HELPERS ===
+const $ = s=>document.querySelector(s);
+function el(tag,attrs={},kids=[]){const e=document.createElement(tag);for(const[k,v]of Object.entries(attrs)){if(k==='class')e.className=v;else if(k==='html')e.innerHTML=v;else e.setAttribute(k,v)}kids.forEach(c=>e.appendChild(c));return e}
+function weightedAvg(values, weights){const keys=Object.keys(values);let sw=0,sum=0;keys.forEach(k=>{const w=(weights[k]??1);sw+=w;sum+=(values[k]??0)*w});return sw?sum/sw:0}
+function ensureStructure(){
+  if(!state.data[state.region]) state.region = Object.keys(state.data)[0];
+  if(!state.data[state.region]) state.data[state.region] = {};
+  if(!state.data[state.region][state.platform]) state.platform = Object.keys(state.data[state.region])[0] || 'TikTok';
+  const rec = state.data[state.region][state.platform] || (state.data[state.region][state.platform] = {invasiveness:{},ps:{}});
+  INVASIVE_METRICS.forEach(m=>{ if(typeof rec.invasiveness[m.key] !== 'number') rec.invasiveness[m.key]=0; });
+  PS_METRICS.forEach(m=>{ if(typeof rec.ps[m.key] !== 'number') rec.ps[m.key]=0; });
+}
+
+function renderSelectors(){
+  const rSel = $('#regionSelect'); const pSel = $('#platformSelect');
+  rSel.innerHTML=''; pSel.innerHTML='';
+  Object.keys(state.data).forEach(r=>{ const o=el('option',{value:r}); o.textContent=r; rSel.appendChild(o); });
+  rSel.value = state.region;
+  Object.keys(state.data[state.region]).sort().forEach(p=>{ const o=el('option',{value:p}); o.textContent=p; pSel.appendChild(o); });
+  pSel.value = state.platform;
+}
+
+function makeSlider(group, m, value){
+  const id = `${group}-${m.key}`;
+  const box = el('div',{class:'metric'});
+  const lbl = el('label');
+  lbl.append(el('span',{html:m.label}), el('span',{class:'val',id:`val-${id}`,html:(value??0).toFixed(1)}));
+  const input = el('input',{type:'range',min:'0',max:'5',step:'0.1',id}); input.value=value??0;
+  input.addEventListener('input',e=>{const v=parseFloat(e.target.value); $(`#val-${id}`).textContent=v.toFixed(1); state.data[state.region][state.platform][group][m.key]=v; calc(); save();});
+  box.append(lbl,input,el('small',{html:'0 (least) – 5 (most)'}));
+  return box;
+}
+
+function renderMetrics(){
+  const invBox=$('#invasiveBox'), psBox=$('#psBox'); invBox.innerHTML=''; psBox.innerHTML='';
+  const rec = state.data[state.region][state.platform];
+  INVASIVE_METRICS.forEach(m=> invBox.appendChild(makeSlider('invasiveness',m,rec.invasiveness[m.key])));
+  PS_METRICS.forEach(m=> psBox.appendChild(makeSlider('ps',m,rec.ps[m.key])));
+}
+
+function calc(){
+  const rec = state.data[state.region][state.platform];
+  const inv = weightedAvg(rec.invasiveness, state.weights.invasiveness);
+  const ps = weightedAvg(rec.ps, state.weights.ps);
+  const overall = (ps*(state.weights.blend.psWeight/100)) + ((5-inv)*(state.weights.blend.invInverseWeight/100));
+  $('#invScore').textContent = inv.toFixed(2);
+  $('#psScore').textContent = ps.toFixed(2);
+  $('#overallScore').textContent = overall.toFixed(2);
+}
+
+function save(){ localStorage.setItem('platformData', JSON.stringify(state.data)); localStorage.setItem('weights', JSON.stringify(state.weights)); }
+function exportJSON(){const blob=new Blob([JSON.stringify({weights:state.weights,data:state.data},null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='privacy-invasiveness-scores.json';a.click();URL.revokeObjectURL(url)}
+function importJSON(){const input=document.createElement('input');input.type='file';input.accept='application/json';input.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const obj=JSON.parse(ev.target.result);if(obj.weights) state.weights=obj.weights; if(obj.data) state.data=obj.data; ensureStructure(); renderSelectors(); renderMetrics(); calc(); save();}catch(err){alert('Invalid JSON');}};r.readAsText(f)};input.click()}
+
+// === INIT ===
+window.addEventListener('DOMContentLoaded',()=>{
+  try{
+    ensureStructure();
+    renderSelectors();
+    renderMetrics();
+    calc();
+    $('#regionSelect').addEventListener('change',e=>{state.region=e.target.value; ensureStructure(); renderSelectors(); renderMetrics(); calc();});
+    $('#platformSelect').addEventListener('change',e=>{state.platform=e.target.value; ensureStructure(); renderMetrics(); calc();});
+    $('#saveBtn').addEventListener('click',()=>{save(); const b=$('#saveBtn');const t=b.textContent;b.textContent='Saved ✓';setTimeout(()=>b.textContent=t,900)});
+    $('#exportBtn').addEventListener('click',exportJSON);
+    $('#importBtn').addEventListener('click',importJSON);
+  }catch(err){
+    const box=$('#errorBox'); box.innerHTML=`<div style="padding:12px;border:1px solid #ff7b7b;background:#241212;border-radius:12px">Render error: ${err?.message||err}</div>`; console.error(err);
+  }
+});
+</script>
+</body>
+</html>
+
