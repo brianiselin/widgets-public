@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baltic Sea Security Timeline 2024-2025</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, Helvetica, sans-serif;
+            background: linear-gradient(to bottom, #f8f9fa 0%, #e9ecef 100%);
+            padding: 2rem 1rem 6rem 1rem;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            padding: 2.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            font-size: 1.75rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 1rem;
+            margin-bottom: 3rem;
+            font-style: italic;
+        }
+        
+        .timeline-wrapper {
+            position: relative;
+            padding: 4rem 0;
+            margin: 2rem 0;
+        }
+        
+        .timeline-line {
+            position: absolute;
+            top: 50%;
+            left: 5%;
+            right: 5%;
+            height: 4px;
+            background: #2c3e50;
+            transform: translateY(-50%);
+        }
+        
+        .year-markers {
+            position: absolute;
+            top: 50%;
+            left: 5%;
+            right: 5%;
+            display: flex;
+            justify-content: space-between;
+            transform: translateY(-50%);
+        }
+        
+        .year-marker {
+            position: relative;
+            background: white;
+            padding: 0.5rem 1rem;
+            font-weight: bold;
+            font-size: 1.25rem;
+            color: #2c3e50;
+            border: 3px solid #2c3e50;
+            border-radius: 4px;
+            z-index: 2;
+        }
+        
+        .events-container {
+            position: relative;
+            min-height: 600px;
+        }
+        
+        .event {
+            position: absolute;
+            width: 280px;
+            transition: transform 0.2s ease;
+        }
+        
+        .event:hover {
+            transform: translateY(-4px);
+        }
+        
+        .event-above {
+            bottom: 52%;
+        }
+        
+        .event-below {
+            top: 52%;
+        }
+        
+        .event-marker {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            border: 3px solid white;
+            z-index: 3;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .event-marker.jamming {
+            background: #f39c12;
+        }
+        
+        .event-marker.sabotage {
+            background: #e74c3c;
+        }
+        
+        .connector-line {
+            position: absolute;
+            width: 2px;
+            background: repeating-linear-gradient(
+                to bottom,
+                #95a5a6,
+                #95a5a6 5px,
+                transparent 5px,
+                transparent 10px
+            );
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1;
+        }
+        
+        .connector-above {
+            bottom: 100%;
+            height: 40px;
+        }
+        
+        .connector-below {
+            top: 100%;
+            height: 40px;
+        }
+        
+        .event-box {
+            background: #ecf0f1;
+            border: 1px solid #bdc3c7;
+            border-radius: 6px;
+            padding: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .event-box.jamming {
+            border-left: 4px solid #f39c12;
+        }
+        
+        .event-box.sabotage {
+            border-left: 4px solid #e74c3c;
+        }
+        
+        .event-title {
+            font-weight: bold;
+            font-size: 0.95rem;
+            color: #2c3e50;
+            margin-bottom: 0.4rem;
+            line-height: 1.3;
+        }
+        
+        .event-date {
+            font-style: italic;
+            font-size: 0.75rem;
+            color: #7f8c8d;
+            margin-bottom: 0.6rem;
+        }
+        
+        .event-description {
+            font-size: 0.8rem;
+            color: #34495e;
+            margin-bottom: 0.6rem;
+            line-height: 1.4;
+        }
+        
+        .event-source {
+            font-size: 0.65rem;
+            color: #95a5a6;
+            font-style: italic;
+        }
+        
+        /* Event positioning */
+        .event-1 { left: 2%; }
+        .event-2 { left: 22%; }
+        .event-3 { left: 38%; }
+        .event-4 { left: 54%; }
+        .event-5 { left: 70%; }
+        .event-6 { left: 86%; }
+        
+        .caption {
+            margin-top: 3rem;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-left: 4px solid #3498db;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            line-height: 1.7;
+            color: #2c3e50;
+        }
+        
+        .caption strong {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+        
+        footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 1rem 2rem;
+            font-size: 0.75rem;
+            z-index: 1000;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .footer-brand {
+            font-weight: 600;
+            font-variant: small-caps;
+            letter-spacing: 0.5px;
+        }
+        
+        .footer-meta {
+            color: #bdc3c7;
+        }
+        
+        .footer-ip {
+            font-size: 0.7rem;
+            color: #95a5a6;
+            font-style: italic;
+            max-width: 800px;
+            line-height: 1.4;
+        }
+        
+        @media print {
+            body {
+                background: white;
+                padding: 1rem;
+            }
+            
+            footer {
+                position: relative;
+                margin-top: 2rem;
+            }
+            
+            .container {
+                box-shadow: none;
+            }
+            
+            .event:hover {
+                transform: none;
+            }
+        }
+        
+        @media (max-width: 1200px) {
+            .event {
+                width: 240px;
+            }
+            
+            .event-title {
+                font-size: 0.85rem;
+            }
+            
+            .event-description {
+                font-size: 0.75rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem 0.5rem 6rem 0.5rem;
+            }
+            
+            .container {
+                padding: 1.5rem;
+            }
+            
+            h1 {
+                font-size: 1.35rem;
+            }
+            
+            .subtitle {
+                font-size: 0.9rem;
+            }
+            
+            .timeline-wrapper {
+                padding: 3rem 0;
+            }
+            
+            .events-container {
+                min-height: 1200px;
+            }
+            
+            .event {
+                width: 90%;
+                max-width: 320px;
+                left: 5% !important;
+            }
+            
+            .event-1 { top: 5%; }
+            .event-2 { top: 20%; }
+            .event-3 { top: 35%; }
+            .event-4 { top: 52%; }
+            .event-5 { top: 67%; }
+            .event-6 { top: 82%; }
+            
+            .event-above, .event-below {
+                position: relative;
+                top: auto;
+                bottom: auto;
+            }
+            
+            .connector-line {
+                display: none;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+        
+        @media (max-width: 320px) {
+            .event {
+                width: 95%;
+            }
+            
+            .event-title {
+                font-size: 0.8rem;
+            }
+            
+            .event-description {
+                font-size: 0.7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Baltic Sea Security Timeline 2024-2025</h1>
+        <p class="subtitle">Hybrid Warfare Incidents and Critical Infrastructure Threats</p>
+        
+        <div class="timeline-wrapper">
+            <div class="timeline-line"></div>
+            <div class="year-markers">
+                <div class="year-marker">2024</div>
+                <div class="year-marker">2025</div>
+            </div>
+            
+            <div class="events-container">
+                <!-- Event 1: 2022-2024 GNSS Jamming -->
+                <div class="event event-1 event-above">
+                    <div class="event-marker jamming" style="left: 50%; bottom: -7.5px;"></div>
+                    <div class="connector-line connector-above"></div>
+                    <div class="event-box jamming">
+                        <div class="event-title">Ongoing GNSS Jamming Over Baltic</div>
+                        <div class="event-date">2022-2024</div>
+                        <div class="event-description">84 hours of GPS/GLONASS/Galileo/BeiDou interference detected in 6-month period; 29 hours in October 2024 alone</div>
+                        <div class="event-source">Source: Gdynia Maritime University, Poland</div>
+                    </div>
+                </div>
+                
+                <!-- Event 2: October 14, 2024 -->
+                <div class="event event-2 event-below">
+                    <div class="event-marker jamming" style="left: 50%; top: -7.5px;"></div>
+                    <div class="connector-line connector-below"></div>
+                    <div class="event-box jamming">
+                        <div class="event-title">Ship-Based GNSS Jamming Confirmed</div>
+                        <div class="event-date">October 14, 2024</div>
+                        <div class="event-description">Mobile ship-based jammers cause up to 7-hour disruptions affecting Polish, Swedish, Lithuanian EEZs</div>
+                        <div class="event-source">Source: Spire Maritime Data</div>
+                    </div>
+                </div>
+                
+                <!-- Event 3: November 17-18, 2024 -->
+                <div class="event event-3 event-above">
+                    <div class="event-marker sabotage" style="left: 50%; bottom: -7.5px;"></div>
+                    <div class="connector-line connector-above"></div>
+                    <div class="event-box sabotage">
+                        <div class="event-title">BCS East-West & C-Lion1 Cable Disruptions</div>
+                        <div class="event-date">November 17-18, 2024</div>
+                        <div class="event-description">Two submarine cables cut simultaneously; Yi Peng 3 Chinese cargo ship under investigation</div>
+                        <div class="event-source">Source: Multiple European governments</div>
+                    </div>
+                </div>
+                
+                <!-- Event 4: January 2025 -->
+                <div class="event event-4 event-below">
+                    <div class="event-marker jamming" style="left: 50%; top: -7.5px;"></div>
+                    <div class="connector-line connector-below"></div>
+                    <div class="event-box jamming">
+                        <div class="event-title">Dramatic Increase in Jamming Cases</div>
+                        <div class="event-date">January 2025</div>
+                        <div class="event-description">Poland: 2,732 cases; Lithuania: 1,185 cases; Latvia: 1,288 cases; Estonia: 1,085 cases</div>
+                        <div class="event-source">Source: Council of the European Union</div>
+                    </div>
+                </div>
+                
+                <!-- Event 5: February 21, 2025 -->
+                <div class="event event-5 event-above">
+                    <div class="event-marker sabotage" style="left: 50%; bottom: -7.5px;"></div>
+                    <div class="connector-line connector-above"></div>
+                    <div class="event-box sabotage">
+                        <div class="event-title">C-Lion1 Cable Damage - Sabotage Suspected</div>
+                        <div class="event-date">February 21, 2025</div>
+                        <div class="event-description">Finland-Germany cable damaged east of Gotland; Sweden and Finland launch sabotage investigation</div>
+                        <div class="event-source">Source: Swedish Police, Cinia Oy</div>
+                    </div>
+                </div>
+                
+                <!-- Event 6: September 9-10, 2025 -->
+                <div class="event event-6 event-below">
+                    <div class="event-marker sabotage" style="left: 50%; top: -7.5px;"></div>
+                    <div class="connector-line connector-below"></div>
+                    <div class="event-box sabotage">
+                        <div class="event-title">Russian Drone Incursion into Poland</div>
+                        <div class="event-date">September 9-10, 2025</div>
+                        <div class="event-description">19-23 Russian drones enter Polish airspace; 4+ shot down by NATO forces; Poland invokes Article 4</div>
+                        <div class="event-source">Source: Polish government, NATO</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="caption">
+            <strong>Timeline of Baltic Sea Hybrid Warfare Incidents (2024-2025):</strong> From persistent GNSS jamming originating from Kaliningrad Oblast affecting Polish, Swedish, and Lithuanian maritime and aviation corridors, to the November 2024 simultaneous severing of the BCS East-West and C-Lion1 submarine cables, the February 2025 suspected sabotage of the C-Lion1 cable east of Gotland, and the unprecedented September 2025 Russian drone incursion into Polish airspace that triggered NATO's Article 4 and resulted in the first NATO shootdown of Russian assets since Ukraine's invasion. <strong>Sources:</strong> Gdynia Maritime University, Spire Maritime, European governments, Swedish Police, Cinia Oy, Polish government, NATO.
+        </div>
+    </div>
+    
+    <footer>
+        <div class="footer-content">
+            <div>
+                <div class="footer-brand">Iselin Group - Strategic Consulting</div>
+                <div class="footer-meta">© Iselin Group. "Baltic Sea Security Timeline HTML Visual" — brian.iselin(@)iselingroup.com</div>
+            </div>
+            <div class="footer-ip">
+                The underlying decision-integrity model, logic, and UI are proprietary to Iselin Group and may not be reproduced, adapted, or deployed in whole or in part without prior written consent; all rights reserved.
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

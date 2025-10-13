@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baltic Sea Security Schematic Map 2024-2025</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, Helvetica, sans-serif;
+            background: linear-gradient(to bottom, #e8f4f8 0%, #d6e9f0 100%);
+            padding: 1.5rem 1rem 6rem 1rem;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            font-size: 1.85rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 1rem;
+            margin-bottom: 2rem;
+            font-style: italic;
+        }
+        
+        .map-container {
+            width: 100%;
+            margin: 0 auto;
+            background: #f8f9fa;
+            border: 2px solid #bdc3c7;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        
+        svg {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        .legend-container {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background: #ecf0f1;
+            border-radius: 6px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+        }
+        
+        .legend-line {
+            width: 30px;
+            height: 3px;
+            display: inline-block;
+        }
+        
+        .legend-line.cable {
+            background: #2980B9;
+        }
+        
+        .legend-line.route {
+            background: #E67E22;
+            border-top: 2px dashed #E67E22;
+            height: 0;
+            border-bottom: none;
+        }
+        
+        .legend-icon {
+            font-size: 1.2rem;
+        }
+        
+        .stats-box {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background: #fff3cd;
+            border-left: 4px solid #f39c12;
+            border-radius: 4px;
+        }
+        
+        .stats-title {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 0.75rem;
+            margin-top: 0.75rem;
+        }
+        
+        .stat-item {
+            font-size: 0.85rem;
+            color: #34495e;
+        }
+        
+        .caption {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-left: 4px solid #3498db;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            line-height: 1.7;
+            color: #2c3e50;
+        }
+        
+        .caption strong {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+        
+        footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 1rem 2rem;
+            font-size: 0.75rem;
+            z-index: 1000;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .footer-content {
+            max-width: 1600px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .footer-brand {
+            font-weight: 600;
+            font-variant: small-caps;
+            letter-spacing: 0.5px;
+        }
+        
+        .footer-meta {
+            color: #bdc3c7;
+        }
+        
+        .footer-ip {
+            font-size: 0.7rem;
+            color: #95a5a6;
+            font-style: italic;
+            max-width: 800px;
+            line-height: 1.4;
+        }
+        
+        @media print {
+            body {
+                background: white;
+                padding: 1rem;
+            }
+            
+            footer {
+                position: relative;
+                margin-top: 2rem;
+            }
+            
+            .container {
+                box-shadow: none;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem 0.5rem 6rem 0.5rem;
+            }
+            
+            .container {
+                padding: 1rem;
+            }
+            
+            h1 {
+                font-size: 1.4rem;
+            }
+            
+            .subtitle {
+                font-size: 0.9rem;
+            }
+            
+            .legend-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Baltic Sea Security Schematic Map 2024-2025</h1>
+        <p class="subtitle">Hybrid Warfare Infrastructure and Threat Landscape</p>
+        
+        <div class="map-container">
+            <svg viewBox="0 0 1200 900" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Schematic map of the Baltic showing undersea cables, reported GPS interference near Kaliningrad, shadow-fleet traffic, and Poland's eastern airspace corridor">
+                <!-- Definitions for patterns and markers -->
+                <defs>
+                    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                        <polygon points="0 0, 10 3, 0 6" fill="#E67E22" />
+                    </marker>
+                    <pattern id="dashed" patternUnits="userSpaceOnUse" width="10" height="2">
+                        <line x1="0" y1="1" x2="6" y2="1" stroke="#E67E22" stroke-width="2"/>
+                    </pattern>
+                </defs>
+                
+                <!-- Background - Baltic Sea Water -->
+                <rect width="1200" height="900" fill="#AED6F1"/>
+                
+                <!-- Land masses - Simplified schematic style -->
+                <!-- Denmark -->
+                <path d="M 120,650 L 150,580 L 200,560 L 220,600 L 200,650 L 150,680 Z" fill="#ECF0F1" stroke="#95A5A6" stroke-width="1.5"/>
+                
+                <!-- Germany -->
+                <path d="M 200,650 L 220,600 L 280,580 L 350,600 L 380,680 L 320,750 L 200,750 Z" fill="#ECF0F1" stroke="#95A5A6" stroke-width="1.5"/>
+                
+                <!-- Poland -->
+                <path d="M 350,600 L 420,550 L 520,540 L 580,580 L 600,650 L 580,720 L 520,750 L 380,680 Z" fill="#ECF0F1" stroke="#95A5A6" stroke-width="1.5"/>
+                
+                <!-- Lithuania -->
+                <path d="M 580,580 L 650,550 L 720,540 L 750,580 L 740,630 L 680,650 L 600,650 Z" fill="#ECF0F1" stroke="#95A5A6" stroke-width="1.5"/>
+                
+                <!-- Latvia -->
+                <path d="M 720,540 L 780,480 L 850,460 L 880,500 L 860,550 L 750,580 Z" fill="#ECF0F1" stroke="#95A5A6" stroke-width="1.5"/>
+                
+                <!-- Estonia -->
+                <path d="M 850,460 L 920,400 L 1000,380 L 1030,420 L 1000,480 L 880,500 Z" fill="#ECF0F1" stroke="#95A5A6" stroke-width="1.5"/>
+                
+                <!-- Finland -->
+                <path d="M 1000,380 L 1080,280 L 1150,200 L 1180,150 L 1180,100 L 1150,80 L 1100,100 L 1050,150 L 1000,220 L 950,300 L 920,400 Z" fill="#ECF0F1" stroke="#95A5A6" stroke-width="1.5"/>
+                
+                <!-- Sweden -->
+                <path d="M 200,560 L 280,480 L 350,400 L 420,300 L 480,200 L 520,120 L 550,80 L 600,100 L 650,200 L 680,300 L 700,400 L 720,540 L 650,550 L 580,580 L 520,540 L 420,550 Z" fill="#ECF0F1" stroke="#95A5A6" stroke-width="1.5"/>
+                
+                <!-- Russia - Kaliningrad Oblast -->
+                <path d="M 520,540 L 580,520 L 620,500 L 640,530 L 620,560 L 580,580 Z" fill="#FFE5E5" stroke="#C0392B" stroke-width="1.5"/>
+                
+                <!-- Russia - St. Petersburg area -->
+                <path d="M 1000,380 L 1050,350 L 1100,330 L 1150,350 L 1150,400 L 1100,420 L 1030,420 Z" fill="#FFE5E5" stroke="#C0392B" stroke-width="1.5"/>
+                
+                <!-- Layer 3: GNSS Interference Zones (semi-transparent) -->
+                <!-- Kaliningrad Primary Jamming Zone -->
+                <circle cx="600" cy="540" r="220" fill="#E74C3C" opacity="0.2" stroke="#E74C3C" stroke-width="2" stroke-dasharray="5,5"/>
+                <circle cx="600" cy="540" r="150" fill="#E74C3C" opacity="0.15"/>
+                
+                <!-- St. Petersburg Secondary Jamming Zone -->
+                <circle cx="1100" cy="370" r="160" fill="#E74C3C" opacity="0.15" stroke="#E74C3C" stroke-width="1.5" stroke-dasharray="5,5"/>
+                
+                <!-- Layer 1: Undersea Cable Routes -->
+                <!-- C-Lion1: Helsinki to Rostock -->
+                <line x1="1080" y1="240" x2="300" y2="680" stroke="#2980B9" stroke-width="3"/>
+                <text x="690" y="460" font-size="11" fill="#2980B9" font-weight="bold">C-Lion1</text>
+                
+                <!-- Damage markers on C-Lion1 -->
+                <g transform="translate(500,580)">
+                    <circle r="8" fill="none" stroke="#C0392B" stroke-width="2"/>
+                    <line x1="-5" y1="-5" x2="5" y2="5" stroke="#C0392B" stroke-width="2"/>
+                    <line x1="-5" y1="5" x2="5" y2="-5" stroke="#C0392B" stroke-width="2"/>
+                </g>
+                <g transform="translate(900,360)">
+                    <circle r="8" fill="none" stroke="#C0392B" stroke-width="2"/>
+                    <line x1="-5" y1="-5" x2="5" y2="5" stroke="#C0392B" stroke-width="2"/>
+                    <line x1="-5" y1="5" x2="5" y2="-5" stroke="#C0392B" stroke-width="2"/>
+                </g>
+                
+                <!-- BCS East-West: Lithuania to Sweden -->
+                <line x1="680" y1="590" x2="420" y2="400" stroke="#2980B9" stroke-width="3"/>
+                <text x="550" y="490" font-size="11" fill="#2980B9" font-weight="bold">BCS East-West</text>
+                
+                <!-- Damage marker on BCS East-West -->
+                <g transform="translate(550,495)">
+                    <circle r="8" fill="none" stroke="#C0392B" stroke-width="2"/>
+                    <line x1="-5" y1="-5" x2="5" y2="5" stroke="#C0392B" stroke-width="2"/>
+                    <line x1="-5" y1="5" x2="5" y2="-5" stroke="#C0392B" stroke-width="2"/>
+                </g>
+                
+                <!-- Estlink 1/2: Tallinn to Helsinki -->
+                <line x1="1000" y1="430" x2="1060" y2="260" stroke="#2980B9" stroke-width="3"/>
+                <line x1="1010" y1="435" x2="1070" y2="265" stroke="#2980B9" stroke-width="2"/>
+                <text x="1000" y="350" font-size="11" fill="#2980B9" font-weight="bold">Estlink</text>
+                
+                <!-- SwePol: Sweden to Poland -->
+                <line x1="450" y1="480" x2="500" y2="650" stroke="#2980B9" stroke-width="3"/>
+                <text x="460" y="565" font-size="11" fill="#2980B9" font-weight="bold">SwePol</text>
+                
+                <!-- Baltic Sea Cable: Triangle -->
+                <line x1="1060" y1="260" x2="950" y2="450" stroke="#2980B9" stroke-width="2.5"/>
+                <line x1="950" y1="450" x2="450" y2="350" stroke="#2980B9" stroke-width="2.5"/>
+                <text x="700" y="350" font-size="10" fill="#2980B9">Baltic Sea Cable</text>
+                
+                <!-- Layer 2: Shadow Fleet Shipping Lanes -->
+                <!-- Primorsk Route -->
+                <path d="M 1100,360 Q 800,420 600,500 Q 400,560 200,620" 
+                      stroke="#E67E22" stroke-width="2.5" fill="none" stroke-dasharray="10,5" opacity="0.8"/>
+                <text x="900" y="440" font-size="10" fill="#E67E22" font-weight="bold">Shadow Fleet - Primorsk</text>
+                
+                <!-- Ust-Luga Route -->
+                <path d="M 1080,380 Q 850,440 650,510 Q 450,570 230,630" 
+                      stroke="#E67E22" stroke-width="2.5" fill="none" stroke-dasharray="10,5" opacity="0.8"/>
+                
+                <!-- Kaliningrad Route -->
+                <path d="M 600,540 Q 400,580 250,640" 
+                      stroke="#E67E22" stroke-width="2.5" fill="none" stroke-dasharray="10,5" opacity="0.8"/>
+                <text x="430" y="590" font-size="10" fill="#E67E22" font-weight="bold">Shadow Fleet - Kaliningrad</text>
+                
+                <!-- Ship icons along routes -->
+                <g transform="translate(750,470)">
+                    <rect x="-8" y="-4" width="16" height="8" fill="#E67E22"/>
+                    <polygon points="8,0 14,-3 14,3" fill="#E67E22"/>
+                </g>
+                <g transform="translate(500,550)">
+                    <rect x="-8" y="-4" width="16" height="8" fill="#E67E22"/>
+                    <polygon points="8,0 14,-3 14,3" fill="#E67E22"/>
+                </g>
+                <g transform="translate(350,600)">
+                    <rect x="-8" y="-4" width="16" height="8" fill="#E67E22"/>
+                    <polygon points="8,0 14,-3 14,3" fill="#E67E22"/>
+                </g>
+                
+                <!-- GNSS Interference markers -->
+                <!-- Okunevo antenna site -->
+                <g transform="translate(600,540)">
+                    <line x1="0" y1="0" x2="0" y2="-15" stroke="#C0392B" stroke-width="2"/>
+                    <circle cx="0" cy="-18" r="3" fill="#C0392B"/>
+                    <line x1="-8" y1="-10" x2="8" y2="-10" stroke="#C0392B" stroke-width="1.5"/>
+                    <line x1="-6" y1="-5" x2="6" y2="-5" stroke="#C0392B" stroke-width="1.5"/>
+                </g>
+                <text x="615" y="535" font-size="9" fill="#C0392B" font-weight="bold">Okunevo Site</text>
+                
+                <!-- Baltiysk military base -->
+                <g transform="translate(570,560)">
+                    <rect x="-5" y="-5" width="10" height="10" fill="#C0392B"/>
+                    <polygon points="0,-5 -3,-8 3,-8" fill="#C0392B"/>
+                </g>
+                <text x="580" y="565" font-size="9" fill="#C0392B" font-weight="bold">Baltiysk</text>
+                
+                <!-- Airport warning icons -->
+                <g transform="translate(520,680)">
+                    <path d="M -5,0 L 0,-5 L 5,0 L 0,3 Z" fill="#f39c12"/>
+                    <text x="8" y="4" font-size="8" fill="#f39c12">Gdansk</text>
+                </g>
+                <g transform="translate(950,450)">
+                    <path d="M -5,0 L 0,-5 L 5,0 L 0,3 Z" fill="#f39c12"/>
+                    <text x="8" y="4" font-size="8" fill="#f39c12">Tallinn</text>
+                </g>
+                
+                <!-- Mobile jammers -->
+                <g transform="translate(480,520)">
+                    <rect x="-6" y="-3" width="12" height="6" fill="#C0392B"/>
+                    <circle cx="0" cy="0" r="12" fill="none" stroke="#C0392B" stroke-width="1.5"/>
+                    <circle cx="0" cy="0" r="18" fill="none" stroke="#C0392B" stroke-width="1" opacity="0.6"/>
+                </g>
+                <text x="500" y="525" font-size="8" fill="#C0392B">Mobile Jammer</text>
+                
+                <!-- Country labels -->
+                <text x="500" y="120" font-size="16" fill="#34495e" font-weight="600">SWEDEN</text>
+                <text x="1080" y="180" font-size="16" fill="#34495e" font-weight="600">FINLAND</text>
+                <text x="960" y="460" font-size="14" fill="#34495e" font-weight="600">EST</text>
+                <text x="820" y="510" font-size="14" fill="#34495e" font-weight="600">LAT</text>
+                <text x="670" y="600" font-size="14" fill="#34495e" font-weight="600">LIT</text>
+                <text x="480" y="680" font-size="16" fill="#34495e" font-weight="600">POLAND</text>
+                <text x="270" y="700" font-size="16" fill="#34495e" font-weight="600">GERMANY</text>
+                <text x="150" y="620" font-size="14" fill="#34495e" font-weight="600">DEN</text>
+                
+                <!-- City markers -->
+                <circle cx="450" cy="280" r="3" fill="#2c3e50"/>
+                <text x="458" y="283" font-size="10" fill="#2c3e50">Stockholm</text>
+                
+                <circle cx="1080" cy="240" r="3" fill="#2c3e50"/>
+                <text x="1088" y="243" font-size="10" fill="#2c3e50">Helsinki</text>
+                
+                <circle cx="1000" cy="430" r="3" fill="#2c3e50"/>
+                <text x="1008" y="433" font-size="10" fill="#2c3e50">Tallinn</text>
+                
+                <circle cx="850" cy="500" r="3" fill="#2c3e50"/>
+                <text x="858" y="503" font-size="10" fill="#2c3e50">Riga</text>
+                
+                <circle cx="710" cy="570" r="3" fill="#2c3e50"/>
+                <text x="718" y="573" font-size="10" fill="#2c3e50">Vilnius</text>
+                
+                <circle cx="520" cy="680" r="3" fill="#2c3e50"/>
+                <text x="528" y="683" font-size="10" fill="#2c3e50">Gdansk</text>
+                
+                <circle cx="600" cy="540" r="3" fill="#C0392B"/>
+                <text x="608" y="543" font-size="10" fill="#C0392B" font-weight="bold">Kaliningrad</text>
+                
+                <circle cx="1100" cy="370" r="3" fill="#C0392B"/>
+                <text x="1045" y="373" font-size="10" fill="#C0392B">St. Petersburg</text>
+                
+                <circle cx="170" cy="610" r="3" fill="#2c3e50"/>
+                <text x="115" y="613" font-size="10" fill="#2c3e50">Copenhagen</text>
+                
+                <!-- Inset Map: Poland Eastern Airspace -->
+                <g id="inset-map">
+                    <rect x="50" y="50" width="280" height="200" fill="white" stroke="#2c3e50" stroke-width="2" rx="4"/>
+                    
+                    <!-- Title -->
+                    <text x="190" y="75" font-size="11" fill="#2c3e50" font-weight="bold" text-anchor="middle">Poland Eastern Airspace - Sept 2025</text>
+                    
+                    <!-- Simplified Poland border -->
+                    <path d="M 70,100 L 150,100 L 200,130 L 200,200 L 150,220 L 70,200 Z" fill="#ECF0F1" stroke="#2c3e50" stroke-width="1.5"/>
+                    
+                    <!-- Belarus -->
+                    <path d="M 200,130 L 270,130 L 300,160 L 300,220 L 200,200 Z" fill="#FFE5E5" stroke="#C0392B" stroke-width="1.5"/>
+                    <text x="250" y="160" font-size="8" fill="#C0392B">Belarus</text>
+                    
+                    <!-- Ukraine -->
+                    <path d="M 200,200 L 300,220 L 300,230 L 200,230 Z" fill="#FFF9E5" stroke="#95A5A6" stroke-width="1"/>
+                    <text x="240" y="228" font-size="8" fill="#7f8c8d">Ukraine</text>
+                    
+                    <!-- High-alert corridor -->
+                    <rect x="180" y="130" width="40" height="90" fill="#E74C3C" opacity="0.25"/>
+                    
+                    <!-- Drone incursion arrows -->
+                    <path d="M 260,140 L 200,145" stroke="#C0392B" stroke-width="2" marker-end="url(#arrowhead)" fill="none"/>
+                    <path d="M 270,160 L 210,170" stroke="#C0392B" stroke-width="2" marker-end="url(#arrowhead)" fill="none"/>
+                    <path d="M 265,180 L 205,190" stroke="#C0392B" stroke-width="2" marker-end="url(#arrowhead)" fill="none"/>
+                    
+                    <!-- Shootdown locations -->
+                    <g transform="translate(190,150)">
+                        <circle r="4" fill="#C0392B"/>
+                        <line x1="-3" y1="-3" x2="3" y2="3" stroke="white" stroke-width="1.5"/>
+                        <line x1="-3" y1="3" x2="3" y2="-3" stroke="white" stroke-width="1.5"/>
+                    </g>
+                    <g transform="translate(195,175)">
+                        <circle r="4" fill="#C0392B"/>
+                        <line x1="-3" y1="-3" x2="3" y2="3" stroke="white" stroke-width="1.5"/>
+                        <line x1="-3" y1="3" x2="3" y2="-3" stroke="white" stroke-width="1.5"/>
+                    </g>
+                    <g transform="translate(185,195)">
+                        <circle r="4" fill="#C0392B"/>
+                        <line x1="-3" y1="-3" x2="3" y2="3" stroke="white" stroke-width="1.5"/>
+                        <line x1="-3" y1="3" x2="3" y2="-3" stroke="white" stroke-width="1.5"/>
+                    </g>
+                    
+                    <!-- Cities -->
+                    <circle cx="120" cy="160" r="2" fill="#2c3e50"/>
+                    <text x="125" y="163" font-size="7" fill="#2c3e50">Warsaw</text>
+                    
+                    <circle cx="160" cy="190" r="2" fill="#2c3e50"/>
+                    <text x="165" y="193" font-size="7" fill="#2c3e50">Lublin</text>
+                    
+                    <!-- Note -->
+                    <text x="190" y="242" font-size="8" fill="#C0392B" text-anchor="middle" font-style="italic">19-23 drones; 4+ NATO shootdowns; Article 4 invoked</text>
+                </g>
+                
+                <!-- GNSS Zone Labels -->
+                <text x="600" y="350" font-size="12" fill="#C0392B" font-weight="bold" text-anchor="middle">Primary GNSS Jamming Zone</text>
+                <text x="600" y="365" font-size="9" fill="#C0392B" text-anchor="middle">Kaliningrad - 218th EW Regiment</text>
+                
+                <text x="1100" y="250" font-size="11" fill="#C0392B" font-weight="bold" text-anchor="middle">Secondary Zone</text>
+                <text x="1100" y="262" font-size="8" fill="#C0392B" text-anchor="middle">St. Petersburg area</text>
+                
+                <!-- Scale indicator -->
+                <g transform="translate(50,820)">
+                    <line x1="0" y1="0" x2="100" y2="0" stroke="#2c3e50" stroke-width="2"/>
+                    <line x1="0" y1="-5" x2="0" y2="5" stroke="#2c3e50" stroke-width="2"/>
+                    <line x1="100" y1="-5" x2="100" y2="5" stroke="#2c3e50" stroke-width="2"/>
+                    <text x="50" y="20" font-size="10" fill="#2c3e50" text-anchor="middle">~200 km</text>
+                </g>
+                
+                <!-- Gulf of Finland notation -->
+                <text x="1000" y="340" font-size="9" fill="#34495e" font-style="italic" text-anchor="middle">Gulf of Finland</text>
+                <text x="1000" y="352" font-size="8" fill="#34495e" font-style="italic" text-anchor="middle">High-traffic corridor - NATO patrols</text>
+            </svg>
+        </div>
+        
+        <!-- Legend -->
+        <div class="legend-container">
+            <div class="legend-item">
+                <span class="legend-line cable"></span>
+                <span>Undersea Cables</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-line route"></span>
+                <span>Shadow Fleet Routes</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-icon" style="color: #C0392B;">⚠</span>
+                <span>Cable Damage Sites</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-icon" style="color: #E74C3C;">◉</span>
+                <span>GNSS Jamming Zones</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-icon" style="color: #E67E22;">🚢</span>
+                <span>Shadow Fleet Traffic</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-icon" style="color: #C0392B;">📡</span>
+                <span>EW Antenna Sites</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-icon" style="color: #f39c12;">✈️</span>
+                <span>Affected Airports</span>
+            </div>
+        </div>
+        
+        <!-- GNSS Impact Statistics -->
+        <div class="stats-box">
+            <div class="stats-title">GNSS Jamming Cases (January 2025)</div>
+            <div class="stats-grid">
+                <div class="stat-item"><strong>Poland:</strong> 2,732 cases</div>
+                <div class="stat-item"><strong>Lithuania:</strong> 1,185 cases</div>
+                <div class="stat-item"><strong>Latvia:</strong> 1,288 cases</div>
+                <div class="stat-item"><strong>Estonia:</strong> 1,085 cases</div>
+            </div>
+            <div style="margin-top: 0.75rem; font-size: 0.8rem; font-style: italic; color: #7f8c8d;">
+                Shadow Fleet Traffic: ~1,000 tankers/year (2023) from Primorsk, Ust-Luga, and Kaliningrad
+            </div>
+        </div>
+        
+        <!-- Caption -->
+        <div class="caption">
+            <strong>Baltic Sea Hybrid Warfare Infrastructure and Threat Landscape (2024-2025):</strong> Schematic overview showing critical undersea cable routes including C-Lion1 (Finland-Germany) and BCS East-West (Lithuania-Sweden) damaged in November 2024 and February 2025; Russian shadow fleet oil export routes from Primorsk, Ust-Luga, and Kaliningrad ports transporting ~1,000 tankers annually to circumvent EU sanctions; GNSS interference zones originating from Kaliningrad Oblast's Okunevo antenna site and Baltiysk military complex (218th Independent Electronic Warfare Regiment) affecting Polish, Swedish, Lithuanian, and Estonian airspace and maritime corridors with 2,732 jamming incidents in Poland alone (January 2025); and inset showing September 2025 Russian drone incursion into Poland's eastern airspace resulting in 4+ NATO shootdowns and Article 4 invocation. <strong>Sources:</strong> Gdynia Maritime University, Spire Maritime, Defense News triangulation data, Swedish Coast Guard, European Parliament TRAN Committee, TeleGeography Submarine Cable Map, Council of the European Union.
+        </div>
+    </div>
+    
+    <footer>
+        <div class="footer-content">
+            <div>
+                <div class="footer-brand">Iselin Group - Strategic Consulting</div>
+                <div class="footer-meta">© Iselin Group. "Baltic Sea Security Schematic Map 2024-2025" — brian.iselin(@)iselingroup.com</div>
+            </div>
+            <div class="footer-ip">
+                The underlying decision-integrity model, logic, and UI are proprietary to Iselin Group and may not be reproduced, adapted, or deployed in whole or in part without prior written consent; all rights reserved.
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
