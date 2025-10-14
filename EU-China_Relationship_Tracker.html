@@ -1,0 +1,1986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EU-China Relations Tracker | Iselin Group</title>
+    <meta name="description" content="Comprehensive tracker of EU-China relations covering trade, investment, technology, diplomatic engagement, and strategic competition.">
+    
+    <!-- Cloudflare Web Analytics -->
+    <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "22466d27b8c14ef98293d50b38526660"}'></script>
+    <!-- End Cloudflare Web Analytics -->
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+    
+    <!-- html2canvas for PNG export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #0a1628 0%, #1a2a42 100%);
+            color: #e0e6ed;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Top Brand Bar */
+        .brand-bar-top {
+            background: linear-gradient(90deg, rgba(10, 22, 40, 0.95) 0%, rgba(26, 42, 66, 0.95) 100%);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .brand-center {
+            font-size: 12px;
+            color: #64748b;
+            letter-spacing: 0.5px;
+        }
+        
+        .brand-chip {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(59, 130, 246, 0.1);
+            padding: 6px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+        
+        .brand-logo {
+            height: 24px;
+            width: 24px;
+            object-fit: contain;
+            border-radius: 4px;
+        }
+        
+        .brand-chip-text {
+            font-size: 11px;
+            font-weight: 600;
+            color: #60a5fa;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        /* Main Container */
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 40px 24px;
+            flex: 1;
+        }
+        
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .eu-flag {
+            width: 64px;
+            height: 64px;
+            background: #003399;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+        }
+        
+        .header-content {
+            flex: 1;
+        }
+        
+        .main-title {
+            font-size: 42px;
+            font-weight: 700;
+            color: #f1f5f9;
+            margin-bottom: 8px;
+        }
+        
+        .ranking-info {
+            font-size: 14px;
+            color: #94a3b8;
+            margin-top: 8px;
+        }
+        
+        .ranking-badge {
+            display: inline-block;
+            background: rgba(245, 158, 11, 0.2);
+            padding: 4px 12px;
+            border-radius: 12px;
+            color: #fbbf24;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+        
+        .score-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            padding: 8px 24px;
+            border-radius: 24px;
+            font-size: 32px;
+            font-weight: 700;
+            color: white;
+            margin-left: 16px;
+        }
+        
+        /* Sub-scores */
+        .subscores {
+            display: flex;
+            gap: 16px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+        
+        .subscore {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .subscore-label {
+            font-size: 11px;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .subscore-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #f1f5f9;
+            background: rgba(239, 68, 68, 0.2);
+            padding: 4px 12px;
+            border-radius: 8px;
+        }
+        
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: #ef4444;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #e0e6ed;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        /* Widget Area */
+        #widget-area {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 32px;
+            backdrop-filter: blur(10px);
+        }
+        
+        /* Section Headers */
+        .section-header {
+            font-size: 24px;
+            font-weight: 700;
+            color: #f1f5f9;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid rgba(239, 68, 68, 0.3);
+        }
+        
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.8) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%);
+        }
+        
+        .stat-card.green::before {
+            background: linear-gradient(90deg, #10b981 0%, #34d399 100%);
+        }
+        
+        .stat-card.blue::before {
+            background: linear-gradient(90deg, #3b82f6 0%, #60a5fa 100%);
+        }
+        
+        .stat-card.purple::before {
+            background: linear-gradient(90deg, #8b5cf6 0%, #a78bfa 100%);
+        }
+        
+        .stat-card.orange::before {
+            background: linear-gradient(90deg, #f59e0b 0%, #fb923c 100%);
+        }
+        
+        .stat-title {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-bottom: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: #f1f5f9;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+        }
+        
+        .stat-unit {
+            font-size: 20px;
+            color: #94a3b8;
+        }
+        
+        .stat-change {
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+        
+        .stat-change.positive {
+            color: #34d399;
+            background: rgba(52, 211, 153, 0.1);
+        }
+        
+        .stat-change.negative {
+            color: #f87171;
+            background: rgba(248, 113, 113, 0.1);
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: #cbd5e1;
+            margin-left: 6px;
+        }
+        
+        .stat-sublabel {
+            font-size: 11px;
+            color: #64748b;
+            margin-top: 4px;
+        }
+        
+        /* Charts Section */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+        
+        .chart-container {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 24px;
+        }
+        
+        .chart-container.full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .chart-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #f1f5f9;
+            margin-bottom: 20px;
+        }
+        
+        .chart-wrapper {
+            height: 300px;
+            position: relative;
+        }
+        
+        .chart-wrapper.tall {
+            height: 400px;
+        }
+        
+        /* Policy Areas */
+        .policy-bars {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        
+        .policy-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .policy-label {
+            width: 180px;
+            font-size: 13px;
+            color: #cbd5e1;
+            font-weight: 500;
+        }
+        
+        .policy-bar-track {
+            flex: 1;
+            height: 32px;
+            background: rgba(15, 23, 42, 0.8);
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .policy-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%);
+            transition: width 0.6s ease;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 12px;
+            font-size: 12px;
+            font-weight: 700;
+            color: white;
+        }
+        
+        /* Flow Diagram */
+        .flow-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 40px 0;
+        }
+        
+        .flow-entity {
+            text-align: center;
+        }
+        
+        .flow-flag {
+            font-size: 64px;
+            margin-bottom: 12px;
+        }
+        
+        .flow-label {
+            font-size: 16px;
+            font-weight: 600;
+            color: #f1f5f9;
+        }
+        
+        .flow-arrows {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .flow-arrow {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .arrow-line {
+            width: 200px;
+            height: 3px;
+            background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%);
+            position: relative;
+        }
+        
+        .arrow-line::after {
+            content: '▶';
+            position: absolute;
+            right: -8px;
+            top: -8px;
+            color: #dc2626;
+            font-size: 16px;
+        }
+        
+        .arrow-reverse .arrow-line {
+            background: linear-gradient(90deg, #3b82f6 0%, #60a5fa 100%);
+        }
+        
+        .arrow-reverse .arrow-line::after {
+            content: '◀';
+            right: auto;
+            left: -8px;
+            color: #60a5fa;
+        }
+        
+        .flow-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #f1f5f9;
+            min-width: 100px;
+        }
+        
+        .flow-description {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+        
+        /* Risk Indicators */
+        .risk-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 20px;
+        }
+        
+        .risk-card {
+            background: rgba(15, 23, 42, 0.8);
+            border-left: 4px solid;
+            border-radius: 8px;
+            padding: 16px;
+        }
+        
+        .risk-card.low {
+            border-color: #10b981;
+        }
+        
+        .risk-card.medium {
+            border-color: #fbbf24;
+        }
+        
+        .risk-card.high {
+            border-color: #ef4444;
+        }
+        
+        .risk-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #f1f5f9;
+            margin-bottom: 8px;
+        }
+        
+        .risk-level {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .risk-card.low .risk-level {
+            color: #10b981;
+        }
+        
+        .risk-card.medium .risk-level {
+            color: #fbbf24;
+        }
+        
+        .risk-card.high .risk-level {
+            color: #ef4444;
+        }
+        
+        .risk-description {
+            font-size: 11px;
+            color: #94a3b8;
+            margin-top: 6px;
+            line-height: 1.4;
+        }
+        
+        /* Timeline */
+        .timeline {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            padding: 40px 0;
+            overflow-x: auto;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%);
+            transform: translateY(-50%);
+        }
+        
+        .timeline-item {
+            position: relative;
+            text-align: center;
+            z-index: 1;
+            min-width: 120px;
+        }
+        
+        .timeline-dot {
+            width: 16px;
+            height: 16px;
+            background: #ef4444;
+            border: 3px solid #0f172a;
+            border-radius: 50%;
+            margin: 0 auto 12px;
+        }
+        
+        .timeline-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #cbd5e1;
+            line-height: 1.4;
+            max-width: 120px;
+            margin: 0 auto;
+            margin-top: 34px;
+            padding-top: 4px;
+        }
+        
+        .timeline-year {
+            font-size: 11px;
+            color: #64748b;
+            margin-top: 4px;
+        }
+        
+        /* Data Sources */
+        .sources-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-top: 40px;
+        }
+        
+        .sources-card {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 24px;
+        }
+        
+        .sources-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .source-item {
+            font-size: 13px;
+            color: #cbd5e1;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .source-item::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: #ef4444;
+            font-weight: bold;
+        }
+        
+        .methodology-highlight {
+            color: #fbbf24;
+            font-weight: 600;
+        }
+        
+        /* Bottom Brand Bar */
+        .brand-bar-bottom {
+            background: rgba(10, 22, 40, 0.95);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 24px;
+            margin-top: auto;
+        }
+        
+        .bottom-content {
+            max-width: 1600px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .bottom-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #94a3b8;
+        }
+        
+        .bottom-meta {
+            font-size: 12px;
+            color: #64748b;
+            line-height: 1.6;
+        }
+        
+        .ip-notice {
+            font-size: 11px;
+            color: #475569;
+            font-variant: small-caps;
+            line-height: 1.6;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #10b981;
+            color: white;
+            padding: 16px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Share Menu */
+        .share-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 8px;
+            background: rgba(30, 41, 59, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 8px;
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            min-width: 160px;
+            backdrop-filter: blur(10px);
+            z-index: 200;
+        }
+        
+        .share-menu.show {
+            display: flex;
+        }
+        
+        .share-item {
+            padding: 10px 16px;
+            color: #e0e6ed;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+        
+        .share-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .brand-bar-top {
+                flex-direction: column;
+                gap: 12px;
+                text-align: center;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .sources-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .risk-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .main-title {
+                font-size: 28px;
+            }
+            
+            .score-badge {
+                font-size: 24px;
+                padding: 6px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Brand Bar -->
+    <div class="brand-bar-top">
+        <div class="brand-chip">
+            <img src="https://brianiselin.github.io/widgets-public/ETI_favicon_128.png" alt="EU-Taiwan Institute" class="brand-logo">
+            <span class="brand-chip-text">EU-Taiwan Institute</span>
+        </div>
+        <div class="brand-center">iselingroup.com • brian.iselin(@)iselingroup.com</div>
+        <div class="brand-chip">
+            <img src="https://brianiselin.github.io/widgets-public/Iselin_Group_Logo_1024%20x.jpg" alt="Iselin Group" class="brand-logo">
+            <span class="brand-chip-text">Iselin Group</span>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="eu-flag">🇪🇺</div>
+            <div class="header-content">
+                <h1 class="main-title">
+                    EU-China Relations Tracker
+                    <span class="score-badge">5.2<span style="font-size: 18px; opacity: 0.8;">/10</span></span>
+                </h1>
+                <div class="ranking-info">
+                    China: <span class="ranking-badge">EU's largest trading partner</span>
+                    EU: <span class="ranking-badge">China's 2nd largest partner</span>
+                </div>
+                <div class="subscores">
+                    <div class="subscore">
+                        <div class="subscore-label">Economic</div>
+                        <div class="subscore-value">6.8</div>
+                    </div>
+                    <div class="subscore">
+                        <div class="subscore-label">Political</div>
+                        <div class="subscore-value">4.5</div>
+                    </div>
+                    <div class="subscore">
+                        <div class="subscore-label">Security</div>
+                        <div class="subscore-value">3.2</div>
+                    </div>
+                    <div class="subscore">
+                        <div class="subscore-label">Cultural</div>
+                        <div class="subscore-value">6.3</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button class="btn btn-primary" onclick="copyLink()">
+                📋 Copy Link
+            </button>
+            <button class="btn btn-primary" onclick="exportPNG()">
+                📸 Export PNG
+            </button>
+            <div style="position: relative;">
+                <button class="btn btn-secondary" onclick="toggleShareMenu()">
+                    📤 Share
+                </button>
+                <div id="shareMenu" class="share-menu">
+                    <a href="#" class="share-item" onclick="shareNative(event)">📱 System Share</a>
+                    <a href="#" class="share-item" onclick="shareX(event)">𝕏 X (Twitter)</a>
+                    <a href="#" class="share-item" onclick="shareLinkedIn(event)">💼 LinkedIn</a>
+                    <a href="#" class="share-item" onclick="shareFacebook(event)">📘 Facebook</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Widget Area -->
+        <div id="widget-area">
+            
+            <!-- Trade & Investment Section -->
+            <h2 class="section-header">Trade &amp; Investment</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-title">Total Trade (2024)</div>
+                    <div class="stat-value">
+                        €732<span class="stat-unit">B</span>
+                    </div>
+                    <div class="stat-change negative">-2.4% YoY</div>
+                    <div class="stat-sublabel">Goods + Services</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-title">Goods Trade</div>
+                    <div class="stat-value">
+                        €710<span class="stat-unit">B</span>
+                    </div>
+                    <div class="stat-sublabel">97% of total</div>
+                </div>
+                
+                <div class="stat-card green">
+                    <div class="stat-title">Services Trade Surplus</div>
+                    <div class="stat-value">
+                        €21.7<span class="stat-unit">B</span>
+                    </div>
+                    <div class="stat-change positive">EU surplus</div>
+                    <div class="stat-sublabel">2024 data</div>
+                </div>
+                
+                <div class="stat-card blue">
+                    <div class="stat-title">EU FDI in China</div>
+                    <div class="stat-value">
+                        €232<span class="stat-unit">B</span>
+                    </div>
+                    <div class="stat-sublabel">Stock (2023)</div>
+                </div>
+                
+                <div class="stat-card blue">
+                    <div class="stat-title">China FDI in EU</div>
+                    <div class="stat-value">
+                        €65<span class="stat-unit">B</span>
+                    </div>
+                    <div class="stat-change positive">+80% in 2024 flows</div>
+                    <div class="stat-sublabel">Stock (2023)</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-title">Trade Deficit</div>
+                    <div class="stat-value">
+                        €306<span class="stat-unit">B</span>
+                    </div>
+                    <div class="stat-change negative">EU deficit (2024)</div>
+                    <div class="stat-sublabel">Goods trade imbalance</div>
+                </div>
+            </div>
+
+            <!-- Trade Flow Diagram -->
+            <div class="chart-container full-width">
+                <h3 class="chart-title">Bilateral Trade Flows (2024)</h3>
+                <div class="flow-container">
+                    <div class="flow-entity">
+                        <div class="flow-flag">🇪🇺</div>
+                        <div class="flow-label">European Union</div>
+                    </div>
+                    
+                    <div class="flow-arrows">
+                        <div class="flow-arrow">
+                            <div class="flow-value">€213B</div>
+                            <div class="arrow-line"></div>
+                            <div class="flow-description">EU Exports to China</div>
+                        </div>
+                        <div class="flow-arrow arrow-reverse">
+                            <div class="flow-description">China Exports to EU</div>
+                            <div class="arrow-line"></div>
+                            <div class="flow-value">€519B</div>
+                        </div>
+                    </div>
+                    
+                    <div class="flow-entity">
+                        <div class="flow-flag">🇨🇳</div>
+                        <div class="flow-label">China</div>
+                    </div>
+                </div>
+                <div style="text-align: center; margin-top: 20px; color: #94a3b8; font-size: 13px;">
+                    Top EU Exports: Machinery &amp; vehicles (51%), Chemicals (17%), Other manufactured goods (20%)<br>
+                    Top China Exports: Machinery &amp; vehicles (55%), Other manufactured goods (34%), Chemicals (8%)
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div class="charts-grid">
+                <div class="chart-container">
+                    <h3 class="chart-title">Bilateral Trade Evolution 2020-2025</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="tradeChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <h3 class="chart-title">Trade Deficit Trend</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="deficitChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Critical Sectors -->
+            <h2 class="section-header">Strategic Sectors &amp; Competition</h2>
+            <div class="stats-grid">
+                <div class="stat-card purple">
+                    <div class="stat-title">Electric Vehicles</div>
+                    <div class="stat-value">
+                        High<span class="stat-label">competition</span>
+                    </div>
+                    <div class="stat-sublabel">EU anti-subsidy investigation ongoing</div>
+                </div>
+                
+                <div class="stat-card orange">
+                    <div class="stat-title">Solar Panels</div>
+                    <div class="stat-value">
+                        97%<span class="stat-label">from China</span>
+                    </div>
+                    <div class="stat-sublabel">EU dependency concern</div>
+                </div>
+                
+                <div class="stat-card blue">
+                    <div class="stat-title">Critical Raw Materials</div>
+                    <div class="stat-value">
+                        High<span class="stat-label">exposure</span>
+                    </div>
+                    <div class="stat-sublabel">Rare earths, lithium processing</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-title">5G Technology</div>
+                    <div class="stat-value">
+                        Restricted<span class="stat-label">access</span>
+                    </div>
+                    <div class="stat-sublabel">EU security concerns</div>
+                </div>
+            </div>
+                        <!-- Critical Minerals Dependency Section -->
+            <h2 class="section-header">Critical Minerals Dependency</h2>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-title">Heavy Rare Earths</div>
+                    <div class="stat-value">
+                        100<span class="stat-unit">%</span>
+                    </div>
+                    <div class="stat-change negative">EU sourced from China</div>
+                    <div class="stat-sublabel">Hybrid cars, fiber optics, nuclear</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-title">Magnesium</div>
+                    <div class="stat-value">
+                        97<span class="stat-unit">%</span>
+                    </div>
+                    <div class="stat-sublabel">Aerospace &amp; automotive critical</div>
+                </div>
+                
+                <div class="stat-card orange">
+                    <div class="stat-title">Light Rare Earths</div>
+                    <div class="stat-value">
+                        85<span class="stat-unit">%</span>
+                    </div>
+                    <div class="stat-sublabel">Catalysts, magnets, engines</div>
+                </div>
+                
+                <div class="stat-card orange">
+                    <div class="stat-title">Lithium</div>
+                    <div class="stat-value">
+                        79<span class="stat-unit">%</span>
+                    </div>
+                    <div class="stat-sublabel">Battery production dependency</div>
+                </div>
+                
+                <div class="stat-card purple">
+                    <div class="stat-title">Gallium</div>
+                    <div class="stat-value">
+                        71<span class="stat-unit">%</span>
+                    </div>
+                    <div class="stat-sublabel">Semiconductors, LEDs, solar</div>
+                </div>
+                
+                <div class="stat-card purple">
+                    <div class="stat-title">Cobalt Refining</div>
+                    <div class="stat-value">
+                        70<span class="stat-unit">%</span>
+                    </div>
+                    <div class="stat-sublabel">China-controlled processing</div>
+                </div>
+                
+                <div class="stat-card blue">
+                    <div class="stat-title">Scandium</div>
+                    <div class="stat-value">
+                        67<span class="stat-unit">%</span>
+                    </div>
+                    <div class="stat-sublabel">Aerospace components</div>
+                </div>
+                
+                <div class="stat-card blue">
+                    <div class="stat-title">Bismuth</div>
+                    <div class="stat-value">
+                        65<span class="stat-unit">%</span>
+                    </div>
+                    <div class="stat-sublabel">Pharmaceuticals, low-melt alloys</div>
+                </div>
+                
+                <div class="stat-card green">
+                    <div class="stat-title">Critical Raw Materials</div>
+                    <div class="stat-value">
+                        30<span class="stat-label">total</span>
+                    </div>
+                    <div class="stat-sublabel">EU official 2020 list</div>
+                </div>
+                
+                <div class="stat-card green">
+                    <div class="stat-title">Rare Earth Magnet Production</div>
+                    <div class="stat-value">
+                        90<span class="stat-unit">%</span>
+                    </div>
+                    <div class="stat-sublabel">Global share controlled by China</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-title">Export Controls (2025)</div>
+                    <div class="stat-value">
+                        April<span class="stat-label">enacted</span>
+                    </div>
+                    <div class="stat-change negative">7 materials restricted</div>
+                    <div class="stat-sublabel">Licenses required for shipments</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-title">2030 Diversification Target</div>
+                    <div class="stat-value">
+                        65<span class="stat-unit">%</span>
+                    </div>
+                    <div class="stat-sublabel">Max single-country dependency</div>
+                </div>
+            </div>
+
+            <!-- Dependency Breakdown Chart -->
+            <div class="chart-container full-width">
+                <h3 class="chart-title">EU Dependency by Critical Mineral (% Sourced from China)</h3>
+                <div class="policy-bars">
+                    <div class="policy-item">
+                        <div class="policy-label">Heavy Rare Earths</div>
+                        <div class="policy-bar-track">
+                            <div class="policy-bar-fill" style="width: 100%; background: linear-gradient(90deg, #dc2626 0%, #7f1d1d 100%);">100%</div>
+                        </div>
+                    </div>
+                    <div class="policy-item">
+                        <div class="policy-label">Magnesium</div>
+                        <div class="policy-bar-track">
+                            <div class="policy-bar-fill" style="width: 97%;">97%</div>
+                        </div>
+                    </div>
+                    <div class="policy-item">
+                        <div class="policy-label">Light Rare Earths</div>
+                        <div class="policy-bar-track">
+                            <div class="policy-bar-fill" style="width: 85%;">85%</div>
+                        </div>
+                    </div>
+                    <div class="policy-item">
+                        <div class="policy-label">Lithium</div>
+                        <div class="policy-bar-track">
+                            <div class="policy-bar-fill" style="width: 79%;">79%</div>
+                        </div>
+                    </div>
+                    <div class="policy-item">
+                        <div class="policy-label">Gallium</div>
+                        <div class="policy-bar-track">
+                            <div class="policy-bar-fill" style="width: 71%;">71%</div>
+                        </div>
+                    </div>
+                    <div class="policy-item">
+                        <div class="policy-label">Cobalt Refining</div>
+                        <div class="policy-bar-track">
+                            <div class="policy-bar-fill" style="width: 70%;">70%</div>
+                        </div>
+                    </div>
+                    <div class="policy-item">
+                        <div class="policy-label">Scandium</div>
+                        <div class="policy-bar-track">
+                            <div class="policy-bar-fill" style="width: 67%;">67%</div>
+                        </div>
+                    </div>
+                    <div class="policy-item">
+                        <div class="policy-label">Bismuth</div>
+                        <div class="policy-bar-track">
+                            <div class="policy-bar-fill" style="width: 65%;">65%</div>
+                        </div>
+                    </div>
+                    <div class="policy-item">
+                        <div class="policy-label">Vanadium</div>
+                        <div class="policy-bar-track">
+                            <div class="policy-bar-fill" style="width: 62%;">62%</div>
+                        </div>
+                    </div>
+                    <div class="policy-item">
+                        <div class="policy-label">Germanium</div>
+                        <div class="policy-bar-track">
+                            <div class="policy-bar-fill" style="width: 45%;">45%</div>
+                        </div>
+                    </div>
+                    <div class="policy-item">
+                        <div class="policy-label">Natural Graphite</div>
+                        <div class="policy-bar-track">
+                            <div class="policy-bar-fill" style="width: 40%;">40%</div>
+                        </div>
+                    </div>
+                    <div class="policy-item">
+                        <div class="policy-label">Tungsten</div>
+                        <div class="policy-bar-track">
+                            <div class="policy-bar-fill" style="width: 32%;">32%</div>
+                        </div>
+                    </div>
+                </div>
+                <div style="text-align: center; margin-top: 20px; color: #94a3b8; font-size: 13px;">
+                    Data source: European Commission research (2024), Bloomberg analysis. China controls 90% of global rare earth magnet production, creating chokepoint even for materials mined elsewhere.
+                </div>
+            </div>
+
+            <!-- CRM Act Progress Chart -->
+            <div class="chart-container full-width">
+                <h3 class="chart-title">EU Critical Raw Materials Act - Progress to 2030 Targets</h3>
+                <div class="chart-wrapper tall">
+                    <canvas id="crmActChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Critical Minerals Detail Section -->
+            <div class="chart-container full-width">
+                <h3 class="chart-title">Critical Minerals Dependency Details</h3>
+                <div style="padding: 24px; background: rgba(15, 23, 42, 0.8); border-radius: 8px; color: #cbd5e1; font-size: 14px; line-height: 1.8;">
+                    <p style="margin-bottom: 16px;">
+                        The EU's dependency on China for critical minerals represents one of the most severe strategic vulnerabilities in the bilateral relationship. Europe is <strong style="color: #ef4444;">100% dependent on China</strong> for heavy rare earth elements used in hybrid cars, fiber optics, and nuclear reactors, and <strong style="color: #ef4444;">97% dependent</strong> for magnesium used in aerospace and automotive applications.
+                    </p>
+                    
+                    <h4 style="color: #f1f5f9; font-size: 16px; margin: 20px 0 12px 0;">April 2025 Export Controls</h4>
+                    <p style="margin-bottom: 12px;">
+                        In April 2025, China imposed export restrictions on seven rare earth materials and permanent magnets, requiring licenses for shipments. The impact was immediate: exports collapsed even as China's broader trade numbers surged. European carmakers have delayed production, while wind turbine and electronics sectors face spiraling costs.
+                    </p>
+                    
+                    <h4 style="color: #f1f5f9; font-size: 16px; margin: 20px 0 12px 0;">The Processing Chokepoint</h4>
+                    <p style="margin-bottom: 12px;">
+                        China's dominance extends beyond mining to <strong style="color: #fbbf24;">refining and processing</strong>, controlling 90% of global rare earth magnet production. This means even materials mined elsewhere must typically pass through Chinese facilities for processing, creating an inescapable dependency.
+                    </p>
+                    
+                    <h4 style="color: #f1f5f9; font-size: 16px; margin: 20px 0 12px 0;">EU Critical Raw Materials Act Targets (2030)</h4>
+                    <ul style="margin-left: 20px; margin-bottom: 16px;">
+                        <li style="margin-bottom: 8px;"><strong style="color: #3b82f6;">10%</strong> of annual EU consumption from domestic extraction</li>
+                        <li style="margin-bottom: 8px;"><strong style="color: #3b82f6;">40%</strong> of annual EU consumption from domestic processing</li>
+                        <li style="margin-bottom: 8px;"><strong style="color: #3b82f6;">15%</strong> of annual EU consumption from recycling</li>
+                        <li style="margin-bottom: 8px;"><strong style="color: #3b82f6;">Max 65%</strong> dependency on any single third country for each strategic raw material</li>
+                    </ul>
+                    
+                    <p style="margin-top: 16px; font-size: 12px; color: #94a3b8; font-style: italic;">
+                        <strong>Note:</strong> Current progress toward 2030 targets remains minimal for most materials. Heavy rare earths, in particular, have no viable alternative suppliers identified, making the 65% target unachievable without technological breakthroughs.
+                    </p>
+                </div>
+            </div>
+
+
+            <!-- Policy Engagement -->
+            <div class="chart-container full-width">
+                <h3 class="chart-title">Engagement by Policy Area (2025)</h3>
+                <div class="policy-bars">
+                    <div class="policy-item">
+                        <div class="policy-label">Trade</div>
+                        <div class="policy-bar-track">
+                            <div class="policy-bar-fill" style="width: 88%;">88%</div>
+                        </div>
+                    </div>
+                    <div class="policy-item">
+                        <div class="policy-label">Investment</div>
+                        <div class="policy-bar-track">
+                            <div class="policy-bar-fill" style="width: 72%;">72%</div>
+                        </div>
+                    </div>
+                    <div class="policy-item">
+                        <div class="policy-label">Climate Change</div>
+                        <div class="policy-bar-track">
+                            <div class="policy-bar-fill" style="width: 65%;">65%</div>
+                        </div>
+                    </div>
+                    <div class="policy-item">
+                        <div class="policy-label">Technology Standards</div>
+                        <div class="policy-bar-track">
+                            <div class="policy-bar-fill" style="width: 58%;">58%</div>
+                        </div>
+                    </div>
+                    <div class="policy-item">
+                        <div class="policy-label">Human Rights</div>
+                        <div class="policy-bar-track">
+                            <div class="policy-bar-fill" style="width: 35%;">35%</div>
+                        </div>
+                    </div>
+                    <div class="policy-item">
+                        <div class="policy-label">Security Cooperation</div>
+                        <div class="policy-bar-track">
+                            <div class="policy-bar-fill" style="width: 28%;">28%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Risk & Resilience -->
+            <h2 class="section-header">Risk &amp; Resilience Indicators</h2>
+            <div class="risk-grid">
+                <div class="risk-card high">
+                    <div class="risk-title">Trade Imbalance</div>
+                    <div class="risk-level">High Risk</div>
+                    <div class="risk-description">€306B deficit in 2024; persistent structural imbalance in goods trade</div>
+                </div>
+                
+                <div class="risk-card high">
+                    <div class="risk-title">Economic Dependencies</div>
+                    <div class="risk-level">High Risk</div>
+                    <div class="risk-description">Critical dependencies on solar panels (97%), rare earths, and key industrial inputs</div>
+                </div>
+                
+                <div class="risk-card medium">
+                    <div class="risk-title">Market Access</div>
+                    <div class="risk-level">Medium Risk</div>
+                    <div class="risk-description">Lack of level playing field; EU businesses face discrimination and regulatory barriers</div>
+                </div>
+            </div>
+
+            <!-- Political & Diplomatic Engagement -->
+            <h2 class="section-header">Political &amp; Diplomatic Engagement</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-title">Annual Summits</div>
+                    <div class="stat-value">
+                        1<span class="stat-label">per year</span>
+                    </div>
+                    <div class="stat-sublabel">Presidential-level</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-title">High-Level Dialogues</div>
+                    <div class="stat-value">
+                        HLETD<span class="stat-label">annual</span>
+                    </div>
+                    <div class="stat-sublabel">VP-level economic talks</div>
+                </div>
+                
+                <div class="stat-card green">
+                    <div class="stat-title">Diplomatic Relations</div>
+                    <div class="stat-value">
+                        Since 1975
+                    </div>
+                    <div class="stat-sublabel">50 years of engagement</div>
+                </div>
+                
+                <div class="stat-card blue">
+                    <div class="stat-title">Strategic Classification</div>
+                    <div class="stat-value">
+                        Triple<span class="stat-label">role</span>
+                    </div>
+                    <div class="stat-sublabel">Partner, competitor, rival</div>
+                </div>
+            </div>
+
+            <!-- Timeline -->
+            <div class="chart-container full-width">
+                <h3 class="chart-title">Key Milestones in EU-China Relations</h3>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-label">
+                            Diplomatic Relations<br>
+                            <span class="timeline-year">1975</span>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-label">
+                            First EU-China Summit<br>
+                            <span class="timeline-year">1998</span>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-label">
+                            China Joins WTO<br>
+                            <span class="timeline-year">2001</span>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-label">
+                            Investment Agreement<br>
+                            <span class="timeline-year">2020</span>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-label">
+                            FDI Screening<br>
+                            <span class="timeline-year">2020</span>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-label">
+                            De-risking Strategy<br>
+                            <span class="timeline-year">2023</span>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-label">
+                            EV Investigation<br>
+                            <span class="timeline-year">2023</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comparative Analysis -->
+            <div class="chart-container full-width">
+                <h3 class="chart-title">EU Trade Relations: Comparative Context</h3>
+                <div class="chart-wrapper">
+                    <canvas id="comparativeChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Methodology & Scoring -->
+            <h2 class="section-header">Methodology &amp; Assessment Framework</h2>
+            
+            <div class="chart-container full-width">
+                <h3 class="chart-title">Iselin Group Engagement Assessment Methodology</h3>
+                <div style="padding: 24px; background: rgba(15, 23, 42, 0.8); border-radius: 8px; color: #cbd5e1; font-size: 14px; line-height: 1.8;">
+                    <p style="margin-bottom: 16px; font-weight: 600; color: #fbbf24;">
+                        The engagement scores and overall rating presented in this tracker represent proprietary assessments by Iselin Group based on comprehensive analysis of publicly available data, official statements, and bilateral activities.
+                    </p>
+                    
+                    <h4 style="color: #f1f5f9; font-size: 16px; margin: 20px 0 12px 0;">Overall Score Calculation (5.2/10)</h4>
+                    <p style="margin-bottom: 12px;">The overall engagement score is derived from four equally-weighted pillars:</p>
+                    <ul style="margin-left: 20px; margin-bottom: 16px;">
+                        <li style="margin-bottom: 8px;"><strong style="color: #ef4444;">Economic Integration (6.8/10):</strong> High trade volume but massive deficit; significant FDI but declining EU investment</li>
+                        <li style="margin-bottom: 8px;"><strong style="color: #ef4444;">Political Dialogue (4.5/10):</strong> Regular summits but strained relations; "triple role" classification reflects complexity</li>
+                        <li style="margin-bottom: 8px;"><strong style="color: #ef4444;">Security Cooperation (3.2/10):</strong> Minimal cooperation; systemic rival classification; technology concerns</li>
+                        <li style="margin-bottom: 8px;"><strong style="color: #ef4444;">Cultural Exchange (6.3/10):</strong> Student exchanges, tourism, but limited people-to-people depth</li>
+                    </ul>
+                    
+                    <h4 style="color: #f1f5f9; font-size: 16px; margin: 20px 0 12px 0;">Sector Engagement Intensity (Policy Area Scores)</h4>
+                    <p style="margin-bottom: 12px;">Percentage scores for individual sectors reflect both volume of interaction and quality of cooperation, adjusted for competitive/adversarial dynamics.</p>
+                    
+                    <h4 style="color: #f1f5f9; font-size: 16px; margin: 20px 0 12px 0;">Risk Assessment Framework</h4>
+                    <p style="margin-bottom: 12px;">Risk levels represent Iselin Group's assessment based on official EU strategic communications and economic data:</p>
+                    <ul style="margin-left: 20px; margin-bottom: 16px;">
+                        <li style="margin-bottom: 8px;"><strong style="color: #ef4444;">High Risk - Trade Imbalance:</strong> €306B deficit represents structural vulnerability</li>
+                        <li style="margin-bottom: 8px;"><strong style="color: #ef4444;">High Risk - Dependencies:</strong> Critical exposure in solar, rare earths, batteries</li>
+                        <li style="margin-bottom: 8px;"><strong style="color: #fbbf24;">Medium Risk - Market Access:</strong> Lack of reciprocity, discrimination against EU firms</li>
+                    </ul>
+                    
+                    <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.1);">
+                        <p style="font-size: 12px; color: #94a3b8; font-style: italic;">
+                            <strong>Disclaimer:</strong> All assessments, scores, and ratings in this tracker represent independent analysis by Iselin Group. While based on publicly available official data and reports, the interpretive framework and scoring methodology are proprietary. Last updated: October 14, 2025.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Sources -->
+            <div class="sources-section">
+                <div class="sources-card">
+                    <h3 class="chart-title">Primary Data Sources</h3>
+                    <ul class="sources-list">
+                        <li class="source-item">European Commission (DG Trade)</li>
+                        <li class="source-item">Eurostat Trade Statistics</li>
+                        <li class="source-item">European External Action Service (EEAS)</li>
+                        <li class="source-item">European Parliament</li>
+                        <li class="source-item">Chinese National Bureau of Statistics</li>
+                        <li class="source-item">WTO Dispute Settlement Body</li>
+                        <li class="source-item">Official bilateral statements &amp; summits</li>
+                    </ul>
+                </div>
+                
+                <div class="sources-card">
+                    <h3 class="chart-title">Analysis &amp; <span class="methodology-highlight">Assessment</span></h3>
+                    <ul class="sources-list">
+                        <li class="source-item">Iselin Group proprietary scoring methodology</li>
+                        <li class="source-item">Quantitative trade &amp; investment analysis</li>
+                        <li class="source-item">Diplomatic engagement tracking</li>
+                        <li class="source-item">Strategic risk assessment framework</li>
+                        <li class="source-item">Sectoral competition analysis</li>
+                        <li class="source-item">De-risking strategy evaluation</li>
+                        <li class="source-item">Comparative benchmarking</li>
+                        <li class="source-item"><em style="color: #fbbf24;">See full methodology section above</em></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Brand Bar -->
+    <div class="brand-bar-bottom">
+        <div class="bottom-content">
+            <div class="bottom-title">Iselin Group - Strategic Consulting</div>
+            <div class="bottom-meta">
+                © Iselin Group. "EU-China Relations Tracker" — brian.iselin(@)iselingroup.com.
+            </div>
+            <div class="ip-notice">
+                The underlying decision‑integrity model, logic, and UI are proprietary to Iselin Group and may not be reproduced, adapted, or deployed in whole or in part without prior written consent; all rights reserved.
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <script>
+        // Trade Evolution Chart
+        const ctx1 = document.getElementById('tradeChart').getContext('2d');
+        const tradeChart = new Chart(ctx1, {
+            type: 'line',
+            data: {
+                labels: ['2020', '2021', '2022', '2023', '2024', '2025'],
+                datasets: [
+                    {
+                        label: 'Total Trade',
+                        data: [615, 696, 856, 783, 732, 720],
+                        borderColor: '#ef4444',
+                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                        tension: 0.4,
+                        borderWidth: 3,
+                        pointRadius: 5,
+                        pointHoverRadius: 7
+                    },
+                    {
+                        label: 'EU Exports',
+                        data: [202, 223, 230, 223, 213, 210],
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.4,
+                        borderWidth: 3,
+                        pointRadius: 5,
+                        pointHoverRadius: 7
+                    },
+                    {
+                        label: 'EU Imports',
+                        data: [413, 473, 626, 560, 519, 510],
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        tension: 0.4,
+                        borderWidth: 3,
+                        pointRadius: 5,
+                        pointHoverRadius: 7
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'bottom',
+                        labels: {
+                            color: '#cbd5e1',
+                            padding: 15,
+                            font: {
+                                size: 12,
+                                weight: '600'
+                            }
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(15, 23, 42, 0.95)',
+                        titleColor: '#f1f5f9',
+                        bodyColor: '#cbd5e1',
+                        borderColor: 'rgba(239, 68, 68, 0.5)',
+                        borderWidth: 1,
+                        padding: 12,
+                        displayColors: true,
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': €' + context.parsed.y + 'B';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.05)',
+                            drawBorder: false
+                        },
+                        ticks: {
+                            color: '#94a3b8',
+                            font: {
+                                size: 11,
+                                weight: '600'
+                            }
+                        }
+                    },
+                    y: {
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.05)',
+                            drawBorder: false
+                        },
+                        ticks: {
+                            color: '#94a3b8',
+                            font: {
+                                size: 11,
+                                weight: '600'
+                            },
+                            callback: function(value) {
+                                return '€' + value + 'B';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Trade Deficit Chart
+        const ctx2 = document.getElementById('deficitChart').getContext('2d');
+        const deficitChart = new Chart(ctx2, {
+            type: 'bar',
+            data: {
+                labels: ['2020', '2021', '2022', '2023', '2024', '2025'],
+                datasets: [
+                    {
+                        label: 'Trade Deficit',
+                        data: [-211, -250, -396, -337, -306, -300],
+                        backgroundColor: 'rgba(239, 68, 68, 0.8)',
+                        borderColor: '#ef4444',
+                        borderWidth: 2,
+                        borderRadius: 6
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(15, 23, 42, 0.95)',
+                        titleColor: '#f1f5f9',
+                        bodyColor: '#cbd5e1',
+                        borderColor: 'rgba(239, 68, 68, 0.5)',
+                        borderWidth: 1,
+                        padding: 12,
+                        callbacks: {
+                            label: function(context) {
+                                return 'Deficit: €' + Math.abs(context.parsed.y) + 'B';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.05)',
+                            drawBorder: false
+                        },
+                        ticks: {
+                            color: '#94a3b8',
+                            font: {
+                                size: 11,
+                                weight: '600'
+                            }
+                        }
+                    },
+                    y: {
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.05)',
+                            drawBorder: false
+                        },
+                        ticks: {
+                            color: '#94a3b8',
+                            font: {
+                                size: 11,
+                                weight: '600'
+                            },
+                            callback: function(value) {
+                                return '€' + value + 'B';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Comparative Analysis Chart
+        const ctx3 = document.getElementById('comparativeChart').getContext('2d');
+        const comparativeChart = new Chart(ctx3, {
+            type: 'bar',
+            data: {
+                labels: ['EU-China', 'EU-USA', 'EU-UK', 'EU-Japan'],
+                datasets: [
+                    {
+                        label: 'Trade Volume (€B)',
+                        data: [732, 894, 753, 145],
+                        backgroundColor: [
+                            'rgba(239, 68, 68, 0.8)',
+                            'rgba(59, 130, 246, 0.8)',
+                            'rgba(139, 92, 246, 0.8)',
+                            'rgba(16, 185, 129, 0.8)'
+                        ],
+                        borderColor: [
+                            '#ef4444',
+                            '#3b82f6',
+                            '#8b5cf6',
+                            '#10b981'
+                        ],
+                        borderWidth: 2,
+                        borderRadius: 8
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y',
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(15, 23, 42, 0.95)',
+                        titleColor: '#f1f5f9',
+                        bodyColor: '#cbd5e1',
+                        borderColor: 'rgba(239, 68, 68, 0.5)',
+                        borderWidth: 1,
+                        padding: 12,
+                        callbacks: {
+                            label: function(context) {
+                                return 'Trade Volume: €' + context.parsed.x + 'B';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.05)',
+                            drawBorder: false
+                        },
+                        ticks: {
+                            color: '#94a3b8',
+                            font: {
+                                size: 11,
+                                weight: '600'
+                            },
+                            callback: function(value) {
+                                return '€' + value + 'B';
+                            }
+                        }
+                    },
+                    y: {
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.05)',
+                            drawBorder: false
+                        },
+                        ticks: {
+                            color: '#94a3b8',
+                            font: {
+                                size: 12,
+                                weight: '600'
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // State Management
+        function getStateFromHash() {
+            const hash = window.location.hash.substring(1);
+            if (!hash) return null;
+            
+            try {
+                return JSON.parse(decodeURIComponent(hash));
+            } catch (e) {
+                return null;
+            }
+        }
+
+        function setStateToHash(state) {
+            const encoded = encodeURIComponent(JSON.stringify(state));
+            window.location.hash = encoded;
+        }
+
+        function getCurrentState() {
+            return {
+                totalTrade: 732,
+                euExports: 213,
+                euImports: 519,
+                euFDI: 232,
+                chinaFDI: 65,
+                tradeDeficit: 306,
+                score: 5.2,
+                economicScore: 6.8,
+                politicalScore: 4.5,
+                securityScore: 3.2,
+                culturalScore: 6.3,
+                timestamp: new Date().toISOString()
+            };
+        }
+
+        window.addEventListener('load', function() {
+            const savedState = getStateFromHash();
+            if (savedState) {
+                console.log('Restored state:', savedState);
+            }
+        });
+
+        function copyLink() {
+            const state = getCurrentState();
+            setStateToHash(state);
+            
+            const url = window.location.href;
+            
+            navigator.clipboard.writeText(url).then(function() {
+                showToast('Link copied to clipboard!');
+            }).catch(function(err) {
+                showToast('Failed to copy link', 'error');
+            });
+        }
+
+        function exportPNG() {
+            const element = document.getElementById('widget-area');
+            
+            showToast('Generating PNG...');
+            
+            html2canvas(element, {
+                backgroundColor: null,
+                scale: 2,
+                useCORS: true,
+                logging: false,
+                windowWidth: element.scrollWidth,
+                windowHeight: element.scrollHeight
+            }).then(function(canvas) {
+                canvas.toBlob(function(blob) {
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.download = 'eu-china-tracker.png';
+                    link.href = url;
+                    link.click();
+                    URL.revokeObjectURL(url);
+                    showToast('PNG exported successfully!');
+                });
+            }).catch(function(error) {
+                console.error('Export failed:', error);
+                showToast('Export failed', 'error');
+            });
+        }
+
+        function toggleShareMenu() {
+            const menu = document.getElementById('shareMenu');
+            menu.classList.toggle('show');
+            
+            if (menu.classList.contains('show')) {
+                setTimeout(() => {
+                    document.addEventListener('click', closeShareMenu);
+                }, 10);
+            }
+        }
+
+        function closeShareMenu(e) {
+            const menu = document.getElementById('shareMenu');
+            if (!e.target.closest('#shareMenu') && !e.target.closest('.btn-secondary')) {
+                menu.classList.remove('show');
+                document.removeEventListener('click', closeShareMenu);
+            }
+        }
+
+        function shareNative(e) {
+            e.preventDefault();
+            const state = getCurrentState();
+            setStateToHash(state);
+            
+            const url = window.location.href;
+            const text = 'EU-China Relations Tracker live scenario snapshot';
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'EU-China Relations Tracker',
+                    text: text,
+                    url: url
+                }).then(() => {
+                    showToast('Shared successfully!');
+                }).catch((error) => {
+                    if (error.name !== 'AbortError') {
+                        console.error('Share failed:', error);
+                    }
+                });
+            } else {
+                showToast('Native sharing not supported', 'error');
+            }
+        }
+
+        function shareX(e) {
+            e.preventDefault();
+            const state = getCurrentState();
+            setStateToHash(state);
+            
+            const url = encodeURIComponent(window.location.href);
+            const text = encodeURIComponent('EU-China Relations Tracker live scenario snapshot');
+            window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank');
+        }
+
+        function shareLinkedIn(e) {
+            e.preventDefault();
+            const state = getCurrentState();
+            setStateToHash(state);
+            
+            const url = encodeURIComponent(window.location.href);
+            window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${url}`, '_blank');
+        }
+
+        function shareFacebook(e) {
+            e.preventDefault();
+            const state = getCurrentState();
+            setStateToHash(state);
+            
+            const url = encodeURIComponent(window.location.href);
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.style.background = type === 'error' ? '#ef4444' : '#10b981';
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        window.addEventListener('hashchange', function() {
+            const state = getStateFromHash();
+            if (state) {
+                console.log('State updated from hash:', state);
+            }
+        });
+                // CRM Act Progress Chart
+        const ctxCRM = document.getElementById('crmActChart').getContext('2d');
+        const crmActChart = new Chart(ctxCRM, {
+            type: 'bar',
+            data: {
+                labels: ['Domestic Extraction', 'Domestic Processing', 'Recycling', 'Single-Country Dependency'],
+                datasets: [
+                    {
+                        label: '2030 Target',
+                        data: [10, 40, 15, 65],
+                        backgroundColor: 'rgba(16, 185, 129, 0.3)',
+                        borderColor: '#10b981',
+                        borderWidth: 2,
+                        borderRadius: 8
+                    },
+                    {
+                        label: 'Current Progress (2025)',
+                        data: [2, 8, 4, 85],
+                        backgroundColor: 'rgba(239, 68, 68, 0.8)',
+                        borderColor: '#ef4444',
+                        borderWidth: 2,
+                        borderRadius: 8
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'bottom',
+                        labels: {
+                            color: '#cbd5e1',
+                            padding: 15,
+                            font: {
+                                size: 12,
+                                weight: '600'
+                            }
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(15, 23, 42, 0.95)',
+                        titleColor: '#f1f5f9',
+                        bodyColor: '#cbd5e1',
+                        borderColor: 'rgba(239, 68, 68, 0.5)',
+                        borderWidth: 1,
+                        padding: 12,
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': ' + context.parsed.y + '%';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.05)',
+                            drawBorder: false
+                        },
+                        ticks: {
+                            color: '#94a3b8',
+                            font: {
+                                size: 11,
+                                weight: '600'
+                            }
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.05)',
+                            drawBorder: false
+                        },
+                        ticks: {
+                            color: '#94a3b8',
+                            font: {
+                                size: 11,
+                                weight: '600'
+                            },
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+    </script>
+</body>
+</html>
