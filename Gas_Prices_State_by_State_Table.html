@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>US Gasoline Prices by State – October 2025</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-gradient(135deg,#1e3c72,#2a5298);color:#fff;padding:2rem 1rem;}
+.container{max-width:1200px;margin:0 auto;}
+.branding-bar{background:rgba(0,0,0,0.6);padding:0.8rem 1.5rem;margin-bottom:1.5rem;border-radius:8px;display:flex;align-items:center;justify-content:space-between;border:1px solid rgba(255,255,255,0.1);}
+.branding-bar .left{display:flex;align-items:center;gap:0.8rem;}
+.branding-bar .logo-small{height:32px;width:auto;}
+.branding-bar .brand{font-weight:600;text-transform:small-caps;letter-spacing:0.5px;font-size:0.85rem;}
+.branding-bar .meta{opacity:0.75;font-size:0.7rem;text-align:right;line-height:1.3;}
+.content-box{background:rgba(255,255,255,0.05);border-radius:12px;padding:2rem;box-shadow:0 8px 32px rgba(0,0,0,0.3);}
+.header{text-align:center;margin-bottom:2rem;}
+h1{font-size:2rem;margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:1px;}
+.subtitle{font-size:1rem;opacity:0.85;margin-bottom:1rem;}
+.national-avg{background:rgba(255,255,255,0.1);padding:1.5rem;border-radius:8px;margin-bottom:2rem;text-align:center;border:2px solid rgba(255,255,255,0.2);}
+.national-avg h2{font-size:1.3rem;margin-bottom:0.5rem;text-transform:small-caps;}
+.national-avg .price{font-size:3rem;font-weight:700;color:#ffd700;}
+table{width:100%;border-collapse:collapse;background:rgba(255,255,255,0.08);border-radius:8px;overflow:hidden;}
+thead{background:rgba(0,0,0,0.3);}
+th{padding:1rem;text-align:left;font-weight:600;text-transform:small-caps;letter-spacing:0.5px;border-bottom:2px solid rgba(255,255,255,0.2);}
+td{padding:0.9rem 1rem;border-bottom:1px solid rgba(255,255,255,0.1);}
+tbody tr:hover{background:rgba(255,255,255,0.1);}
+.price-cell{font-weight:700;font-size:1.1rem;color:#ffd700;}
+.rank-cell{font-weight:600;opacity:0.8;}
+.state-cell{font-weight:500;}
+.footnote{margin-top:2rem;font-size:0.85rem;opacity:0.7;line-height:1.6;}
+@media(max-width:768px){
+.branding-bar{flex-direction:column;gap:0.5rem;text-align:center;}
+.branding-bar .meta{text-align:center;}
+}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="branding-bar">
+<div class="left">
+<img src="https://brianiselin.github.io/widgets-public/Iselin_Group_Logo_1024%20x.jpg" alt="Iselin Group" class="logo-small">
+<span class="brand">Iselin Group – Strategic Consulting</span>
+</div>
+<div class="meta">
+© Iselin Group. "US Gas Prices State by State (Oct 2025)" – brian.iselin@iselingroup.com<br>
+<span style="font-size:0.65rem;text-transform:small-caps;">All rights reserved. Unauthorised reproduction prohibited.</span>
+</div>
+</div>
+<div class="content-box">
+<div class="header">
+<h1>US Gasoline Prices by State</h1>
+<p class="subtitle">Regular Unleaded – October 17, 2025</p>
+</div>
+<div class="national-avg">
+<h2>National Average</h2>
+<div class="price">$3.051</div>
+</div>
+<table id="priceTable">
+<thead>
+<tr>
+<th>Rank</th>
+<th>State</th>
+<th>Regular ($/gal)</th>
+<th>Mid-Grade ($/gal)</th>
+<th>Premium ($/gal)</th>
+<th>Diesel ($/gal)</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+<div class="footnote">
+<strong>Source:</strong> AAA State Gas Price Averages, 17 October 2025. Prices reflect retail averages for regular unleaded, mid-grade, premium, and diesel fuel. Rankings based on regular unleaded prices.
+</div>
+</div>
+</div>
+<script>
+const stateData=[
+{state:"Oklahoma",regular:2.551,mid:2.965,premium:3.247,diesel:3.142},
+{state:"Arkansas",regular:2.624,mid:3.100,premium:3.450,diesel:3.286},
+{state:"Texas",regular:2.624,mid:3.101,premium:3.463,diesel:3.132},
+{state:"Mississippi",regular:2.641,mid:3.088,premium:3.455,diesel:3.237},
+{state:"Wisconsin",regular:2.647,mid:3.183,premium:3.675,diesel:3.388},
+{state:"Louisiana",regular:2.658,mid:3.102,premium:3.483,diesel:3.254},
+{state:"Kentucky",regular:2.673,mid:3.222,premium:3.645,diesel:3.354},
+{state:"Missouri",regular:2.699,mid:3.058,premium:3.380,diesel:3.321},
+{state:"Tennessee",regular:2.715,mid:3.191,premium:3.579,diesel:3.356},
+{state:"Iowa",regular:2.722,mid:3.028,premium:3.506,diesel:3.427},
+{state:"Alabama",regular:2.723,mid:3.172,premium:3.562,diesel:3.402},
+{state:"South Carolina",regular:2.726,mid:3.189,premium:3.558,diesel:3.344},
+{state:"Kansas",regular:2.755,mid:3.096,premium:3.431,diesel:3.375},
+{state:"North Carolina",regular:2.798,mid:3.254,premium:3.649,diesel:3.454},
+{state:"Michigan",regular:2.813,mid:3.428,premium:3.987,diesel:3.630},
+{state:"Nebraska",regular:2.814,mid:3.037,premium:3.519,diesel:3.327},
+{state:"Ohio",regular:2.817,mid:3.368,premium:3.882,diesel:3.594},
+{state:"New Mexico",regular:2.819,mid:3.224,premium:3.543,diesel:3.415},
+{state:"Georgia",regular:2.831,mid:3.280,premium:3.686,diesel:3.500},
+{state:"South Dakota",regular:2.848,mid:3.044,premium:3.508,diesel:3.315},
+{state:"North Dakota",regular:2.856,mid:3.208,premium:3.530,diesel:3.440},
+{state:"Minnesota",regular:2.867,mid:3.282,premium:3.721,diesel:3.551},
+{state:"Indiana",regular:2.883,mid:3.451,premium:3.941,diesel:3.770},
+{state:"Virginia",regular:2.919,mid:3.404,premium:3.781,diesel:3.574},
+{state:"Delaware",regular:2.938,mid:3.504,premium:3.799,diesel:3.599},
+{state:"West Virginia",regular:2.940,mid:3.355,premium:3.787,diesel:3.586},
+{state:"Florida",regular:2.947,mid:3.404,premium:3.725,diesel:3.570},
+{state:"Rhode Island",regular:2.956,mid:3.711,premium:4.095,diesel:3.775},
+{state:"New Hampshire",regular:2.963,mid:3.562,premium:3.979,diesel:3.781},
+{state:"Colorado",regular:2.965,mid:3.370,premium:3.688,diesel:3.428},
+{state:"New Jersey",regular:2.989,mid:3.581,premium:3.840,diesel:3.566},
+{state:"Wyoming",regular:2.991,mid:3.260,premium:3.576,diesel:3.500},
+{state:"Maryland",regular:3.018,mid:3.612,premium:3.918,diesel:3.653},
+{state:"Massachusetts",regular:3.023,mid:3.654,premium:4.013,diesel:3.818},
+{state:"Maine",regular:3.030,mid:3.558,premium:4.031,diesel:3.863},
+{state:"Connecticut",regular:3.065,mid:3.685,premium:4.061,diesel:3.767},
+{state:"Montana",regular:3.091,mid:3.409,premium:3.727,diesel:3.566},
+{state:"Illinois",regular:3.132,mid:3.727,premium:4.199,diesel:3.676},
+{state:"Vermont",regular:3.135,mid:3.668,premium:4.091,diesel:3.813},
+{state:"New York",regular:3.140,mid:3.675,premium:4.047,diesel:3.883},
+{state:"District of Columbia",regular:3.201,mid:3.702,premium:4.179,diesel:3.845},
+{state:"Pennsylvania",regular:3.227,mid:3.681,premium:4.051,diesel:3.965},
+{state:"Utah",regular:3.363,mid:3.629,premium:3.865,diesel:3.668},
+{state:"Arizona",regular:3.424,mid:3.804,premium:4.132,diesel:3.604},
+{state:"Idaho",regular:3.451,mid:3.751,premium:4.016,diesel:3.787},
+{state:"Alaska",regular:3.849,mid:4.120,premium:4.349,diesel:4.070},
+{state:"Nevada",regular:3.865,mid:4.160,premium:4.429,diesel:3.911},
+{state:"Oregon",regular:4.047,mid:4.311,premium:4.580,diesel:4.423},
+{state:"Washington",regular:4.436,mid:4.725,premium:4.960,diesel:5.027},
+{state:"Hawaii",regular:4.476,mid:4.710,premium:4.987,diesel:5.242},
+{state:"California",regular:4.645,mid:4.885,premium:5.064,diesel:5.134}
+];
+stateData.sort((a,b)=>a.regular-b.regular);
+const tbody=document.querySelector('#priceTable tbody');
+stateData.forEach((row,idx)=>{
+const tr=document.createElement('tr');
+const rank=document.createElement('td');
+rank.className='rank-cell';
+rank.textContent=(idx+1).toString();
+const state=document.createElement('td');
+state.className='state-cell';
+state.textContent=row.state;
+const reg=document.createElement('td');
+reg.className='price-cell';
+reg.textContent='$'+row.regular.toFixed(3);
+const mid=document.createElement('td');
+mid.textContent='$'+row.mid.toFixed(3);
+const prem=document.createElement('td');
+prem.textContent='$'+row.premium.toFixed(3);
+const dies=document.createElement('td');
+dies.textContent='$'+row.diesel.toFixed(3);
+tr.appendChild(rank);
+tr.appendChild(state);
+tr.appendChild(reg);
+tr.appendChild(mid);
+tr.appendChild(prem);
+tr.appendChild(dies);
+tbody.appendChild(tr);
+});
+</script>
+</body>
+</html>

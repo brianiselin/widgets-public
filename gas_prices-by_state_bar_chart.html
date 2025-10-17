@@ -6,11 +6,15 @@
 <title>US Gasoline Prices Bar Chart – October 2025</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
-html{min-height:100vh;}
-body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-gradient(135deg,#1e3c72,#2a5298);color:#fff;padding:2rem 1rem;min-height:100vh;padding-bottom:6rem;}
-.container{max-width:1400px;margin:0 auto;background:rgba(255,255,255,0.05);border-radius:12px;padding:2rem;box-shadow:0 8px 32px rgba(0,0,0,0.3);}
+body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-gradient(135deg,#1e3c72,#2a5298);color:#fff;padding:2rem 1rem;}
+.container{max-width:1400px;margin:0 auto;}
+.branding-bar{background:rgba(0,0,0,0.6);padding:0.8rem 1.5rem;margin-bottom:1.5rem;border-radius:8px;display:flex;align-items:center;justify-content:space-between;border:1px solid rgba(255,255,255,0.1);}
+.branding-bar .left{display:flex;align-items:center;gap:0.8rem;}
+.branding-bar .logo-small{height:32px;width:auto;}
+.branding-bar .brand{font-weight:600;text-transform:small-caps;letter-spacing:0.5px;font-size:0.85rem;}
+.branding-bar .meta{opacity:0.75;font-size:0.7rem;text-align:right;line-height:1.3;}
+.content-box{background:rgba(255,255,255,0.05);border-radius:12px;padding:2rem;box-shadow:0 8px 32px rgba(0,0,0,0.3);}
 .header{text-align:center;margin-bottom:2rem;}
-.logo{max-width:240px;height:auto;margin-bottom:1rem;}
 h1{font-size:2rem;margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:1px;}
 .subtitle{font-size:1rem;opacity:0.85;margin-bottom:1rem;}
 .chart-container{background:rgba(255,255,255,0.08);border-radius:8px;padding:2rem;margin-bottom:2rem;}
@@ -19,21 +23,26 @@ h1{font-size:2rem;margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:1
 .legend-item{display:flex;align-items:center;gap:0.5rem;}
 .legend-color{width:20px;height:20px;border-radius:3px;}
 .footnote{margin-top:2rem;font-size:0.85rem;opacity:0.7;line-height:1.6;}
-.bottom-bar{position:fixed;bottom:0;left:0;right:0;width:100%;background:rgba(0,0,0,0.9);padding:0.8rem 1rem;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(255,255,255,0.2);font-size:0.75rem;z-index:9999;backdrop-filter:blur(10px);}
-.bottom-bar .left{display:flex;align-items:center;gap:0.8rem;}
-.bottom-bar .logo-small{height:28px;width:auto;}
-.bottom-bar .brand{font-weight:600;text-transform:small-caps;letter-spacing:0.5px;}
-.bottom-bar .meta{opacity:0.75;font-size:0.7rem;text-align:right;line-height:1.3;}
 @media(max-width:768px){
-.bottom-bar{flex-direction:column;gap:0.5rem;padding:0.6rem;}
-.bottom-bar .meta{text-align:center;}
+.branding-bar{flex-direction:column;gap:0.5rem;text-align:center;}
+.branding-bar .meta{text-align:center;}
 }
 </style>
 </head>
 <body>
 <div class="container">
+<div class="branding-bar">
+<div class="left">
+<img src="https://brianiselin.github.io/widgets-public/Iselin_Group_Logo_1024%20x.jpg" alt="Iselin Group" class="logo-small">
+<span class="brand">Iselin Group – Strategic Consulting</span>
+</div>
+<div class="meta">
+© Iselin Group. "US Gas Prices State by State (Oct 2025)" – brian.iselin@iselingroup.com<br>
+<span style="font-size:0.65rem;text-transform:small-caps;">All rights reserved. Unauthorised reproduction prohibited.</span>
+</div>
+</div>
+<div class="content-box">
 <div class="header">
-<img src="https://brianiselin.github.io/widgets-public/Iselin_Group_Logo_1024%20x.jpg" alt="Iselin Group Logo" class="logo">
 <h1>US Gasoline Prices by State</h1>
 <p class="subtitle">Regular Unleaded – October 17, 2025</p>
 </div>
@@ -57,15 +66,6 @@ h1{font-size:2rem;margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:1
 <div class="footnote">
 <strong>Source:</strong> AAA State Gas Price Averages, 17 October 2025. Chart displays the five most expensive states, five least expensive states, and the national average for regular unleaded petrol.
 </div>
-</div>
-<div class="bottom-bar">
-<div class="left">
-<img src="https://brianiselin.github.io/widgets-public/Iselin_Group_Logo_1024%20x.jpg" alt="Iselin Group" class="logo-small">
-<span class="brand">Iselin Group – Strategic Consulting</span>
-</div>
-<div class="meta">
-© Iselin Group. "US Gas Prices State by State (Oct 2025)" – brian.iselin@iselingroup.com<br>
-<span style="font-size:0.65rem;text-transform:small-caps;">All rights reserved. Unauthorised reproduction prohibited.</span>
 </div>
 </div>
 <script>
