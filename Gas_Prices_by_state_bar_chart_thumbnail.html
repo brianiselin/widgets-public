@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>US Gasoline Prices Bar Chart – Thumbnail</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-gradient(135deg,#1e3c72,#2a5298);color:#fff;padding:1.5rem 1rem;}
+.container{max-width:1000px;margin:0 auto;}
+.branding-bar{background:rgba(0,0,0,0.6);padding:0.6rem 1rem;margin-bottom:1rem;border-radius:8px;display:flex;align-items:center;justify-content:space-between;border:1px solid rgba(255,255,255,0.1);}
+.branding-bar .left{display:flex;align-items:center;gap:0.6rem;}
+.branding-bar .logo-small{height:24px;width:auto;}
+.branding-bar .brand{font-weight:600;text-transform:small-caps;letter-spacing:0.5px;font-size:0.75rem;}
+.branding-bar .meta{opacity:0.75;font-size:0.65rem;text-align:right;line-height:1.3;}
+.content-box{background:rgba(255,255,255,0.05);border-radius:12px;padding:1.5rem;box-shadow:0 8px 32px rgba(0,0,0,0.3);}
+.header{text-align:center;margin-bottom:1.5rem;}
+h1{font-size:1.6rem;margin-bottom:0.4rem;text-transform:uppercase;letter-spacing:1px;}
+.subtitle{font-size:0.9rem;opacity:0.85;margin-bottom:0.8rem;}
+.chart-container{background:rgba(255,255,255,0.08);border-radius:8px;padding:1.5rem;margin-bottom:1rem;}
+#chartCanvas{display:block;width:100%;height:auto;}
+.legend{display:flex;justify-content:center;gap:1.5rem;margin-top:1rem;font-size:0.85rem;}
+.legend-item{display:flex;align-items:center;gap:0.4rem;}
+.legend-color{width:18px;height:18px;border-radius:3px;}
+.cta{text-align:center;margin-top:1rem;padding:1rem;background:rgba(255,255,255,0.1);border-radius:8px;}
+.cta a{color:#ffd700;text-decoration:none;font-weight:600;font-size:0.95rem;text-transform:small-caps;letter-spacing:0.5px;}
+.cta a:hover{text-decoration:underline;}
+.footnote{margin-top:1rem;font-size:0.75rem;opacity:0.7;line-height:1.5;text-align:center;}
+@media(max-width:768px){
+.branding-bar{flex-direction:column;gap:0.5rem;text-align:center;}
+.branding-bar .meta{text-align:center;}
+}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="branding-bar">
+<div class="left">
+<img src="https://brianiselin.github.io/widgets-public/Iselin_Group_Logo_1024%20x.jpg" alt="Iselin Group" class="logo-small">
+<span class="brand">Iselin Group – Strategic Consulting</span>
+</div>
+<div class="meta">
+© Iselin Group. "US Gas Prices State by State (Oct 2025)" – brian.iselin@iselingroup.com<br>
+<span style="font-size:0.6rem;text-transform:small-caps;">All rights reserved. Unauthorised reproduction prohibited.</span>
+</div>
+</div>
+<div class="content-box">
+<div class="header">
+<h1>US Gasoline Prices by State</h1>
+<p class="subtitle">Regular Unleaded – October 17, 2025</p>
+</div>
+<div class="chart-container">
+<canvas id="chartCanvas"></canvas>
+<div class="legend">
+<div class="legend-item">
+<div class="legend-color" style="background:#dc3545;"></div>
+<span>Highest Prices</span>
+</div>
+<div class="legend-item">
+<div class="legend-color" style="background:#ffc107;"></div>
+<span>National Average</span>
+</div>
+<div class="legend-item">
+<div class="legend-color" style="background:#28a745;"></div>
+<span>Lowest Prices</span>
+</div>
+</div>
+</div>
+<div class="cta">
+<a href="#" target="_blank">→ View All 51 States Interactive Chart</a>
+</div>
+<div class="footnote">
+<strong>Source:</strong> AAA State Gas Price Averages, 17 October 2025
+</div>
+</div>
+</div>
+<script>
+const chartData=[
+{state:"California",price:4.645,type:"high"},
+{state:"Hawaii",price:4.476,type:"high"},
+{state:"Washington",price:4.436,type:"high"},
+{state:"Oregon",price:4.047,type:"high"},
+{state:"Nevada",price:3.865,type:"high"},
+{state:"National Average",price:3.051,type:"avg"},
+{state:"Arkansas",price:2.624,type:"low"},
+{state:"Texas",price:2.624,type:"low"},
+{state:"Mississippi",price:2.641,type:"low"},
+{state:"Louisiana",price:2.658,type:"low"},
+{state:"Oklahoma",price:2.551,type:"low"}
+];
+const canvas=document.getElementById('chartCanvas');
+const ctx=canvas.getContext('2d');
+const dpr=window.devicePixelRatio||1;
+const containerWidth=canvas.parentElement.clientWidth-48;
+const barHeight=32;
+const barSpacing=16;
+const leftMargin=140;
+const rightMargin=70;
+const topMargin=30;
+const bottomMargin=15;
+const chartHeight=chartData.length*(barHeight+barSpacing)+topMargin+bottomMargin;
+canvas.width=containerWidth*dpr;
+canvas.height=chartHeight*dpr;
+canvas.style.width=containerWidth+'px';
+canvas.style.height=chartHeight+'px';
+ctx.scale(dpr,dpr);
+const maxPrice=Math.ceil(Math.max(...chartData.map(d=>d.price)));
+const chartWidth=containerWidth-leftMargin-rightMargin;
+function getColor(type){
+if(type==="high")return"#dc3545";
+if(type==="low")return"#28a745";
+return"#ffc107";
+}
+ctx.font="600 13px 'Segoe UI',sans-serif";
+ctx.fillStyle="#ffffff";
+ctx.textAlign="right";
+ctx.textBaseline="middle";
+chartData.forEach((item,idx)=>{
+const y=topMargin+idx*(barHeight+barSpacing);
+ctx.fillText(item.state,leftMargin-10,y+barHeight/2);
+});
+ctx.textAlign="left";
+chartData.forEach((item,idx)=>{
+const y=topMargin+idx*(barHeight+barSpacing);
+const barWidth=(item.price/maxPrice)*chartWidth;
+ctx.fillStyle=getColor(item.type);
+ctx.fillRect(leftMargin,y,barWidth,barHeight);
+ctx.fillStyle="#ffffff";
+ctx.font="700 14px 'Segoe UI',sans-serif";
+ctx.fillText("$"+item.price.toFixed(3),leftMargin+barWidth+8,y+barHeight/2);
+});
+ctx.strokeStyle="rgba(255,255,255,0.2)";
+ctx.lineWidth=1;
+for(let i=0;i<=5;i++){
+const x=leftMargin+(chartWidth/5)*i;
+ctx.beginPath();
+ctx.moveTo(x,topMargin-10);
+ctx.lineTo(x,topMargin+chartData.length*(barHeight+barSpacing)-barSpacing);
+ctx.stroke();
+ctx.fillStyle="rgba(255,255,255,0.5)";
+ctx.font="400 10px 'Segoe UI',sans-serif";
+ctx.textAlign="center";
+ctx.fillText("$"+(maxPrice/5*i).toFixed(2),x,topMargin-20);
+}
+</script>
+</body>
+</html>
