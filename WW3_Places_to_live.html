@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The WW3 Happiness Index | Iselin Group</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e0e0e0;
+            line-height: 1.6;
+        }
+        
+        /* Top Branding Bar */
+        .top-bar {
+            background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.6) 100%);
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            padding: 12px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .top-bar-left {
+            font-weight: 600;
+            color: #ffffff;
+            font-size: 14px;
+        }
+        
+        .top-bar-center {
+            color: #b0b0b0;
+            font-size: 12px;
+            font-variant: small-caps;
+        }
+        
+        .top-bar-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .brand-logo {
+            height: 32px;
+            width: auto;
+            border-radius: 4px;
+        }
+        
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            color: #ff6b6b;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        .subtitle {
+            font-size: 1.1em;
+            color: #b0b0b0;
+            font-style: italic;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .methodology {
+            background: rgba(255,255,255,0.05);
+            border-left: 4px solid #feca57;
+            padding: 20px;
+            margin-bottom: 40px;
+            border-radius: 6px;
+        }
+        
+        .methodology h3 {
+            color: #feca57;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+        
+        .rankings-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        @media (max-width: 968px) {
+            .rankings-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .ranking-section {
+            background: rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        
+        .ranking-section.top {
+            border-top: 3px solid #4ecdc4;
+        }
+        
+        .ranking-section.bottom {
+            border-top: 3px solid #ff6b6b;
+        }
+        
+        .ranking-section h2 {
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            text-align: center;
+        }
+        
+        .ranking-section.top h2 {
+            color: #4ecdc4;
+        }
+        
+        .ranking-section.bottom h2 {
+            color: #ff6b6b;
+        }
+        
+        .country-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        
+        .country-item:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateX(5px);
+        }
+        
+        .country-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .rank {
+            font-size: 1.3em;
+            font-weight: bold;
+            min-width: 35px;
+        }
+        
+        .ranking-section.top .rank {
+            color: #4ecdc4;
+        }
+        
+        .ranking-section.bottom .rank {
+            color: #ff6b6b;
+        }
+        
+        .country-name {
+            font-size: 1.1em;
+            font-weight: 500;
+        }
+        
+        .score {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #feca57;
+            min-width: 60px;
+            text-align: right;
+        }
+        
+        .stats {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            font-size: 0.85em;
+            color: #999;
+            text-align: right;
+        }
+        
+        .disclaimer {
+            background: rgba(255,107,107,0.1);
+            border: 1px solid rgba(255,107,107,0.3);
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 30px;
+            text-align: center;
+            font-size: 0.95em;
+            color: #ffb3b3;
+        }
+        
+        /* Bottom Branding Bar */
+        .bottom-bar {
+            background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.95) 100%);
+            border-top: 1px solid rgba(255,255,255,0.15);
+            padding: 25px 30px;
+            margin-top: 50px;
+        }
+        
+        .bottom-bar-main {
+            font-weight: 600;
+            color: #ffffff;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        
+        .bottom-bar-meta {
+            color: #999;
+            font-size: 12px;
+            margin-bottom: 15px;
+        }
+        
+        .ip-notice {
+            color: #777;
+            font-size: 11px;
+            font-variant: small-caps;
+            line-height: 1.5;
+            max-width: 1000px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Branding Bar -->
+    <div class="top-bar">
+        <div class="top-bar-left">Iselin Group - Strategic Consulting</div>
+        <div class="top-bar-center">iselingroup.com - brian.iselin(@)iselingroup.com</div>
+        <div class="top-bar-right">
+            <img src="https://brianiselin.github.io/widgets-public/Iselin_Group_Logo_1024%20x.jpg" alt="Iselin Group" class="brand-logo">
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="header">
+            <h1>🌍 The WW3 Happiness Index</h1>
+            <p class="subtitle">Ranking nations by the ratio of survival probability to life satisfaction — where would you rather be when the sirens sound?</p>
+        </div>
+
+        <div class="methodology">
+            <h3>⚠️ Methodology (Sort Of)</h3>
+            <p>We've calculated a half-serious, half-sardonic "WW3 Happiness Index" by dividing each country's estimated <strong>nuclear war survival probability</strong> (based on remoteness, neutrality, and food security) by its <strong>2024 life satisfaction score</strong>. Higher ratios mean you're more likely to survive... even if you weren't particularly happy to begin with. Lower ratios? Well, you might be content now, but good luck when the mushroom clouds roll in.</p>
+        </div>
+
+        <div class="rankings-container">
+            <!-- Top 10 -->
+            <div class="ranking-section top">
+                <h2>🏆 Top 10 - Winners (?)</h2>
+                <div class="country-item">
+                    <div class="country-info">
+                        <span class="rank">#1</span>
+                        <span class="country-name">Iceland</span>
+                    </div>
+                    <div class="stats">
+                        <span class="score">12.92</span>
+                        <span>Survival: 97.3% | Happiness: 7.53</span>
+                    </div>
+                </div>
+                <div class="country-item">
+                    <div class="country-info">
+                        <span class="rank">#2</span>
+                        <span class="country-name">Bhutan</span>
+                    </div>
+                    <div class="stats">
+                        <span class="score">12.58</span>
+                        <span>Survival: 95.5% | Happiness: 7.59</span>
+                    </div>
+                </div>
+                <div class="country-item">
+                    <div class="country-info">
+                        <span class="rank">#3</span>
+                        <span class="country-name">New Zealand</span>
+                    </div>
+                    <div class="stats">
+                        <span class="score">12.37</span>
+                        <span>Survival: 87.0% | Happiness: 7.03</span>
+                    </div>
+                </div>
+                <div class="country-item">
+                    <div class="country-info">
+                        <span class="rank">#4</span>
+                        <span class="country-name">Uruguay</span>
+                    </div>
+                    <div class="stats">
+                        <span class="score">12.25</span>
+                        <span>Survival: 81.0% | Happiness: 6.61</span>
+                    </div>
+                </div>
+                <div class="country-item">
+                    <div class="country-info">
+                        <span class="rank">#5</span>
+                        <span class="country-name">Australia</span>
+                    </div>
+                    <div class="stats">
+                        <span class="score">11.81</span>
+                        <span>Survival: 83.4% | Happiness: 7.06</span>
+                    </div>
+                </div>
+                <div class="country-item">
+                    <div class="country-info">
+                        <span class="rank">#6</span>
+                        <span class="country-name">Costa Rica</span>
+                    </div>
+                    <div class="stats">
+                        <span class="score">11.49</span>
+                        <span>Survival: 80.0% | Happiness: 6.96</span>
+                    </div>
+                </div>
+                <div class="country-item">
+                    <div class="country-info">
+                        <span class="rank">#7</span>
+                        <span class="country-name">Indonesia</span>
+                    </div>
+                    <div class="stats">
+                        <span class="score">11.31</span>
+                        <span>Survival: 63.0% | Happiness: 5.57</span>
+                    </div>
+                </div>
+                <div class="country-item">
+                    <div class="country-info">
+                        <span class="rank">#8</span>
+                        <span class="country-name">Chile</span>
+                    </div>
+                    <div class="stats">
+                        <span class="score">11.16</span>
+                        <span>Survival: 71.0% | Happiness: 6.36</span>
+                    </div>
+                </div>
+                <div class="country-item">
+                    <div class="country-info">
+                        <span class="rank">#9</span>
+                        <span class="country-name">Brazil</span>
+                    </div>
+                    <div class="stats">
+                        <span class="score">10.85</span>
+                        <span>Survival: 68.0% | Happiness: 6.27</span>
+                    </div>
+                </div>
+                <div class="country-item">
+                    <div class="country-info">
+                        <span class="rank">#10</span>
+                        <span class="country-name">Argentina</span>
+                    </div>
+                    <div class="stats">
+                        <span class="score">10.50</span>
+                        <span>Survival: 65.0% | Happiness: 6.19</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom 10 -->
+            <div class="ranking-section bottom">
+                <h2>💀 Bottom 10 - Losers (?!)</h2>
+                <div class="country-item">
+                    <div class="country-info">
+                        <span class="rank">#138</span>
+                        <span class="country-name">Afghanistan</span>
+                    </div>
+                    <div class="stats">
+                        <span class="score">2.33</span>
+                        <span>Survival: 4.0% | Happiness: 1.72</span>
+                    </div>
+                </div>
+                <div class="country-item">
+                    <div class="country-info">
+                        <span class="rank">#137</span>
+                        <span class="country-name">Ukraine</span>
+                    </div>
+                    <div class="stats">
+                        <span class="score">2.67</span>
+                        <span>Survival: 13.0% | Happiness: 4.87</span>
+                    </div>
+                </div>
+                <div class="country-item">
+                    <div class="country-info">
+                        <span class="rank">#136</span>
+                        <span class="country-name">Russia</span>
+                    </div>
+                    <div class="stats">
+                        <span class="score">2.76</span>
+                        <span>Survival: 16.0% | Happiness: 5.79</span>
+                    </div>
+                </div>
+                <div class="country-item">
+                    <div class="country-info">
+                        <span class="rank">#135</span>
+                        <span class="country-name">United States</span>
+                    </div>
+                    <div class="stats">
+                        <span class="score">2.97</span>
+                        <span>Survival: 20.0% | Happiness: 6.73</span>
+                    </div>
+                </div>
+                <div class="country-item">
+                    <div class="country-info">
+                        <span class="rank">#134</span>
+                        <span class="country-name">Israel</span>
+                    </div>
+                    <div class="stats">
+                        <span class="score">3.13</span>
+                        <span>Survival: 23.0% | Happiness: 7.34</span>
+                    </div>
+                </div>
+                <div class="country-item">
+                    <div class="country-info">
+                        <span class="rank">#133</span>
+                        <span class="country-name">United Kingdom</span>
+                    </div>
+                    <div class="stats">
+                        <span class="score">3.56</span>
+                        <span>Survival: 24.0% | Happiness: 6.75</span>
+                    </div>
+                </div>
+                <div class="country-item">
+                    <div class="country-info">
+                        <span class="rank">#132</span>
+                        <span class="country-name">Germany</span>
+                    </div>
+                    <div class="stats">
+                        <span class="score">3.72</span>
+                        <span>Survival: 25.0% | Happiness: 6.72</span>
+                    </div>
+                </div>
+                <div class="country-item">
+                    <div class="country-info">
+                        <span class="rank">#131</span>
+                        <span class="country-name">France</span>
+                    </div>
+                    <div class="stats">
+                        <span class="score">3.78</span>
+                        <span>Survival: 25.0% | Happiness: 6.61</span>
+                    </div>
+                </div>
+                <div class="country-item">
+                    <div class="country-info">
+                        <span class="rank">#130</span>
+                        <span class="country-name">China</span>
+                    </div>
+                    <div class="stats">
+                        <span class="score">3.85</span>
+                        <span>Survival: 23.0% | Happiness: 5.97</span>
+                    </div>
+                </div>
+                <div class="country-item">
+                    <div class="country-info">
+                        <span class="rank">#129</span>
+                        <span class="country-name">North Korea</span>
+                    </div>
+                    <div class="stats">
+                        <span class="score">4.17</span>
+                        <span>Survival: 12.5% | Happiness: 3.00*</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="disclaimer">
+            <strong>⚠️ DISCLAIMER</strong><br>
+            This index is a satirical thought experiment combining real happiness data with speculative survival probabilities. It is not intended as serious strategic advice, predictive analysis, or geopolitical guidance. Please don't relocate to Bhutan based on this widget alone. Probably.
+        </div>
+    </div>
+
+    <!-- Bottom Branding Bar -->
+    <div class="bottom-bar">
+        <div class="bottom-bar-main">Iselin Group - Strategic Consulting</div>
+        <div class="bottom-bar-meta">© Iselin Group. "The WW3 Happiness Index" — brian.iselin(@)iselingroup.com.</div>
+        <div class="ip-notice">
+            The underlying decision‑integrity model, logic, and UI are proprietary to Iselin Group and may not be reproduced, adapted, or deployed in whole or in part without prior written consent; all rights reserved.
+        </div>
+    </div>
+
+    <!-- Cloudflare Web Analytics -->
+    <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "22466d27b8c14ef98293d50b38526660"}'></script>
+    <!-- End Cloudflare Web Analytics -->
+</body>
+</html>
