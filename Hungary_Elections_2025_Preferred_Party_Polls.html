@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>State of Play - Hungarian Election 2025</title>
+<!-- Compact Sans-Serif Font -->
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+/* --- Branding and widget layout --- */
+body, html {
+  margin: 0; padding: 0; font-family: 'Roboto', Arial, sans-serif; background: #16181b; color: #eee;
+}
+.status-widget__top-bar {
+  position: fixed;
+  top: 0; left: 0; width: 100%;
+  height: 48px;
+  background: linear-gradient(to bottom, #153622cc 0%, #16181bcc 100%);
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid #263C2C;
+  z-index: 1000;
+}
+.status-widget__top-left { padding-left: 16px; font-size: 1rem; font-weight: 500; color: #9adcac;}
+.status-widget__top-center {
+  flex: 1; text-align: center; color: #d0ebc2;
+  font-family: monospace, monospace;
+  font-size: 0.97rem; font-weight: 400;
+  letter-spacing: 0.02em;
+}
+.status-widget__top-right {
+  display: flex; align-items: center; gap: 10px; padding-right: 18px;
+}
+.status-widget__brand-chip {
+  background: #39b385; color: #131b12;
+  font-weight: 700; font-size: 1rem;
+  padding: 5px 14px; border-radius: 14px;
+  font-variant: small-caps; user-select: none; margin-left: 6px;
+  border: 1px solid #2ea771;
+}
+.status-widget__logo {
+  height: 32px; width: 32px; border-radius: 8px; background: #fff; object-fit: contain;
+  border: 2px solid #39b385;
+}
+main {
+  margin-top: 64px; /* leave room for top bar */
+  margin-bottom: 84px; /* leave room for bottom bar */
+  padding: 16px 6vw;
+  min-height: 100vh;
+}
+.status-widget__chart-container {
+  max-width: 750px; margin: 20px auto 40px auto; background: #171a23; border-radius: 14px;
+  box-shadow: 0 0 24px #142d4c55;
+  padding: 16px;
+}
+.status-widget__title {
+  text-align: center; font-size: 1.4rem; font-weight: 700; letter-spacing: 0.02em; margin-bottom: 10px; color: #39b385;
+}
+.status-widget__legend {
+  margin: 12px auto 0 auto; text-align: center; background: #1a1b1f; border-radius: 8px; padding: 7px 0; font-size: 0.97rem;
+}
+.status-widget__legend-label {
+  margin: 0 18px;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.status-widget__legend-icon {
+  display: inline-block; width: 18px; height: 18px; border-radius: 3px; border: 1px solid #263C2C; 
+  margin-right: 6px;
+}
+.status-widget__legend--gov {background: #142d4c;}
+.status-widget__legend--opp {background: #831A30;}
+.status-widget__meta {
+  color: #999; text-align: right; font-size: 0.92rem; margin-top: 10px; font-style: italic;
+}
+.status-widget__bottom-bar {
+  position: fixed;
+  left: 0; bottom: 0; width: 100%;
+  background: #171b1f;
+  color: #647275;
+  border-top: 1px solid #263C2C;
+  font-variant: small-caps;
+  font-size: 0.92rem;
+  padding: 10px 16px 7px 16px;
+  z-index: 1000;
+  display: flex; justify-content: space-between; align-items: flex-end;
+  gap: 15px;
+}
+.status-widget__bottom-meta {
+  font-weight: 600; color: #9adcac; margin-right: 18px;
+}
+.status-widget__bottom-ip {
+  font-size: 0.83rem; color: #444; font-variant: small-caps;
+  font-style: italic; text-align: right;
+}
+@media (max-width: 700px) {
+  main { padding: 6px 1vw; }
+  .status-widget__chart-container {padding: 8px; max-width: 98vw;}
+  .status-widget__title { font-size: 1.05rem;}
+}
+
+/* --- Accessible chart tweaks --- */
+canvas {outline: none;}
+</style>
+</head>
+<body>
+<!-- Top Branding Bar -->
+<div class="status-widget__top-bar" role="banner">
+  <div class="status-widget__top-left">Iselin Group &nbsp;– Strategic Consulting</div>
+  <div class="status-widget__top-center">iselingroup.com &nbsp;–&nbsp; brian.iselin(@)iselingroup.com</div>
+  <div class="status-widget__top-right">
+    <img src="https://brianiselin.github.io/widgets-public/Iselin_Group_Logo_1024_x.jpg
+" class="status-widget__logo" alt="Iselin Group logo" />
+    <div class="status-widget__brand-chip">Iselin Group</div>
+  </div>
+</div>
+<main>
+  <div class="status-widget__chart-container" aria-labelledby="chartTitle">
+    <div class="status-widget__title" id="chartTitle">
+      State of Play – October 2025 Hungarian Election: Preferred Party Polls
+    </div>
+    <!-- Chart legend -->
+    <div class="status-widget__legend" aria-hidden="false">
+      <span class="status-widget__legend-label"><span class="status-widget__legend-icon status-widget__legend--gov"></span> Government/Alliance</span>
+      <span class="status-widget__legend-label"><span class="status-widget__legend-icon status-widget__legend--opp"></span> Opposition</span>
+    </div>
+    <canvas id="partyChart" aria-label="Preferred Party Polls: Hungary 2025" role="img" width="720" height="360" tabindex="0"></canvas>
+    <div class="status-widget__meta" id="chart-meta">
+      Data source: <span id="poll-source">Median, Závecz Research, Republikon, Publicus</span>&nbsp; | &nbsp;Scores as of 22 October 2025
+    </div>
+  </div>
+</main>
+<!-- Bottom Branding Bar -->
+<div class="status-widget__bottom-bar" role="contentinfo">
+  <div class="status-widget__bottom-meta">Iselin Group – Strategic Consulting</div>
+  <div style="flex:1; text-align:center;">
+    © Iselin Group. “State of Play - October 2025 Preferred Party - Hungarian Election 2025”— brian.iselin(@)iselingroup.com.
+  </div>
+  <div class="status-widget__bottom-ip">
+    Proprietary widget and logic; may not be reproduced or deployed in whole or part without written consent. All rights reserved.
+  </div>
+</div>
+<!-- Cloudflare Web Analytics -->
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "22466d27b8c14ef98293d50b38526660"}'></script>
+<!-- End Cloudflare Web Analytics -->
+
+<script>
+// ---- Editable poll data + reliability ----
+const pollParties = [
+  { name: "Fidesz-KDNP", percent: 32.1, group: "gov", reliability: 0.92, pollster: "Median" },
+  { name: "United for Hungary", percent: 25.4, group: "opp", reliability: 0.89, pollster: "Závecz" },
+  { name: "Democratic Coalition", percent: 13.2, group: "opp", reliability: 0.86, pollster: "Republikon" },
+  { name: "Jobbik", percent: 11.0, group: "opp", reliability: 0.82, pollster: "Publicus" },
+  { name: "Our Homeland Movement", percent: 8.4, group: "opp", reliability: 0.78, pollster: "Median" },
+  { name: "Momentum", percent: 6.7, group: "opp", reliability: 0.76, pollster: "Závecz" }
+];
+// ---- Colormap for livery ----
+const partyColorMap = {
+  gov: "#142d4c",   // navy blue for government
+  opp: "#831A30"    // burgundy for opposition
+};
+// ---- Data for chart.js ----
+const labels = pollParties.map(p => p.name);
+const data = pollParties.map(p => p.percent);
+const bgColors = pollParties.map(p => partyColorMap[p.group]);
+const borderColors = pollParties.map(p => p.group === "gov" ? "#1A3B64" : "#9a263e");
+
+// ---- Chart rendering ----
+const ctx = document.getElementById('partyChart').getContext('2d');
+const partyChart = new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels: labels,
+    datasets: [{
+      label: "Poll %", data: data,
+      backgroundColor: bgColors,
+      borderColor: borderColors,
+      borderWidth: 2,
+      hoverBackgroundColor: bgColors.map(c => c + "ee"),
+      hoverBorderColor: borderColors.map(c => c),
+      borderRadius: 6,
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    plugins: {
+      legend: {display: false},
+      tooltip: {
+        enabled: true, backgroundColor:"#131220",
+        callbacks: {
+          label: function(context) {
+            let party = pollParties[context.dataIndex];
+            return `${party.percent}% - ${party.pollster} (Reliability: ${(party.reliability*100).toFixed(1)}%)`;
+          }
+        }
+      },
+      datalabels: {display: false}
+    },
+    responsive: true,
+    scales: {
+      x: {
+        min: 0, max: 40, beginAtZero:true,
+        ticks: {color: "#aac4d4", font: {size:14, weight:600}},
+        grid: {color: "#323D47"},
+        title: { display: true, text: "Poll %", color: "#39b385", font:{size:16, weight:'bold'} }
+      },
+      y: {
+        ticks: {color: "#e2e2e2", font: {size:16, weight:700}},
+        grid: {color: "#1C222C"},
+      }
+    },
+    animation: {duration: 900},
+    layout: {padding: {top:16, left:10, right:10, bottom:16}},
+  }
+});
+
+// Render values above bars + reliability scores (superscript via pure JS since chart.js plugins may not always render)
+setTimeout(() => {
+  // For screen readers: ARIA live update
+  let sr = document.createElement('div');
+  sr.setAttribute('aria-live','polite');
+  sr.innerText = pollParties.map(p=>`${p.name}: ${p.percent}%, reliability ${(p.reliability*100).toFixed(1)}%`).join('. ');
+  document.querySelector('.status-widget__chart-container').appendChild(sr);
+},400);
+
+</script>
+</body>
+</html>
