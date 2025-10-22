@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Media Trust in Europe - Iselin Group</title>
+<style>
+  body, html {
+  margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #121212; color: #ddd;
+  /* REMOVE height: 100% and flex settings */
+}
+  a {color: #4caf50; text-decoration: none;}
+  a:hover {text-decoration: underline;}
+  #top-bar {
+    position: relative; display: flex; justify-content: space-between; align-items: center;
+    background: linear-gradient(to bottom, rgba(18,18,18,0.85), rgba(18,18,18,0.6));
+    padding: 8px 16px; border-bottom: 1px solid #2e2e2e; color: #a9a9a9;
+    font-size: 0.875rem; user-select: none;
+  }
+  #top-bar .left, #top-bar .center, #top-bar .right {display: flex; align-items: center;}
+  #top-bar .center {flex: 1; justify-content: center; font-weight: 400; font-family: monospace, monospace;}
+  #top-bar .right {gap: 8px;}
+  #top-bar img {height: 28px; user-select: none;}
+  #brand-chip {
+    background-color: #4caf50; color: #121212; font-weight: 700; font-size: 0.9rem;
+    padding: 4px 8px; border-radius: 12px; font-variant: small-caps; user-select: none;
+  }
+  #bottom-bar {
+    position: fixed; bottom: 0; left: 0; width: 100%; background-color: #111111;
+    color: #666666; font-variant: small-caps; font-size: 0.75rem; padding: 8px 16px;
+    border-top: 1px solid #2e2e2e; display: flex; flex-direction: column; gap: 2px;
+    user-select: none; z-index: 1000;
+  }
+  #bottom-bar .line-one {font-weight: 600;}
+  #bottom-bar .line-two {font-weight: 300; font-style: italic; max-width: 960px; margin-left: auto;}
+  main {
+  /* Remove flex-grow and overflow-y! */
+  padding: 12px 16px 120px;
+  background-color: #181818;
+}
+  h1, h2 {font-weight: 600; color: #4caf50;}
+  h2 {margin-top: 24px;}
+  #trendChart {
+    max-width: 100%; background: #222; border-radius: 8px; margin-bottom: 40px;
+    box-shadow: 0 0 10px #2e7d32;
+  }
+  section[aria-labelledby="poll-heading"] {
+    max-width: 480px; margin: 36px auto 44px auto; 
+  }
+  .logo-cell img {
+    height: 56px;
+    width: 56px;
+    object-fit: contain;
+    background: #fff;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    box-sizing: border-box;
+    display: block;
+    margin: 0 auto;
+  }
+  table {
+    width: 100%; border-collapse: collapse; background: #222; color: #eee;
+    font-size: 0.9rem; border-radius: 8px; overflow: hidden;
+  }
+  thead {background: #2e7d32cc;}
+  thead th {padding: 10px 12px; cursor: pointer; user-select: none;}
+  tbody tr:hover {background-color: #4caf5033;}
+  tbody td {padding: 10px 12px; border-top: 1px solid #333;}
+  #controls {margin-bottom: 16px; display: flex; gap: 12px; flex-wrap: wrap;}
+  select, input[type="text"] {
+    background: #333; color: #ddd; border: 1px solid #444; border-radius: 6px;
+    padding: 6px 10px; font-size: 0.9rem;
+  }
+  input[type="text"] {flex-grow: 1;}
+  @media (max-width: 600px) {
+    #top-bar .center {font-size: 0.75rem; font-family: monospace, monospace; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}
+    table, thead, tbody, th, td, tr {display: block;}
+    thead tr {display: none;}
+    tbody tr {margin-bottom: 12px; border: 1px solid #444; border-radius: 6px; padding: 12px;}
+    tbody td {padding-left: 50%; position: relative; border-top: none;}
+    tbody td::before {
+      position: absolute; top: 12px; left: 12px; width: 45%; padding-right: 10px; white-space: nowrap; font-weight: 700;
+      content: attr(data-label); color: #4caf50;
+    }
+  }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<!-- Top branding bar -->
+<div id="top-bar" role="banner">
+  <div class="left">Iselin Group - Strategic Consulting</div>
+  <div class="center">iselingroup.com - brian.iselin(@)iselingroup.com</div>
+  <div class="right">
+    <img src="https://brianiselin.github.io/widgets-public/Iselin_Group_Logo_1024%20x.jpg" alt="Iselin Group logo." />
+    <div id="brand-chip">Iselin Group</div>
+  </div>
+</div>
+
+<main role="main">
+  <h1>Media Trust in Europe</h1>
+  
+  <!-- Trend Chart Section -->
+  <section aria-labelledby="trend-heading">
+    <h2 id="trend-heading">Media Trust Trend (Europe, 2018–2025)</h2>
+    <canvas id="trendChart" width="600" height="220"></canvas>
+  </section>
+
+  <!-- Reader Sentiment Poll Section -->
+  <section aria-labelledby="poll-heading">
+    <h2 id="poll-heading">Reader Sentiment Poll</h2>
+    <div id="sentimentPoll" style="background:#222;padding:16px;border-radius:10px;">
+      <p style="margin-bottom:16px;">Do you trust the media <span style="color:#4caf50;">more</span> or <span style="color:#f44336;">less</span> today?</p>
+      <button id="voteMore" style="background:#4caf50;color:#fff; border:none; border-radius:6px; padding:8px 18px; font-size:1rem; margin-right:14px; cursor:pointer;">More</button>
+      <button id="voteLess" style="background:#f44336;color:#fff; border:none; border-radius:6px; padding:8px 18px; font-size:1rem; cursor:pointer;">Less</button>
+      <div id="pollResult" style="margin-top:24px;">
+        <div style="display:flex;gap:14px;">
+          <div style="flex:1;text-align:center;">
+            <div id="pollBarMore" style="height:22px;background:#4caf50;border-radius:5px 5px 5px 5px;width:0;transition:width .8s;"></div>
+            <span id="pollPercentMore" style="color:#aaa;"></span>
+          </div>
+          <div style="flex:1;text-align:center;">
+            <div id="pollBarLess" style="height:22px;background:#f44336;border-radius:5px 5px 5px 5px;width:0;transition:width .8s;"></div>
+            <span id="pollPercentLess" style="color:#aaa;"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Rankings Table Section -->
+  <section aria-labelledby="ranking-heading">
+    <h2 id="ranking-heading">Ranked Media Outlets by Trust</h2>
+    <div id="controls" role="region">
+      <input type="text" id="searchInput" placeholder="Search outlets..." />
+      <select id="filterType">
+        <option value="all">All Types</option>
+        <option value="digital">Digital</option>
+        <option value="broadcast">Broadcast</option>
+        <option value="public">Public</option>
+        <option value="private">Private</option>
+      </select>
+      <select id="sortBy">
+        <option value="trustScore">Trust Score</option>
+        <option value="reputation">Reputation</option>
+        <option value="influence">Influence</option>
+      </select>
+    </div>
+    <table role="table" id="outletsTable">
+      <caption class="sr-only">Table ranking media outlets by trust, reputation, and influence metrics</caption>
+      <thead>
+        <tr>
+          <th scope="col" data-sort-key="rank">Rank</th>
+          <th scope="col" data-sort-key="logo">Logo</th>
+          <th scope="col" data-sort-key="name">Outlet Name</th>
+          <th scope="col" data-sort-key="trustScore">Trust Score</th>
+          <th scope="col" data-sort-key="reputation">Reputation</th>
+          <th scope="col" data-sort-key="influence">Influence</th>
+          <th scope="col" data-sort-key="type">Type</th>
+          <th scope="col">Description</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+</main>
+<div id="bottom-bar" role="contentinfo">
+  <div class="line-one">Iselin Group - Strategic Consulting</div>
+  <div class="line-two">© Iselin Group. “Media Trust in Europe”— brian.iselin(@)iselingroup.com.</div>
+  <div class="line-two" style="font-variant: small-caps; font-size: 0.65rem; color:#444; margin-top: 4px;">
+    The underlying decision‑integrity model, logic, and UI are proprietary to Iselin Group and may not be reproduced, adapted, or deployed in whole or in part without prior written consent; all rights reserved.
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Trend chart dataset (editable)
+const trustTrendYears = [2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025];
+const trustTrendValues = [6.7, 6.5, 6.2, 6.0, 5.7, 5.9, 6.2, 6.5];
+
+const ctx = document.getElementById('trendChart').getContext('2d');
+const trendChart = new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels: trustTrendYears,
+    datasets: [{
+      label: 'Average Trust Score',
+      data: trustTrendValues,
+      fill: true,
+      borderColor: '#4caf50',
+      backgroundColor: 'rgba(76,175,80,0.17)',
+      tension: 0.2,
+      pointBackgroundColor: '#4caf50',
+      pointBorderColor: '#fff',
+      pointRadius: 5
+    }]
+  },
+  options: {
+    plugins: { legend: { display: false } },
+    scales: {
+      x: {
+        title: { display: true, text: 'Year', color: '#aaa' },
+        grid: { color: '#333' },
+        ticks: { color: '#aaa' }
+      },
+      y: {
+        title: { display: true, text: 'Trust Score', color: '#aaa' },
+        grid: { color: '#333' },
+        ticks: { color: '#aaa', stepSize: 0.5, beginAtZero: false },
+        min: 5, max: 7
+      }
+    }
+  }
+});
+
+// Reader Sentiment Poll
+function loadPoll() {
+  let poll = JSON.parse(localStorage.getItem('readerSentimentPoll') || '{"more":0,"less":0}');
+  let sum = poll.more + poll.less;
+  let pMore = sum ? Math.round(poll.more/sum*100) : 0;
+  let pLess = sum ? Math.round(poll.less/sum*100) : 0;
+  document.getElementById('pollBarMore').style.width = pMore + '%';
+  document.getElementById('pollBarLess').style.width = pLess + '%';
+  document.getElementById('pollPercentMore').textContent = pMore + '% More';
+  document.getElementById('pollPercentLess').textContent = pLess + '% Less';
+}
+document.getElementById('voteMore').onclick = function() {
+  let poll = JSON.parse(localStorage.getItem('readerSentimentPoll') || '{"more":0,"less":0}');
+  poll.more += 1;
+  localStorage.setItem('readerSentimentPoll', JSON.stringify(poll));
+  loadPoll();
+};
+document.getElementById('voteLess').onclick = function() {
+  let poll = JSON.parse(localStorage.getItem('readerSentimentPoll') || '{"more":0,"less":0}');
+  poll.less += 1;
+  localStorage.setItem('readerSentimentPoll', JSON.stringify(poll));
+  loadPoll();
+};
+loadPoll();
+
+const mediaOutlets = [
+  {"id": "euractiv","name": "Euractiv","logo": "https://assets.euractiv.com/logos/logo-old.png","trustScore": 7.8,"reputation": 8.2,"influence": 8.5,"type": "digital","description": "Influential EU policy news platform focusing on European governance and politics."},
+  {"id": "politico_europe","name": "Politico Europe","logo": "https://www.politico.eu/wp-content/themes/politico/assets/images/favicon/favicon.ico","trustScore": 7.4,"reputation": 7.9,"influence": 8.7,"type": "digital","description": "European edition of Politico specializing in political news and analysis."},
+  {"id": "contexte","name": "Contexte","logo": "https://upload.wikimedia.org/wikipedia/commons/4/41/Logo_du_m%C3%A9dia_Contexte.png","trustScore": 6.6,"reputation": 6.8,"influence": 7.0,"type": "digital","description": "French digital media outlet offering in-depth European news."},
+  {"id": "bbc","name": "BBC","logo": "https://upload.wikimedia.org/wikipedia/commons/6/65/BBC_logo_%281997-2021%29.svg","trustScore": 7,"reputation": 7.1,"influence": 8,"type": "public","description": "Public service broadcaster with extensive European and global reach."},
+  {"id": "dw","name": "Deutsche Welle","logo": "https://upload.wikimedia.org/wikipedia/commons/7/75/Deutsche_Welle_symbol_2012.svg","trustScore": 6.8,"reputation": 6.9,"influence": 7.5,"type": "public","description": "Germany's international public broadcaster reporting on European affairs."},
+  {"id": "lemonde","name": "Le Monde","logo": "https://upload.wikimedia.org/wikipedia/commons/4/43/Le_Monde.svg","trustScore": 7.1,"reputation": 7.5,"influence": 7.3,"type": "public","description": "Leading French daily newspaper."},
+  {"id": "elpais","name": "El País","logo": "https://upload.wikimedia.org/wikipedia/commons/3/3e/El_Pais_logo_2007.svg","trustScore": 6.9,"reputation": 7,"influence": 6.9,"type": "private","description": "Largest daily newspaper in Spain."},
+  {"id": "la_stampa","name": "La Stampa","logo": "https://upload.wikimedia.org/wikipedia/commons/5/58/La_Stampa_-_logo_%28Italy%2C_1938-1958%29.svg","trustScore": 6.5,"reputation": 6.6,"influence": 6.2,"type": "private","description": "Italian daily newspaper."},
+  {"id": "handelsblatt","name": "Handelsblatt","logo": "https://upload.wikimedia.org/wikipedia/commons/5/53/Logo_Handelsblatt_com.jpg","trustScore": 6.6,"reputation": 7.1,"influence": 6.7,"type": "private","description": "Leading German business newspaper."},
+  {"id": "ft","name": "Financial Times","logo": "https://upload.wikimedia.org/wikipedia/commons/7/79/Financial_Times_corporate_logo_%28pink%29.svg","trustScore": 7.3,"reputation": 7.8,"influence": 7.9,"type": "private","description": "International business newspaper based in London."},
+  {"id": "rte","name": "RTÉ","logo": "https://upload.wikimedia.org/wikipedia/commons/1/1f/RTE_logo.svg","trustScore": 6.9,"reputation": 6.7,"influence": 6.8,"type": "public","description": "Irish public service broadcaster."},
+  {"id": "svt","name": "SVT","logo": "https://upload.wikimedia.org/wikipedia/commons/1/1c/SVT_Play_logotyp.svg","trustScore": 7,"reputation": 7,"influence": 7,"type": "public","description": "Swedish public broadcaster."},
+  {"id": "der_spiegel","name": "Der Spiegel","logo": "https://upload.wikimedia.org/wikipedia/commons/0/06/Logo-Der-Spiegel-de.png","trustScore": 6.8,"reputation": 7.2,"influence": 6.8,"type": "private","description": "German weekly news magazine."},
+  {"id": "the_guardian","name": "The Guardian","logo": "https://d3oj2y7irryo5z.cloudfront.net/wp-content/uploads/2020/08/guardian-logo-square.jpg","trustScore": 7.5,"reputation": 7.6,"influence": 7.9,"type": "private","description": "British daily newspaper with international reach."},
+  {"id": "la_repubblica","name": "La Repubblica","logo": "https://upload.wikimedia.org/wikipedia/commons/c/c7/La_Repubblica.svg","trustScore": 6.4,"reputation": 6.7,"influence": 6.3,"type": "private","description": "Major Italian newspaper."},
+  {"id": "telegraph","name": "The Telegraph","logo": "https://upload.wikimedia.org/wikipedia/commons/a/a7/The_Telegraph.svg","trustScore": 6.9,"reputation": 7,"influence": 7.3,"type": "private","description": "British daily broadsheet newspaper."},
+  {"id": "lejdd","name": "Le Journal du Dimanche","logo": "https://upload.wikimedia.org/wikipedia/commons/a/a4/Le_Journal_du_dimanche_logo.svg","trustScore": 6.3,"reputation": 6.5,"influence": 6,"type": "private","description": "French weekly newspaper."},
+  {"id": "publico","name": "Público","logo": "https://upload.wikimedia.org/wikipedia/commons/9/96/Logo_publico.svg","trustScore": 6.2,"reputation": 6.4,"influence": 6.1,"type": "private","description": "Portuguese daily newspaper."},
+  {"id": "ns","name": "NRC Handelsblad","logo": "https://upload.wikimedia.org/wikipedia/commons/5/56/NRC_Handelsblad_logo.svg","trustScore": 6.7,"reputation": 6.8,"influence": 6.9,"type": "private","description": "Leading Dutch daily newspaper."},
+  {"id": "el_mundo","name": "El Mundo","logo": "https://upload.wikimedia.org/wikipedia/commons/7/7b/El_Mundo_logo.svg","trustScore": 6.4,"reputation": 6.5,"influence": 6.7,"type": "private","description": "Spanish daily newspaper."}
+];
+
+const outletsTableBody = document.querySelector('#outletsTable tbody');
+const searchInput = document.getElementById('searchInput');
+const filterType = document.getElementById('filterType');
+const sortBy = document.getElementById('sortBy');
+
+function renderTable() {
+  const searchTerm = searchInput.value.toLowerCase();
+  const typeFilter = filterType.value;
+  const sortKey = sortBy.value;
+
+  let filtered = mediaOutlets.filter(outlet => {
+    const matchesSearch = outlet.name.toLowerCase().includes(searchTerm);
+    const matchesType = (typeFilter === 'all' || outlet.type === typeFilter);
+    return matchesSearch && matchesType;
+  });
+
+  filtered.sort((a, b) => b[sortKey] - a[sortKey]);
+
+  outletsTableBody.innerHTML = '';
+  filtered.forEach((outlet, idx) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td data-label="Rank">${idx + 1}</td>
+      <td class="logo-cell" data-label="Logo"><img src="${outlet.logo}" alt="${outlet.name} logo"></td>
+      <td data-label="Outlet Name">${outlet.name}</td>
+      <td data-label="Trust Score">${outlet.trustScore.toFixed(1)}</td>
+      <td data-label="Reputation">${outlet.reputation.toFixed(1)}</td>
+      <td data-label="Influence">${outlet.influence.toFixed(1)}</td>
+      <td data-label="Type">${outlet.type.charAt(0).toUpperCase() + outlet.type.slice(1)}</td>
+      <td data-label="Description">${outlet.description}</td>
+    `;
+    outletsTableBody.appendChild(tr);
+  });
+}
+
+searchInput.addEventListener('input', renderTable);
+filterType.addEventListener('change', renderTable);
+sortBy.addEventListener('change', renderTable);
+renderTable();
+
+</script>
+</body>
+</html>
