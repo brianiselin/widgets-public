@@ -28,3 +28,30 @@ Use a **Custom HTML** or **Embed** block in your CMS or builder, and paste an `<
 
 For example, embedding the lease vs buy calculator:
 
+```
+<iframe src="https://brianiselin.github.io/widgets-public/Buy-or-Lease-Calculator.html" 
+        width="100%" height="620" style="border:none;" loading="lazy" 
+        title="Buy-or-Lease Calculator"></iframe>
+```
+
+---
+
+## License & Usage
+
+All widgets and code in this repository are proprietary.  
+Please see the `LICENSE` file for detailed usage terms.
+
+---
+
+## Support & Contact
+
+For questions or custom widget requests, contact brian.iselin@iselingroup.com.
+
+---
+
+*This repository is continuously updated; check back often for new widgets and tools.*
+```
+
+This version is simplified, adds usage & license notes, and keeps everything clear for readers and users.
+
+Let me know if you want me to generate a full detailed list of current widgets in markdown table format!
