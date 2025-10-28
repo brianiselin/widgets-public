@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FlowBrussels ESG Sustainability Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+:root{
+--bg:#0c111b;--card:#121a29;--ink:#e8f0ff;--muted:#b9c7e6;--rail:#2a3344;--accent:#63d4ff;--para:#ffd166;--capt:#ffd166;--over:#7dfcc2;--border:#243047;
+--grid:#34456b;--axes:#2a3554;--radar-stroke:#5ad1ff;--radar-fill:rgba(90,209,255,0.22);--label-small:#9cb5e0;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;overflow-x:hidden;}
+.top-bar,.bottom-bar{background:linear-gradient(90deg,rgba(18,26,41,0.95),rgba(12,17,27,0.95));border-bottom:1px solid var(--border);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;font-size:0.85rem;}
+.top-bar{position:sticky;top:0;z-index:100;}
+.bottom-bar{position:fixed;bottom:0;left:0;right:0;border-top:1px solid var(--border);border-bottom:none;font-size:0.75rem;color:var(--muted);}
+.brand-chip{background:var(--accent);color:var(--bg);padding:4px 10px;border-radius:6px;font-weight:600;font-size:0.75rem;}
+.logo{height:28px;border-radius:4px;}
+.breadcrumbs{color:var(--muted);font-size:0.8rem;}
+main{padding:20px;max-width:1400px;margin:60px auto 80px;}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+@media(max-width:920px){.grid{grid-template-columns:1fr;}}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;}
+h2{font-size:1.4rem;margin-bottom:12px;color:var(--accent);}
+h3{font-size:1.1rem;margin-bottom:8px;color:var(--para);}
+.input-row{display:flex;align-items:center;margin-bottom:10px;gap:10px;flex-wrap:wrap;}
+.input-row label{flex:1 1 180px;font-weight:500;color:var(--muted);}
+.input-row input,.input-row select{flex:0 0 100px;padding:6px 10px;background:var(--rail);border:1px solid var(--border);border-radius:6px;color:var(--ink);font-size:0.95rem;}
+button{background:var(--accent);color:var(--bg);border:none;padding:10px 20px;border-radius:8px;font-weight:600;cursor:pointer;font-size:1rem;margin-top:10px;}
+button:hover{opacity:0.9;}
+.dashboard{margin-top:20px;}
+.scorecard{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;margin-bottom:20px;}
+.scorebox{background:var(--rail);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center;}
+.scorebox-title{font-size:0.8rem;color:var(--muted);text-transform:uppercase;margin-bottom:4px;}
+.scorebox-value{font-size:1.8rem;font-weight:700;color:var(--over);}
+.charts{display:grid;grid-template-columns:320px 1fr;gap:14px;margin-top:20px;}
+@media(max-width:920px){.charts{grid-template-columns:1fr;}}
+.chart-container{background:var(--rail);border:1px solid var(--border);border-radius:10px;padding:14px;position:relative;}
+canvas{display:block;margin:0 auto;}
+.actions{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;}
+.ip-notice{font-size:0.7rem;color:var(--label-small);font-variant:small-caps;margin-top:6px;}
+ul{padding-left:20px;}
+ul li{margin-bottom:4px;color:var(--muted);}
+</style>
+</head>
+<body>
+<div class="top-bar">
+<div style="display:flex;align-items:center;gap:10px;">
+<img class="logo" src="https://brianiselin.github.io/widgets-public/Iselin_Group_Logo_1024_x.jpg" alt="Iselin Group">
+<span>Iselin Group - Strategic Consulting</span>
+</div>
+<div class="breadcrumbs">iselingroup.com - brian.iselin@iselingroup.com</div>
+<div class="brand-chip">FlowBrussels</div>
+</div>
+<main>
+<div class="grid">
+<div class="card">
+<h2>ESG Input Parameters</h2>
+<div class="input-row"><label>Shared trips/month:</label><input type="number" id="trips" value="5000"></div>
+<div class="input-row"><label>Avg km/trip:</label><input type="number" id="km_per_trip" value="8"></div>
+<div class="input-row"><label>Vehicles deployed:</label><input type="number" id="vehicles" value="200"></div>
+<div class="input-row"><label>% Electric vehicles:</label><input type="number" id="pct_electric" value="20"></div>
+<div class="input-row"><label>Avg occupancy:</label><input type="number" id="occupancy" value="1.6" step="0.1"></div>
+<div class="input-row"><label>% Modal shift:</label><input type="number" id="pct_modalshift" value="15"></div>
+<div class="input-row"><label>Earnings before (€):</label><input type="number" id="earnings_before" value="1000"></div>
+<div class="input-row"><label>Earnings after (€):</label><input type="number" id="earnings_after" value="1300"></div>
+<div class="input-row"><label>Governance model:</label>
+<select id="gov_select">
+<option value="coop">Driver co-op</option>
+<option value="open">Open protocol</option>
+<option value="private">Fleet/Private</option>
+<option value="public">Public Utility</option>
+</select>
+</div>
+<button onclick="calculateESG()">Calculate ESG Metrics</button>
+<div class="actions">
+<button onclick="copyLink()">Copy Link</button>
+<button onclick="exportPNG()">Export PNG</button>
+<button onclick="shareMenu()">Share</button>
+</div>
+</div>
+<div class="card">
+<h2>ESG Impact Scorecard</h2>
+<div class="scorecard">
+<div class="scorebox">
+<div class="scorebox-title">CO₂ Saved</div>
+<div class="scorebox-value" id="co2_score">—</div>
+</div>
+<div class="scorebox">
+<div class="scorebox-title">Income Gain</div>
+<div class="scorebox-value" id="income_score">—</div>
+</div>
+<div class="scorebox">
+<div class="scorebox-title">Governance</div>
+<div class="scorebox-value" id="gov_score" style="font-size:1.2rem;">—</div>
+</div>
+</div>
+<h3>Environmental</h3>
+<ul id="env_list"></ul>
+<h3>Social</h3>
+<ul id="social_list"></ul>
+<h3>Governance</h3>
+<ul id="gov_list"></ul>
+</div>
+</div>
+<div id="widget-area" class="dashboard">
+<div class="charts">
+<div class="chart-container">
+<h3 style="text-align:center;color:var(--para);">CO₂ Impact</h3>
+<canvas id="gaugeCanvas" width="300" height="200"></canvas>
+</div>
+<div class="chart-container">
+<h3 style="text-align:center;color:var(--para);">ESG Metrics Overview</h3>
+<canvas id="radarCanvas" width="400" height="300"></canvas>
+</div>
+<div class="chart-container">
+<h3 style="text-align:center;color:var(--para);">Emissions Comparison</h3>
+<canvas id="barCanvas" width="400" height="250"></canvas>
+</div>
+<div class="chart-container">
+<h3 style="text-align:center;color:var(--para);">Driver Income Gain</h3>
+<canvas id="speedoCanvas" width="300" height="200"></canvas>
+</div>
+</div>
+</div>
+</main>
+<div class="bottom-bar">
+<div>Iselin Group - Strategic Consulting | © Iselin Group. FlowBrussels Sustainability Dashboard — brian.iselin@iselingroup.com</div>
+<div class="ip-notice">The underlying decision‑integrity model, logic, and UI are proprietary to Iselin Group and may not be reproduced, adapted, or deployed in whole or in part without prior written consent; all rights reserved.</div>
+</div>
+<script>
+let state={};
+function saveState(){
+const s={trips:document.getElementById('trips').value,km:document.getElementById('km_per_trip').value,vehicles:document.getElementById('vehicles').value,electric:document.getElementById('pct_electric').value,occupancy:document.getElementById('occupancy').value,modalshift:document.getElementById('pct_modalshift').value,eb:document.getElementById('earnings_before').value,ea:document.getElementById('earnings_after').value,gov:document.getElementById('gov_select').value};
+location.hash=btoa(JSON.stringify(s));
+}
+function loadState(){
+if(!location.hash)return;
+try{
+const s=JSON.parse(atob(location.hash.substring(1)));
+document.getElementById('trips').value=s.trips||5000;
+document.getElementById('km_per_trip').value=s.km||8;
+document.getElementById('vehicles').value=s.vehicles||200;
+document.getElementById('pct_electric').value=s.electric||20;
+document.getElementById('occupancy').value=s.occupancy||1.6;
+document.getElementById('pct_modalshift').value=s.modalshift||15;
+document.getElementById('earnings_before').value=s.eb||1000;
+document.getElementById('earnings_after').value=s.ea||1300;
+document.getElementById('gov_select').value=s.gov||'coop';
+calculateESG();
+}catch(e){}
+}
+function calculateESG(){
+const trips=Number(document.getElementById('trips').value);
+const km_per_trip=Number(document.getElementById('km_per_trip').value);
+const vehicles=Number(document.getElementById('vehicles').value);
+const pct_electric=Number(document.getElementById('pct_electric').value);
+const occupancy=Number(document.getElementById('occupancy').value);
+const pct_modalshift=Number(document.getElementById('pct_modalshift').value);
+const earnings_before=Number(document.getElementById('earnings_before').value);
+const earnings_after=Number(document.getElementById('earnings_after').value);
+const gov_select=document.getElementById('gov_select').value;
+const emission_car=0.16,emission_taxi=0.14,emission_electric=0.03,avg_private_occupancy=1.2;
+const total_km=trips*km_per_trip;
+const km_electric=total_km*(pct_electric/100);
+const km_non_electric=total_km-km_electric;
+const co2_new=(km_electric*emission_electric)+(km_non_electric*emission_taxi);
+const km_shifted=total_km*(pct_modalshift/100);
+const co2_old=(km_shifted*emission_car)+(total_km-km_shifted)*emission_taxi;
+const co2_saved=co2_old-co2_new;
+const cars_removed=(km_shifted/(12000*avg_private_occupancy));
+const income_increase=earnings_after-earnings_before;
+const income_pct=Math.round(100*income_increase/earnings_before);
+let gov_score='';
+if(gov_select==='coop')gov_score='High';
+else if(gov_select==='open')gov_score='Moderate';
+else if(gov_select==='public')gov_score='Good';
+else gov_score='Low';
+document.getElementById('co2_score').textContent=co2_saved.toFixed(1)+' t/mo';
+document.getElementById('income_score').textContent='+€'+income_increase.toFixed(0);
+document.getElementById('gov_score').textContent=gov_score;
+const envList=document.getElementById('env_list');
+envList.innerHTML='';
+['Monthly CO₂ saved: '+co2_saved.toFixed(1)+' tons','Cars removed (equiv.): '+cars_removed.toFixed(0),'% Electric trips: '+pct_electric+'%','Avg occupancy: '+occupancy].forEach(t=>{const li=document.createElement('li');li.textContent=t;envList.appendChild(li);});
+const socialList=document.getElementById('social_list');
+socialList.innerHTML='';
+['Income increase: €'+income_increase.toFixed(0)+' (+'+income_pct+'%)','Drivers impacted: '+vehicles].forEach(t=>{const li=document.createElement('li');li.textContent=t;socialList.appendChild(li);});
+const govList=document.getElementById('gov_list');
+govList.innerHTML='';
+const li=document.createElement('li');li.textContent='Governance: '+gov_score+' ('+gov_select+')';govList.appendChild(li);
+drawGauge(co2_saved);
+drawRadar(co2_saved,income_pct,gov_score);
+drawBar(co2_old,co2_new);
+drawSpeedo(income_pct);
+saveState();
+}
+function drawGauge(val){
+const c=document.getElementById('gaugeCanvas');
+const ctx=c.getContext('2d');
+ctx.clearRect(0,0,c.width,c.height);
+const cx=150,cy=150,r=100,start=Math.PI,end=2*Math.PI;
+ctx.lineWidth=20;
+ctx.strokeStyle='#2a3344';
+ctx.beginPath();ctx.arc(cx,cy,r,start,end);ctx.stroke();
+const maxCO2=50;
+const ratio=Math.min(val/maxCO2,1);
+const angleEnd=start+ratio*(end-start);
+ctx.strokeStyle='#7dfcc2';
+ctx.beginPath();ctx.arc(cx,cy,r,start,angleEnd);ctx.stroke();
+ctx.fillStyle='#e8f0ff';
+ctx.font='bold 28px system-ui';
+ctx.textAlign='center';
+ctx.fillText(val.toFixed(1)+' t',cx,cy-10);
+ctx.font='14px system-ui';
+ctx.fillStyle='#b9c7e6';
+ctx.fillText('CO₂ Saved/mo',cx,cy+15);
+}
+function drawRadar(co2,income,gov){
+const c=document.getElementById('radarCanvas');
+const ctx=c.getContext('2d');
+ctx.clearRect(0,0,c.width,c.height);
+const cx=200,cy=150,r=100;
+const labels=['CO₂ Impact','Income Gain','Governance','Occupancy','Modal Shift'];
+const govMap={High:90,Moderate:70,Good:80,Low:50};
+const scores=[Math.min(co2*2,100),Math.min(income,100),govMap[gov]||50,80,75];
+ctx.strokeStyle='#34456b';
+for(let i=1;i<=5;i++){
+ctx.beginPath();
+const rad=r*(i/5);
+for(let j=0;j<5;j++){
+const angle=(Math.PI*2/5)*j-Math.PI/2;
+const x=cx+rad*Math.cos(angle),y=cy+rad*Math.sin(angle);
+if(j===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+}
+ctx.closePath();ctx.stroke();
+}
+ctx.strokeStyle='#5ad1ff';
+ctx.fillStyle='rgba(90,209,255,0.22)';
+ctx.beginPath();
+for(let i=0;i<5;i++){
+const angle=(Math.PI*2/5)*i-Math.PI/2;
+const rad=r*(scores[i]/100);
+const x=cx+rad*Math.cos(angle),y=cy+rad*Math.sin(angle);
+if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+}
+ctx.closePath();ctx.fill();ctx.stroke();
+ctx.fillStyle='#9cb5e0';
+ctx.font='11px system-ui';
+ctx.textAlign='center';
+for(let i=0;i<5;i++){
+const angle=(Math.PI*2/5)*i-Math.PI/2;
+const x=cx+(r+20)*Math.cos(angle),y=cy+(r+20)*Math.sin(angle);
+ctx.fillText(labels[i],x,y);
+}
+}
+function drawBar(old,newVal){
+const c=document.getElementById('barCanvas');
+const ctx=c.getContext('2d');
+ctx.clearRect(0,0,c.width,c.height);
+const w=80,gap=40,x1=80,x2=x1+w+gap,base=200,scale=3;
+const h1=old*scale,h2=newVal*scale;
+ctx.fillStyle='#ffd166';
+ctx.fillRect(x1,base-h1,w,h1);
+ctx.fillStyle='#7dfcc2';
+ctx.fillRect(x2,base-h2,w,h2);
+ctx.fillStyle='#e8f0ff';
+ctx.font='bold 14px system-ui';
+ctx.textAlign='center';
+ctx.fillText(old.toFixed(1)+' t',x1+w/2,base-h1-8);
+ctx.fillText(newVal.toFixed(1)+' t',x2+w/2,base-h2-8);
+ctx.fillStyle='#b9c7e6';
+ctx.font='12px system-ui';
+ctx.fillText('Baseline',x1+w/2,base+20);
+ctx.fillText('FlowBrussels',x2+w/2,base+20);
+}
+function drawSpeedo(pct){
+const c=document.getElementById('speedoCanvas');
+const ctx=c.getContext('2d');
+ctx.clearRect(0,0,c.width,c.height);
+const cx=150,cy=150,r=100,start=Math.PI*0.75,end=Math.PI*2.25;
+ctx.lineWidth=18;
+ctx.strokeStyle='#2a3344';
+ctx.beginPath();ctx.arc(cx,cy,r,start,end);ctx.stroke();
+const maxPct=50;
+const ratio=Math.min(pct/maxPct,1);
+const angleEnd=start+ratio*(end-start);
+ctx.strokeStyle='#ffd166';
+ctx.beginPath();ctx.arc(cx,cy,r,start,angleEnd);ctx.stroke();
+ctx.fillStyle='#e8f0ff';
+ctx.font='bold 32px system-ui';
+ctx.textAlign='center';
+ctx.fillText('+'+pct+'%',cx,cy);
+ctx.font='14px system-ui';
+ctx.fillStyle='#b9c7e6';
+ctx.fillText('Income Gain',cx,cy+25);
+}
+function copyLink(){
+const url=location.href;
+navigator.clipboard.writeText(url).then(()=>{
+alert('Link copied to clipboard!');
+});
+}
+function exportPNG(){
+html2canvas(document.getElementById('widget-area'),{backgroundColor:null,useCORS:true,scale:2}).then(canvas=>{
+const link=document.createElement('a');
+link.download='flowbrussels-esg.png';
+link.href=canvas.toDataURL();
+link.click();
+});
+}
+function shareMenu(){
+const url=location.href;
+const text='FlowBrussels ESG Sustainability Dashboard live scenario snapshot';
+if(navigator.share){
+navigator.share({title:'FlowBrussels ESG',text:text,url:url}).catch(()=>{});
+}else{
+const opts=[
+{label:'X',url:'https://twitter.com/intent/tweet?text='+encodeURIComponent(text)+'&url='+encodeURIComponent(url)},
+{label:'LinkedIn',url:'https://www.linkedin.com/sharing/share-offsite/?url='+encodeURIComponent(url)},
+{label:'Facebook',url:'https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(url)}
+];
+const choice=prompt('Share on:\n1. X\n2. LinkedIn\n3. Facebook\nEnter number:');
+if(choice>=1&&choice<=3)window.open(opts[choice-1].url,'_blank');
+}
+}
+window.addEventListener('load',loadState);
+</script>
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "22466d27b8c14ef98293d50b38526660"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>

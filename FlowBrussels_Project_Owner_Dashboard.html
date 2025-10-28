@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>FlowBrussels Project Owner Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+:root{
+  --bg:#0c111b;--card:#121a29;--ink:#e8f0ff;--muted:#b9c7e6;--rail:#2a3344;--accent:#63d4ff;
+  --para:#ffd166;--capt:#ffd166;--over:#7dfcc2;--border:#243047;--grid:#34456b;
+  --axes:#2a3554;--radar-stroke:#5ad1ff;--radar-fill:rgba(90,209,255,0.22);--label-small:#9cb5e0;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body {
+  font-family: system-ui,-apple-system,sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.5;
+  overflow-x: hidden;
+}
+.top-bar,.bottom-bar {
+  background: linear-gradient(90deg, rgba(18,26,41,0.95), rgba(12,17,27,0.95));
+  border-bottom: 1px solid var(--border);
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.85rem;
+}
+.top-bar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.bottom-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  border-top: 1px solid var(--border);
+  border-bottom: none;
+  font-size: 0.75rem;
+  color: var(--muted);
+  font-variant: small-caps;
+  padding: 6px 20px;
+}
+.brand-chip {
+  background: var(--accent);
+  color: var(--bg);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+.logo {
+  height: 28px;
+  border-radius: 4px;
+}
+.breadcrumbs {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+main {
+  padding: 20px;
+  max-width: 1400px;
+  margin: 60px auto 80px;
+}
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+@media (max-width: 920px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px;
+}
+h2 {
+  font-size: 1.4rem;
+  margin-bottom: 14px;
+  color: var(--accent);
+}
+h3 {
+  font-size: 1.15rem;
+  margin-bottom: 8px;
+  color: var(--para);
+  text-align: center;
+}
+.tile-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.tile {
+  background: var(--rail);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 15px;
+  text-align: center;
+  box-shadow: 0 2px 10px #1111;
+}
+.tile-label {
+  color: var(--muted);
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+.tile-value {
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: var(--over);
+  line-height: 1.1;
+  word-break: break-word;
+  white-space: normal;
+  max-width: 100%;
+  display: block;
+}
+.tile-delta {
+  font-size: 1rem;
+  color: var(--para);
+  font-weight: 600;
+  word-break: break-word;
+  white-space: normal;
+  max-width: 100%;
+  display: block;
+}
+
+}
+.stats-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  font-size: 0.95rem;
+}
+.stats-table th {
+  background: var(--bg);
+  color: var(--capt);
+  font-weight: 600;
+  padding: 7px;
+  border-bottom: 1px solid var(--border);
+}
+.stats-table td {
+  padding: 8px 6px;
+  text-align: center;
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+}
+.stats-table tr:last-child td {
+  border-bottom: none;
+}
+.charts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+@media (max-width: 920px) {
+  .charts {
+    grid-template-columns: 1fr;
+  }
+}
+.chart-container {
+  background: var(--rail);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  position: relative;
+}
+canvas {
+  display: block;
+  margin: 0 auto;
+  background: transparent;
+}
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+.actions button {
+  background: var(--accent);
+  color: var(--bg);
+  border: none;
+  padding: 9px 22px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: opacity 0.25s ease;
+}
+.actions button:hover {
+  opacity: 0.90;
+}
+.ip-notice {
+  color: var(--label-small);
+  margin-top: 8px;
+  font-variant: small-caps;
+}
+</style>
+</head>
+<body>
+<div class="top-bar" role="banner">
+  <div style="display:flex; align-items:center; gap:10px;">
+    <img class="logo" src="https://brianiselin.github.io/widgets-public/Iselin_Group_Logo_1024_x.jpg" alt="Iselin Group logo" />
+    <span>Iselin Group - Strategic Consulting</span>
+  </div>
+  <div class="breadcrumbs" aria-label="Contact info">iselingroup.com - brian.iselin@iselingroup.com</div>
+  <div class="brand-chip" aria-label="Brand">FlowBrussels</div>
+</div>
+<main role="main">
+  <div class="grid" role="region" aria-label="Dashboard metrics and charts">
+    <section class="card" aria-labelledby="dashboardTitle">
+      <h2 id="dashboardTitle">Project Owner Dashboard</h2>
+      <div class="tile-row" role="list">
+        <article class="tile" role="listitem" aria-label="Completed trips">
+          <div class="tile-label">Completed Trips</div>
+          <div class="tile-value" id="tileCompleted" aria-live="polite">––</div>
+          <div class="tile-delta" id="tileCompDelta" aria-live="polite"></div>
+        </article>
+        <article class="tile" role="listitem" aria-label="Ongoing trips">
+          <div class="tile-label">Ongoing Trips</div>
+          <div class="tile-value" id="tileOngoing" aria-live="polite">––</div>
+        </article>
+        <article class="tile" role="listitem" aria-label="Online drivers">
+          <div class="tile-label">Online Drivers</div>
+          <div class="tile-value" id="tileOnlineDrivers" aria-live="polite">––</div>
+        </article>
+        <article class="tile" role="listitem" aria-label="Driver earnings">
+          <div class="tile-label">Driver Earnings</div>
+          <div class="tile-value" id="tileEarnings" aria-live="polite">––</div>
+          <div class="tile-delta" id="tileEarnDelta" aria-live="polite"></div>
+        </article>
+        <article class="tile" role="listitem" aria-label="Searches">
+          <div class="tile-label">Searches</div>
+          <div class="tile-value" id="tileSearches" aria-live="polite">––</div>
+          <div class="tile-delta" id="tileSearDelta" aria-live="polite"></div>
+        </article>
+        <article class="tile" role="listitem" aria-label="Conversion rate">
+          <div class="tile-label">Conversion Rate</div>
+          <div class="tile-value" id="tileConvRate" aria-live="polite">––</div>
+        </article>
+      </div>
+      <div class="actions" role="region" aria-label="Dashboard actions">
+        <button type="button" id="refreshBtn">Refresh</button>
+        <button type="button" id="copyLinkBtn">Copy Link</button>
+        <button type="button" id="exportPngBtn">Export PNG</button>
+        <button type="button" id="shareBtn">Share</button>
+      </div>
+      <h3>City Breakdown</h3>
+      <table class="stats-table" id="statsTable" aria-describedby="dashboardTitle" role="grid" tabindex="0">
+        <thead>
+          <tr>
+            <th scope="col">City</th>
+            <th scope="col">Online Drivers</th>
+            <th scope="col">Searches</th>
+            <th scope="col">Ongoing Trips</th>
+            <th scope="col">Completed Trips</th>
+            <th scope="col">Conversion %</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+    <section class="card" aria-labelledby="trendsTitle">
+      <h2 id="trendsTitle">Network Trends</h2>
+      <div class="charts" role="region" aria-label="Charts and graphs">
+        <div class="chart-container" role="figure" aria-label="Trip volume trends line chart">
+          <h3>Trip Volume Trends</h3>
+          <canvas id="lineChart" width="340" height="180" aria-describedby="trendsTitle"></canvas>
+        </div>
+        <div class="chart-container" role="figure" aria-label="Searches versus completed trips area chart">
+          <h3>Searches vs Completed</h3>
+          <canvas id="areaChart" width="340" height="180" aria-describedby="trendsTitle"></canvas>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+<div class="bottom-bar">
+  <div>Iselin Group - Strategic Consulting | © Iselin Group. FlowBrussels Project Owner Dashboard — brian.iselin@iselingroup.com</div>
+  <div class="ip-notice">The underlying decision‑integrity model, logic, and UI are proprietary to Iselin Group and may not be reproduced, adapted, or deployed in whole or in part without prior written consent; all rights reserved.</div>
+</div>
+<script>
+"use strict";
+
+const demoData = {
+  summary: {
+    completed: { today: 47662, delta: +5440 },
+    ongoing: 3653,
+    onlineDrivers: 65486,
+    earnings: { today: 8359831, delta: +713886 },
+    searches: { today: 227870, delta: +47082 },
+    conversion: 20.9
+  },
+  cities: [
+    { name: "Brussels", drivers: 1521, searches: 14802, ongoing: 274, complete: 6290 },
+    { name: "Antwerp", drivers: 695, searches: 6204, ongoing: 191, complete: 2942 },
+    { name: "Ghent", drivers: 508, searches: 5327, ongoing: 142, complete: 2524 },
+    { name: "Liège", drivers: 429, searches: 4381, ongoing: 89, complete: 1810 },
+    { name: "Bruges", drivers: 280, searches: 2104, ongoing: 48, complete: 859 },
+    { name: "Namur", drivers: 155, searches: 1220, ongoing: 31, complete: 531 },
+    { name: "Charleroi", drivers: 290, searches: 1802, ongoing: 36, complete: 760 }
+  ]
+};
+
+function formatNum(num) {
+  return num.toLocaleString("en-GB");
+}
+
+function renderTiles() {
+  const s = demoData.summary;
+  const deltaSign = (v) => (v > 0 ? "+" : "") + formatNum(v);
+  document.getElementById("tileCompleted").textContent = formatNum(s.completed.today);
+  document.getElementById("tileCompDelta").textContent = deltaSign(s.completed.delta);
+  document.getElementById("tileOngoing").textContent = formatNum(s.ongoing);
+  document.getElementById("tileOnlineDrivers").textContent = formatNum(s.onlineDrivers);
+  document.getElementById("tileEarnings").textContent = "€" + formatNum(s.earnings.today);
+  document.getElementById("tileEarnDelta").textContent = deltaSign(s.earnings.delta).replace("+", "+€");
+  document.getElementById("tileSearches").textContent = formatNum(s.searches.today);
+  document.getElementById("tileSearDelta").textContent = deltaSign(s.searches.delta);
+  document.getElementById("tileConvRate").textContent = s.conversion.toFixed(1) + "%";
+}
+
+function renderTable() {
+  const tb = document.getElementById("statsTable").querySelector("tbody");
+  tb.innerHTML = "";
+  demoData.cities.forEach((city) => {
+    const tr = document.createElement("tr");
+    const vals = [
+      city.name,
+      formatNum(city.drivers),
+      formatNum(city.searches),
+      formatNum(city.ongoing),
+      formatNum(city.complete),
+      ((city.complete / (city.searches + 1)) * 100).toFixed(1) + "%"
+    ];
+    vals.forEach((val) => {
+      const td = document.createElement("td");
+      td.textContent = val;
+      tr.appendChild(td);
+    });
+    tb.appendChild(tr);
+  });
+}
+
+function renderCharts() {
+  const lineCtx = document.getElementById("lineChart").getContext("2d");
+  const areaCtx = document.getElementById("areaChart").getContext("2d");
+
+  const hours = ["06:00", "08:00", "10:00", "12:00", "14:00", "16:00", "18:00"];
+  const tripCounts = [4952, 8129, 11902, 15546, 19654, 24222, 29900];
+  const tripCountsYesterday = [4724, 7778, 11394, 14498, 19123, 23830, 28739];
+
+  if (window.lineChartObj) window.lineChartObj.destroy();
+  window.lineChartObj = new Chart(lineCtx, {
+    type: "line",
+    data: {
+      labels: hours,
+      datasets: [
+        {
+          label: "Today",
+          data: tripCounts,
+          borderColor: getComputedStyle(document.documentElement).getPropertyValue('--accent').trim(),
+          backgroundColor: "transparent",
+          pointRadius: 3,
+          fill: false
+        },
+        {
+          label: "Yesterday",
+          data: tripCountsYesterday,
+          borderColor: getComputedStyle(document.documentElement).getPropertyValue('--para').trim(),
+          backgroundColor: "transparent",
+          borderDash: [7, 4],
+          pointRadius: 3,
+          fill: false
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { labels: { color: getComputedStyle(document.documentElement).getPropertyValue('--ink').trim() } } },
+      scales: {
+        x: { grid: { color: getComputedStyle(document.documentElement).getPropertyValue('--grid').trim() }, ticks: { color: getComputedStyle(document.documentElement).getPropertyValue('--muted').trim() } },
+        y: { grid: { color: getComputedStyle(document.documentElement).getPropertyValue('--grid').trim() }, ticks: { color: getComputedStyle(document.documentElement).getPropertyValue('--muted').trim() } }
+      }
+    }
+  });
+
+  const searches = [26500, 43901, 65324, 83212, 101802, 120514, 138190];
+  const completed = [2731, 5522, 7672, 9805, 13402, 17839, 21222];
+
+  if (window.areaChartObj) window.areaChartObj.destroy();
+  window.areaChartObj = new Chart(areaCtx, {
+    type: "line",
+    data: {
+      labels: hours,
+      datasets: [
+        {
+          label: "Searches",
+          data: searches,
+          borderColor: getComputedStyle(document.documentElement).getPropertyValue('--accent').trim(),
+          backgroundColor: "rgba(99, 212, 255, 0.14)",
+          pointRadius: 3,
+          fill: true
+        },
+        {
+          label: "Completed",
+          data: completed,
+          borderColor: getComputedStyle(document.documentElement).getPropertyValue('--over').trim(),
+          backgroundColor: "rgba(125, 252, 194, 0.2)",
+          pointRadius: 3,
+          fill: true
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { labels: { color: getComputedStyle(document.documentElement).getPropertyValue('--ink').trim() } } },
+      scales: {
+        x: { grid: { color: getComputedStyle(document.documentElement).getPropertyValue('--grid').trim() }, ticks: { color: getComputedStyle(document.documentElement).getPropertyValue('--muted').trim() } },
+        y: { grid: { color: getComputedStyle(document.documentElement).getPropertyValue('--grid').trim() }, ticks: { color: getComputedStyle(document.documentElement).getPropertyValue('--muted').trim() } }
+      }
+    }
+  });
+}
+
+function copyLink() {
+  const url = location.href;
+  navigator.clipboard.writeText(url).then(() => {
+    alert("Link copied to clipboard!");
+  });
+}
+
+function exportPNG() {
+  html2canvas(document.querySelector('main'), { backgroundColor: null, useCORS: true, scale: 2 }).then((canvas) => {
+    const link = document.createElement("a");
+    link.download = "flowbrussels-city.png";
+    link.href = canvas.toDataURL();
+    link.click();
+  });
+}
+function shareMenu() {
+  const url = location.href;
+  const text = "FlowBrussels live project snapshot";
+  if (navigator.share) {
+    navigator.share({ title: "FlowBrussels Dashboard", text: text, url: url }).catch(() => {});
+  } else {
+    const opts = [
+      { label: "X", url: "https://twitter.com/intent/tweet?text=" + encodeURIComponent(text) + "&url=" + encodeURIComponent(url) },
+      { label: "LinkedIn", url: "https://www.linkedin.com/sharing/share-offsite/?url=" + encodeURIComponent(url) },
+      { label: "Facebook", url: "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(url) }
+    ];
+    const choice = prompt("Share on:\n1. X\n2. LinkedIn\n3. Facebook\nEnter number:");
+    if (choice >= 1 && choice <= 3) window.open(opts[choice - 1].url, "_blank");
+  }
+}
+
+function refreshData() {
+  renderTiles();
+  renderTable();
+  renderCharts();
+}
+
+window.addEventListener("load", () => {
+  refreshData();
+});
+
+</script>
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token":"22466d27b8c14ef98293d50b38526660"}'></script>
+<!-- End Cloudflare Web Analytics -->
+</body>
+</html>

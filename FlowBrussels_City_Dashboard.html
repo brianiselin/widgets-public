@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FlowBrussels City Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+:root{
+--bg:#0c111b;--card:#121a29;--ink:#e8f0ff;--muted:#b9c7e6;--rail:#2a3344;--accent:#63d4ff;--para:#ffd166;--capt:#ffd166;--over:#7dfcc2;--border:#243047;
+--grid:#34456b;--axes:#2a3554;--radar-stroke:#5ad1ff;--radar-fill:rgba(90,209,255,0.22);--label-small:#9cb5e0;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;overflow-x:hidden;}
+.top-bar,.bottom-bar{background:linear-gradient(90deg,rgba(18,26,41,0.95),rgba(12,17,27,0.95));border-bottom:1px solid var(--border);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;font-size:0.85rem;}
+.top-bar{position:sticky;top:0;z-index:100;}
+.bottom-bar{position:fixed;bottom:0;left:0;right:0;border-top:1px solid var(--border);border-bottom:none;font-size:0.75rem;color:var(--muted);padding:8px 20px;}
+.brand-chip{background:var(--accent);color:var(--bg);padding:4px 10px;border-radius:6px;font-weight:600;font-size:0.75rem;}
+.logo{height:28px;border-radius:4px;}
+.breadcrumbs{color:var(--muted);font-size:0.8rem;}
+main{padding:20px;max-width:1400px;margin:60px auto 80px;}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+@media(max-width:920px){.grid{grid-template-columns:1fr;}}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;}
+h2{font-size:1.4rem;margin-bottom:12px;color:var(--accent);}
+h3{font-size:1.1rem;margin-bottom:8px;color:var(--para);text-align:center;}
+.tile-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px;}
+.tile{background:var(--rail);border:1px solid var(--border);border-radius:11px;padding:14px;text-align:center;box-shadow:0 2px 10px #1111;}
+.tile-label{color:var(--muted);font-size:0.85rem;text-transform:uppercase;margin-bottom:3px;}
+.tile-value{font-size:2.1rem;font-weight:700;color:var(--over);}
+.tile-delta{font-size:0.95rem;color:var(--para);font-weight:600;}
+.controls{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;align-items:center;}
+.controls label{color:var(--muted);font-weight:500;}
+.controls select{background:var(--rail);border:1px solid var(--border);color:var(--ink);padding:6px 12px;border-radius:6px;font-size:0.95rem;}
+.charts{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px;}
+@media(max-width:920px){.charts{grid-template-columns:1fr;}}
+.chart-container{background:var(--rail);border:1px solid var(--border);border-radius:10px;padding:14px;position:relative;}
+canvas{display:block;margin:0 auto;background:transparent;}
+.actions{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;}
+button{background:var(--accent);color:var(--bg);border:none;padding:9px 20px;border-radius:8px;font-weight:600;cursor:pointer;font-size:0.98rem;}
+button:hover{opacity:0.9;}
+.ip-notice{font-size:0.7rem;color:var(--label-small);font-variant:small-caps;margin-top:6px;}
+</style>
+</head>
+<body>
+<div class="top-bar">
+<div style="display:flex;align-items:center;gap:10px;">
+<img class="logo" src="https://brianiselin.github.io/widgets-public/Iselin_Group_Logo_1024_x.jpg" alt="Iselin Group">
+<span>Iselin Group - Strategic Consulting</span>
+</div>
+<div class="breadcrumbs">iselingroup.com - brian.iselin@iselingroup.com</div>
+<div class="brand-chip">FlowBrussels</div>
+</div>
+<main id="widgetArea">
+<div class="grid">
+<div class="card">
+<h2>City Authority Dashboard</h2>
+<div class="controls">
+<label>Timeframe:</label>
+<select id="timeframeSelect">
+<option value="today">Today</option>
+<option value="week">This Week</option>
+<option value="month" selected>This Month</option>
+<option value="year">This Year</option>
+</select>
+<label>City/Area:</label>
+<select id="areaSelect">
+<option value="all">All Cities</option>
+<option value="brussels">Brussels</option>
+<option value="antwerp">Antwerp</option>
+<option value="ghent">Ghent</option>
+</select>
+</div>
+<div class="tile-row">
+<div class="tile">
+<div class="tile-label">CO₂ Saved</div>
+<div class="tile-value" id="tileCO2">—</div>
+<div class="tile-delta" id="tileCO2Delta"></div>
+</div>
+<div class="tile">
+<div class="tile-label">Cars Removed</div>
+<div class="tile-value" id="tileCarsRemoved">—</div>
+</div>
+<div class="tile">
+<div class="tile-label">Modal Shift</div>
+<div class="tile-value" id="tileModalShift">—</div>
+</div>
+<div class="tile">
+<div class="tile-label">EV Fleet %</div>
+<div class="tile-value" id="tileEVPct">—</div>
+<div class="tile-delta" id="tileEVDelta"></div>
+</div>
+<div class="tile">
+<div class="tile-label">Avg Occupancy</div>
+<div class="tile-value" id="tileOccupancy">—</div>
+</div>
+<div class="tile">
+<div class="tile-label">Traffic Reduction</div>
+<div class="tile-value" id="tileTrafficRed">—</div>
+</div>
+</div>
+<div class="actions">
+<button onclick="refreshData()">Refresh</button>
+<button onclick="copyLink()">Copy Link</button>
+<button onclick="exportPNG()">Export PNG</button>
+<button onclick="shareMenu()">Share</button>
+</div>
+</div>
+<div class="card">
+<h2>Sustainability Scorecard</h2>
+<div class="charts">
+<div class="chart-container">
+<h3>CO₂ Trends (tonnes/month)</h3>
+<canvas id="co2TrendChart" width="340" height="200"></canvas>
+</div>
+<div class="chart-container">
+<h3>Emission Sources</h3>
+<canvas id="emissionsChart" width="340" height="200"></canvas>
+</div>
+<div class="chart-container">
+<h3>Modal Split Evolution</h3>
+<canvas id="modalChart" width="340" height="200"></canvas>
+</div>
+<div class="chart-container">
+<h3>Traffic Impact Index</h3>
+<canvas id="trafficGauge" width="300" height="200"></canvas>
+</div>
+</div>
+</div>
+</div>
+</main>
+<div class="bottom-bar">
+<div>Iselin Group - Strategic Consulting | © Iselin Group. FlowBrussels City Dashboard — brian.iselin@iselingroup.com</div>
+<div class="ip-notice">The underlying decision‑integrity model, logic, and UI are proprietary to Iselin Group and may not be reproduced, adapted, or deployed in whole or in part without prior written consent; all rights reserved.</div>
+</div>
+<script>
+const demoData={
+co2Saved:{today:52.4,delta:+6.8},
+carsRemoved:142,
+modalShift:18.5,
+evPct:{current:24,delta:+3},
+occupancy:1.62,
+trafficReduction:14.2,
+co2Months:[38.2,41.5,44.8,47.3,50.1,52.4],
+emissionSources:{car:42,taxi:38,electric:20},
+modalSplit:{private:52,shared:28,publicTransit:12,microMobility:8}
+};
+function formatNum(x){return x.toLocaleString('en-GB');}
+function renderTiles(){
+const d=demoData;
+document.getElementById('tileCO2').textContent=d.co2Saved.today.toFixed(1)+' t';
+document.getElementById('tileCO2Delta').textContent=(d.co2Saved.delta>=0?'+':'')+d.co2Saved.delta.toFixed(1)+' t';
+document.getElementById('tileCarsRemoved').textContent=formatNum(d.carsRemoved);
+document.getElementById('tileModalShift').textContent=d.modalShift.toFixed(1)+'%';
+document.getElementById('tileEVPct').textContent=d.evPct.current+'%';
+document.getElementById('tileEVDelta').textContent=(d.evPct.delta>=0?'+':'')+d.evPct.delta+'%';
+document.getElementById('tileOccupancy').textContent=d.occupancy.toFixed(2);
+document.getElementById('tileTrafficRed').textContent=d.trafficReduction.toFixed(1)+'%';
+}
+function renderCharts(){
+const co2Ctx=document.getElementById('co2TrendChart').getContext('2d');
+const emCtx=document.getElementById('emissionsChart').getContext('2d');
+const modCtx=document.getElementById('modalChart').getContext('2d');
+const trafCtx=document.getElementById('trafficGauge').getContext('2d');
+if(window.co2Chart)window.co2Chart.destroy();
+window.co2Chart=new Chart(co2Ctx,{
+type:'line',
+data:{
+labels:['Jan','Feb','Mar','Apr','May','Jun'],
+datasets:[{label:'CO₂ Saved (tonnes)',data:demoData.co2Months,borderColor:varCSS('--over'),backgroundColor:hexToRGBA(varCSS('--over'),0.2),pointRadius:4,fill:true}]
+},
+options:{responsive:true,plugins:{legend:{labels:{color:varCSS('--ink')}}},scales:{x:{grid:{color:varCSS('--grid')},ticks:{color:varCSS('--muted')}},y:{grid:{color:varCSS('--grid')},ticks:{color:varCSS('--muted')}}}}
+});
+if(window.emChart)window.emChart.destroy();
+window.emChart=new Chart(emCtx,{
+type:'doughnut',
+data:{
+labels:['Private Car','Taxi','Electric'],
+datasets:[{data:[demoData.emissionSources.car,demoData.emissionSources.taxi,demoData.emissionSources.electric],backgroundColor:[varCSS('--para'),varCSS('--muted'),varCSS('--over')]}]
+},
+options:{responsive:true,plugins:{legend:{labels:{color:varCSS('--ink')}}}}
+});
+if(window.modChart)window.modChart.destroy();
+window.modChart=new Chart(modCtx,{
+type:'bar',
+data:{
+labels:['Private','Shared','Public','Micro'],
+datasets:[{label:'Modal Split %',data:[demoData.modalSplit.private,demoData.modalSplit.shared,demoData.modalSplit.publicTransit,demoData.modalSplit.microMobility],backgroundColor:[varCSS('--para'),varCSS('--accent'),varCSS('--over'),varCSS('--muted')]}]
+},
+options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{grid:{color:varCSS('--grid')},ticks:{color:varCSS('--muted')}},y:{grid:{color:varCSS('--grid')},ticks:{color:varCSS('--muted')}}}}
+});
+drawTrafficGauge(trafCtx,demoData.trafficReduction);
+}
+function drawTrafficGauge(ctx,val){
+ctx.clearRect(0,0,300,200);
+const cx=150,cy=150,r=90,start=Math.PI,end=2*Math.PI;
+ctx.lineWidth=18;
+ctx.strokeStyle='#2a3344';
+ctx.beginPath();ctx.arc(cx,cy,r,start,end);ctx.stroke();
+const maxVal=30;
+const ratio=Math.min(val/maxVal,1);
+const angleEnd=start+ratio*(end-start);
+ctx.strokeStyle='#7dfcc2';
+ctx.beginPath();ctx.arc(cx,cy,r,start,angleEnd);ctx.stroke();
+ctx.fillStyle='#e8f0ff';
+ctx.font='bold 28px system-ui';
+ctx.textAlign='center';
+ctx.fillText(val.toFixed(1)+'%',cx,cy-10);
+ctx.font='14px system-ui';
+ctx.fillStyle='#b9c7e6';
+ctx.fillText('Traffic Reduction',cx,cy+15);
+}
+function varCSS(key){return getComputedStyle(document.documentElement).getPropertyValue(key).trim();}
+function hexToRGBA(hex,alpha){
+let c=hex.replace('#','');
+if(c.length===3)c=c[0]+c[0]+c[1]+c[1]+c[2]+c[2];
+let r=parseInt(c.substring(0,2),16),g=parseInt(c.substring(2,4),16),b=parseInt(c.substring(4,6),16);
+return `rgba(${r},${g},${b},${alpha})`;
+}
+function refreshData(){
+renderTiles();
+renderCharts();
+}
+function copyLink(){
+const url=location.href;
+navigator.clipboard.writeText(url).then(()=>{alert('Link copied to clipboard!');});
+}
+function exportPNG(){
+html2canvas(document.getElementById('widgetArea'),{backgroundColor:null,useCORS:true,scale:2}).then(canvas=>{
+const link=document.createElement('a');
+link.download='flowbrussels-city.png';
+link.href=canvas.toDataURL();
+link.click();
+});
+}
+function shareMenu(){
+const url=location.href;
+const text='FlowBrussels City Dashboard live snapshot';
+if(navigator.share){
+navigator.share({title:'FlowBrussels City',text:text,url:url}).catch(()=>{});
+}else{
+const opts=[
+{label:'X',url:'https://twitter.com/intent/tweet?text='+encodeURIComponent(text)+'&url='+encodeURIComponent(url)},
+{label:'LinkedIn',url:'https://www.linkedin.com/sharing/share-offsite/?url='+encodeURIComponent(url)},
+{label:'Facebook',url:'https://www.facebook.com/sharer/sharer.php?u='+encodeURIComponent(url)}
+];
+const choice=prompt('Share on:\n1. X\n2. LinkedIn\n3. Facebook\nEnter number:');
+if(choice>=1&&choice<=3)window.open(opts[choice-1].url,'_blank');
+}
+}
+window.addEventListener('load',refreshData);
+</script>
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "22466d27b8c14ef98293d50b38526660"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>
