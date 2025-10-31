@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>EIPIO Advanced Tradecraft Quiz</title>
+    <!-- Cloudflare Web Analytics -->
+    <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "22466d27b8c14ef98293d50b38526660"}'></script>
+    <style>
+        /* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            padding-top: 48px;
+            padding-bottom: 80px;
+            position: relative;
+            color: #333;
+        }
+        a {
+            color: #2a5298;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Iselin Group Top Branding Bar */
+        #iselin-top-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 48px;
+            background: linear-gradient(to right, rgba(30, 30, 30, 0.9), rgba(50, 50, 50, 0.7));
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            font-size: 12px;
+            font-variant: small-caps;
+            letter-spacing: 1px;
+            color: #ccc;
+            z-index: 9999;
+        }
+        #iselin-top-bar .left,
+        #iselin-top-bar .center,
+        #iselin-top-bar .right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+        #iselin-top-bar .right img {
+            height: 28px;
+            width: auto;
+            border-radius: 4px;
+            object-fit: contain;
+            filter: brightness(180%) contrast(120%);
+        }
+
+        /* Iselin Group Bottom Branding Bar */
+        #iselin-bottom-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: #1e3c72;
+            color: #a9b4c2;
+            font-size: 11px;
+            font-variant: small-caps;
+            letter-spacing: 0.8px;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 -2px 8px rgba(0,0,0,0.5);
+            z-index: 9999;
+        }
+        #iselin-bottom-bar .left {
+            font-weight: 600;
+        }
+        #iselin-bottom-bar .right {
+            max-width: 75%;
+            text-align: right;
+            line-height: 1.3;
+            font-weight: 400;
+        }
+
+        /* Container & main content */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            padding-bottom: 30px;
+            padding-top: 30px;
+        }
+        .header {
+            background: rgba(30, 60, 114, 0.95);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 25px 30px;
+            color: #fff;
+            border-radius: 12px 12px 0 0;
+        }
+        .header h1 {
+            font-size: 26px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+        .header .subtitle {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.85);
+            font-variant: small-caps;
+            letter-spacing: 1px;
+        }
+        .content {
+            padding: 0 30px 40px 30px;
+        }
+        .intro {
+            margin-bottom: 30px;
+            line-height: 1.6;
+            color: #333;
+        }
+        .question-container {
+            margin-bottom: 35px;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #2a5298;
+        }
+        .question-number {
+            font-variant: small-caps;
+            color: #2a5298;
+            font-weight: 600;
+            font-size: 13px;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+        .question-text {
+            font-size: 16px;
+            font-weight: 500;
+            color: #1a1a1a;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 14px 18px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .option:hover {
+            border-color: #2a5298;
+            background: #f0f4f8;
+        }
+        .option input[type="radio"] {
+            margin-right: 12px;
+            cursor: pointer;
+        }
+        .option label {
+            cursor: pointer;
+            flex: 1;
+            color: #333;
+            line-height: 1.4;
+        }
+        .submit-btn, .retake-btn {
+            background: #2a5298;
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: background 0.3s ease;
+            font-variant: small-caps;
+            letter-spacing: 1px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .submit-btn:hover, .retake-btn:hover {
+            background: #1e3c72;
+        }
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .results {
+            text-align: center;
+        }
+        .score-display {
+            font-size: 72px;
+            font-weight: 700;
+            color: #2a5298;
+            margin: 30px 0;
+        }
+        .score-percentage {
+            font-size: 28px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+        .feedback {
+            font-size: 20px;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin: 30px 0;
+            line-height: 1.6;
+            color: #333;
+        }
+        .answer-review {
+            text-align: left;
+            margin-top: 40px;
+        }
+        .review-item {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .review-item.correct {
+            border-left: 4px solid #28a745;
+        }
+        .review-item.incorrect {
+            border-left: 4px solid #dc3545;
+        }
+        .review-question {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #1a1a1a;
+        }
+        .review-answer {
+            margin: 8px 0;
+            font-size: 14px;
+        }
+        .your-answer {
+            color: #dc3545;
+        }
+        .correct-answer {
+            color: #28a745;
+            font-weight: 600;
+        }
+        .explanation {
+            margin-top: 12px;
+            padding: 12px;
+            background: white;
+            border-radius: 4px;
+            font-size: 14px;
+            line-height: 1.5;
+            color: #555;
+        }
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #f0f;
+            position: absolute;
+            animation: confetti-fall 3s linear infinite;
+            pointer-events: none;
+            z-index: 10000;
+        }
+        @keyframes confetti-fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        .progress-bar {
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: #2a5298;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div id="iselin-top-bar" aria-label="Iselin Group Top Branding Bar">
+        <div class="left">Iselin Group - Strategic Consulting</div>
+        <div class="center">iselingroup.com - brian.iselin(@)iselingroup.com</div>
+        <div class="right">
+            <img src="https://brianiselin.github.io/widgets-public/Iselin_Group_Logo_1024_x.jpg" alt="Iselin Group Logo" />
+        </div>
+    </div>
+
+    <div class="container" role="main" aria-label="EIPIO Advanced Tradecraft Quiz container">
+        <div class="header" role="banner">
+            <h1>EIPIO Advanced Tradecraft Assessment</h1>
+            <div class="subtitle">European Institute of Professional Intelligence Officers</div>
+        </div>
+
+        <div class="content">
+            <section id="quiz-section">
+                <div class="intro" tabindex="0">
+                    <p><strong>Welcome to the EIPIO Advanced Tradecraft Quiz.</strong></p>
+                    <p style="margin-top: 12px;">This assessment evaluates your mastery of professional intelligence tradecraft across collection methods, counterintelligence, operational security, analytical techniques, and ethical decision-making. The quiz contains 30 advanced questions designed for experienced intelligence professionals.</p>
+                    <p style="margin-top: 12px;">Select the best answer for each question. Good luck!</p>
+                </div>
+
+                <div class="progress-bar" aria-label="Quiz progress">
+                    <div class="progress-fill" id="progress-fill" style="width: 0%" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+                </div>
+
+                <form id="quiz-form" aria-live="polite" aria-relevant="additions" aria-label="Quiz questions form">
+                    <!-- Questions dynamically inserted here -->
+                </form>
+
+                <button type="button" class="submit-btn" id="submit-btn" onclick="submitQuiz(event)" disabled>Submit Quiz</button>
+            </section>
+
+            <section id="results-section" style="display: none;" role="region" aria-live="polite" aria-label="Quiz results"></section>
+        </div>
+    </div>
+
+    <div id="iselin-bottom-bar" aria-label="Iselin Group Bottom Branding Bar">
+        <div class="left">Iselin Group - Strategic Consulting</div>
+        <div class="right">
+            © Iselin Group. “EIPIO Intelligence Tradecraft Quiz” – brian.iselin(@)iselingroup.com. The underlying decision‑integrity model, logic, and UI are proprietary to
+            Iselin Group and may not be reproduced, adapted, or deployed in whole or in part without prior written consent; all rights reserved.
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                question: "In the intelligence cycle, which phase is most critical for preventing collection gaps that lead to analytic failures?",
+                options: [
+                    "Processing and exploitation",
+                    "Requirements management and prioritization",
+                    "Dissemination and feedback",
+                    "Analysis and production"
+                ],
+                correct: 1,
+                explanation: "Requirements management ensures that intelligence collection is properly directed and prioritized, preventing gaps that would result in incomplete or misdirected intelligence production. Poor requirements definition is a leading cause of intelligence failures."
+            },
+            {
+                question: "When conducting source validation using the Admiralty System, what does a rating of 'B3' indicate?",
+                options: [
+                    "Usually reliable source, possibly true information",
+                    "Fairly reliable source, possibly true information",
+                    "Not usually reliable source, possibly true information",
+                    "Reliable source, probably true information"
+                ],
+                correct: 1,
+                explanation: "In the Admiralty System, source reliability is rated A-F (A being most reliable) and information credibility is rated 1-6 (1 being most credible). B3 indicates a 'usually reliable' source with 'possibly true' information."
+            },
+            {
+                question: "What is the primary purpose of implementing 'need-to-know' compartmentation in intelligence operations?",
+                options: [
+                    "To reduce operational costs by limiting information sharing",
+                    "To create organizational hierarchy and authority structures",
+                    "To minimize damage from potential compromises and insider threats",
+                    "To accelerate decision-making by reducing information overload"
+                ],
+                correct: 2,
+                explanation: "Need-to-know compartmentation limits access to sensitive information to only those individuals who require it to perform their duties, thereby minimizing potential damage if a breach or insider threat occurs. This is a fundamental OPSEC principle."
+            },
+            {
+                question: "In counterintelligence operations, what does 'dangle' tradecraft involve?",
+                options: [
+                    "Allowing a suspected adversary agent to believe they remain undetected",
+                    "Presenting an attractive intelligence officer or asset to an adversary service to identify their recruitment methods",
+                    "Deliberately exposing classified information to track how it spreads",
+                    "Creating false communications to mislead adversary SIGINT collection"
+                ],
+                correct: 1,
+                explanation: "A 'dangle' operation involves presenting a seemingly accessible and attractive potential recruit to an adversary intelligence service to learn about their targeting priorities, recruitment techniques, and operational methods."
+            },
+            {
+                question: "Which analytical technique is specifically designed to challenge assumptions and reduce cognitive biases by systematically considering alternative hypotheses?",
+                options: [
+                    "SWOT Analysis",
+                    "Link Analysis",
+                    "Analysis of Competing Hypotheses (ACH)",
+                    "PESTLE Analysis"
+                ],
+                correct: 2,
+                explanation: "Analysis of Competing Hypotheses (ACH) is a structured analytic technique developed by Richards Heuer that helps analysts systematically evaluate multiple hypotheses against available evidence, reducing confirmation bias and improving analytic rigor."
+            },
+            {
+                question: "In HUMINT operations, what is the primary risk of 'walking back the cat'?",
+                options: [
+                    "Exposing the original source through investigative backtracking",
+                    "Creating false connections in link analysis",
+                    "Compromising technical collection capabilities",
+                    "Violating operational security protocols"
+                ],
+                correct: 0,
+                explanation: "'Walking back the cat' refers to retracing intelligence reporting to its original source. While useful for validation, this process risks exposing sources and methods if not conducted with extreme care and proper compartmentation."
+            },
+            {
+                question: "What is 'indicator management' in the context of operational security?",
+                options: [
+                    "Tracking key performance metrics for intelligence operations",
+                    "Deliberately controlling or manipulating observable signatures to deceive adversary collection",
+                    "Managing classified indicators and warnings for senior decision-makers",
+                    "Prioritizing intelligence collection requirements"
+                ],
+                correct: 1,
+                explanation: "Indicator management involves deliberately controlling, reducing, or manipulating observable signatures (indicators) that adversaries might use to detect, identify, or characterize friendly operations. This is a critical OPSEC discipline."
+            },
+            {
+                question: "In cyber intelligence, what does 'attribution' primarily refer to?",
+                options: [
+                    "Assigning credit to analysts for intelligence products",
+                    "Identifying the source or actor responsible for a cyber operation or attack",
+                    "Tracking the dissemination chain of classified information",
+                    "Correlating multiple intelligence sources"
+                ],
+                correct: 1,
+                explanation: "Attribution in cyber intelligence is the process of identifying who is responsible for a cyber operation, intrusion, or attack. This is technically challenging due to the ease of misdirection and false flag operations in cyberspace."
+            },
+            {
+                question: "What is the 'mosaic theory' concern in intelligence security?",
+                options: [
+                    "The difficulty of analyzing fragmented intelligence from multiple sources",
+                    "The risk that individually innocuous pieces of information can be combined to reveal classified intelligence",
+                    "The challenge of maintaining consistency across multiple cover stories",
+                    "The problem of cognitive bias in pattern recognition"
+                ],
+                correct: 1,
+                explanation: "Mosaic theory refers to the risk that multiple pieces of unclassified or low-classification information, when combined, can reveal highly sensitive classified intelligence. This principle underpins many classification and OPSEC decisions."
+            },
+            {
+                question: "In agent handling, what is the primary purpose of using a 'cut-out'?",
+                options: [
+                    "To provide legal deniability for intelligence operations",
+                    "To create separation between the handler and agent, enhancing security",
+                    "To reduce operational costs by sharing handlers",
+                    "To facilitate communication in denied areas"
+                ],
+                correct: 1,
+                explanation: "A cut-out is an intermediary used to pass information or materials between a handler and an agent, providing an additional layer of security and separation that protects both parties if one side is compromised."
+            },
+            {
+                question: "What does 'blowback' refer to in intelligence operations?",
+                options: [
+                    "Technical failure of explosive devices in covert operations",
+                    "Unintended consequences of covert operations that negatively affect the sponsoring agency or nation",
+                    "Compromise of an intelligence operation through poor OPSEC",
+                    "Defection of intelligence officers to adversary services"
+                ],
+                correct: 1,
+                explanation: "Blowback refers to unintended negative consequences of covert intelligence operations that harm the sponsoring country or agency, often emerging years after the original operation. This is a critical consideration in operational planning."
+            },
+            {
+                question: "In surveillance detection, what is a 'trigger'?",
+                options: [
+                    "An event that initiates an intelligence collection operation",
+                    "A person or position used to alert the surveillance team when the target appears",
+                    "A technical device used to activate recording equipment",
+                    "A psychological technique to prompt a source to provide information"
+                ],
+                correct: 1,
+                explanation: "In surveillance operations, a trigger is a team member positioned to observe and alert the rest of the team when the target appears or moves, enabling efficient deployment of surveillance resources."
+            },
+            {
+                question: "What is 'strategic warning' in intelligence analysis?",
+                options: [
+                    "Notification of imminent tactical threats requiring immediate action",
+                    "Long-term assessment of potential major threats or developments that could significantly affect national security",
+                    "Alert about compromised classification systems",
+                    "Warning about insider threats within intelligence organizations"
+                ],
+                correct: 1,
+                explanation: "Strategic warning involves providing advance notice of significant long-term threats or developments that could fundamentally affect national security interests, allowing policymakers time to prepare responses or preventive measures."
+            },
+            {
+                question: "In cryptanalysis, what is a 'known-plaintext attack'?",
+                options: [
+                    "Attempting to decrypt messages when both encrypted and unencrypted versions are available",
+                    "Using publicly known information to guess encryption keys",
+                    "Exploiting weak passwords in authentication systems",
+                    "Social engineering to obtain plaintext passwords"
+                ],
+                correct: 0,
+                explanation: "A known-plaintext attack is a cryptanalytic technique where the analyst has access to both encrypted (ciphertext) and unencrypted (plaintext) versions of messages, which can be used to deduce the encryption key or algorithm."
+            },
+            {
+                question: "What is 'perception management' in the context of influence operations?",
+                options: [
+                    "Training intelligence officers to improve observational skills",
+                    "Actions to convey or deny selected information to foreign audiences to influence their emotions, motives, and reasoning",
+                    "Managing public perception of intelligence agencies through media relations",
+                    "Psychological profiling of intelligence targets"
+                ],
+                correct: 1,
+                explanation: "Perception management involves actions designed to convey or deny information to foreign audiences, influencing their emotions, motives, objective reasoning, and behavior in ways that favor the originator's objectives."
+            },
+            {
+                question: "In counterintelligence, what does 'honey trap' tradecraft exploit?",
+                options: [
+                    "Financial vulnerabilities of intelligence targets",
+                    "Professional ambitions and career frustrations",
+                    "Personal relationships and romantic or sexual attraction",
+                    "Ideological beliefs and political convictions"
+                ],
+                correct: 2,
+                explanation: "A honey trap is a counterintelligence or recruitment technique that uses romantic or sexual relationships to compromise targets, obtain information, or coerce cooperation. This exploits human emotional and physical vulnerabilities."
+            },
+            {
+                question: "What is the primary limitation of SIGINT compared to HUMINT?",
+                options: [
+                    "SIGINT is more expensive to conduct than HUMINT",
+                    "SIGINT cannot provide insight into intentions and decision-making contexts that HUMINT can access",
+                    "SIGINT requires more personnel than HUMINT operations",
+                    "SIGINT collection is more easily detected than HUMINT operations"
+                ],
+                correct: 1,
+                explanation: "While SIGINT can capture communications content, it often lacks the contextual understanding of intentions, motivations, and decision-making processes that a well-placed human source can provide through direct access and observation."
+            },
+            {
+                question: "In intelligence analysis, what is 'mirror imaging'?",
+                options: [
+                    "Using multiple independent analysts to verify findings",
+                    "The analytical error of assuming adversaries think and act according to your own cultural and rational frameworks",
+                    "Creating duplicate intelligence reports for different classification levels",
+                    "Reflecting an adversary's own intelligence back to them as deception"
+                ],
+                correct: 1,
+                explanation: "Mirror imaging is a cognitive bias where analysts incorrectly assume that adversaries will think, decide, and act based on the analyst's own cultural norms and rational frameworks, leading to flawed assessments and predictions."
+            },
+            {
+                question: "What is 'legend' in the context of non-official cover (NOC) operations?",
+                options: [
+                    "A highly experienced intelligence officer with exceptional operational record",
+                    "The complete false identity and biographical background created for an undercover officer",
+                    "Classified historical accounts of successful intelligence operations",
+                    "Senior intelligence officers who mentor junior operatives"
+                ],
+                correct: 1,
+                explanation: "A legend is the complete false identity, biographical background, and supporting documentation created for an intelligence officer operating under non-official cover, designed to withstand scrutiny and enable operational access."
+            },
+            {
+                question: "In technical surveillance countermeasures (TSCM), what does 'technical surveillance' primarily refer to?",
+                options: [
+                    "Satellite imagery collection",
+                    "Cyber network monitoring",
+                    "Covert electronic eavesdropping and monitoring devices",
+                    "Open-source intelligence gathering using technical tools"
+                ],
+                correct: 2,
+                explanation: "In TSCM contexts, technical surveillance refers to covert electronic devices used to intercept communications or monitor activities, such as bugs, wiretaps, and hidden cameras. TSCM aims to detect and neutralize these threats."
+            },
+            {
+                question: "What is 'intelligence gain/loss' calculation used for in operational planning?",
+                options: [
+                    "Budgeting and resource allocation for intelligence programs",
+                    "Assessing whether the intelligence value obtained justifies the risk of exposing sources and methods",
+                    "Measuring analyst productivity and performance",
+                    "Calculating the classification level for intelligence products"
+                ],
+                correct: 1,
+                explanation: "Intelligence gain/loss analysis weighs the value of intelligence to be gained against the risk of compromising sources, methods, or capabilities. This is critical for deciding whether to use sensitive collection capabilities or share intelligence."
+            },
+            {
+                question: "In covert action planning, what does 'plausible deniability' require?",
+                options: [
+                    "Complete absence of any connection to the sponsoring government",
+                    "Sufficient ambiguity about sponsorship that official denial remains credible despite evidence",
+                    "Legal authorization that protects operatives from prosecution",
+                    "Multiple layers of cut-outs to prevent attribution"
+                ],
+                correct: 1,
+                explanation: "Plausible deniability means structuring operations so that even if evidence suggests government involvement, official denial remains believable to key audiences. This doesn't require absolute proof of non-involvement, just sufficient ambiguity."
+            },
+            {
+                question: "What is 'order of battle' (OOB) intelligence?",
+                options: [
+                    "Planning sequence for military operations",
+                    "Detailed identification and analysis of the command structure, units, equipment, and disposition of an adversary's forces",
+                    "Prioritization of intelligence collection requirements",
+                    "Chronological documentation of battle outcomes"
+                ],
+                correct: 1,
+                explanation: "Order of Battle intelligence provides comprehensive information about an adversary's military organization, including unit identification, equipment, strength, command relationships, and locations—essential for military planning and threat assessment."
+            },
+            {
+                question: "In agent recruitment, what does the acronym MICE traditionally represent?",
+                options: [
+                    "Military Intelligence Collection and Evaluation",
+                    "Money, Ideology, Compromise, Ego",
+                    "Mission, Intent, Capability, Environment",
+                    "Methods, Indicators, Consequences, Effectiveness"
+                ],
+                correct: 1,
+                explanation: "MICE represents the four primary motivations for agent recruitment: Money (financial incentive), Ideology (belief systems), Compromise (coercion through blackmail), and Ego (personal recognition or revenge). Understanding these motivations is fundamental to recruitment operations."
+            },
+            {
+                question: "What is 'collection synchronization' in intelligence operations?",
+                options: [
+                    "Ensuring all analysts receive intelligence reports simultaneously",
+                    "Coordinating multiple collection disciplines to target the same intelligence requirement efficiently",
+                    "Aligning intelligence collection schedules with operational timelines",
+                    "Standardizing collection methods across different agencies"
+                ],
+                correct: 1,
+                explanation: "Collection synchronization involves coordinating different intelligence collection methods (HUMINT, SIGINT, IMINT, etc.) to work together efficiently against priority intelligence requirements, maximizing effectiveness while minimizing redundancy and risk."
+            },
+            {
+                question: "In counterintelligence analysis, what is an 'anomaly'?",
+                options: [
+                    "Unexpected intelligence gap requiring additional collection",
+                    "Unusual pattern or behavior that deviates from established baselines and may indicate hostile activity",
+                    "Classification error in intelligence reporting",
+                    "Conflict between intelligence assessments from different agencies"
+                ],
+                correct: 1,
+                explanation: "An anomaly is any deviation from expected patterns or behaviors that may indicate espionage, insider threats, or other hostile counterintelligence concerns. Detecting and investigating anomalies is central to counterintelligence practice."
+            },
+            {
+                question: "What is the primary purpose of 'sanitization' before disseminating intelligence?",
+                options: [
+                    "Correcting grammatical errors and improving readability",
+                    "Removing information that could reveal sources, methods, or capabilities while preserving intelligence value",
+                    "Translating foreign language intelligence into English",
+                    "Reducing classification levels to enable wider distribution"
+                ],
+                correct: 1,
+                explanation: "Sanitization involves removing or modifying information that could compromise sources, methods, or capabilities while retaining the intelligence value needed by consumers. This enables broader dissemination while protecting sensitive equities."
+            },
+            {
+                question: "In influence operations, what is 'black propaganda'?",
+                options: [
+                    "Propaganda targeting African nations during the Cold War",
+                    "Information that falsely appears to originate from a source other than the true sponsor",
+                    "Propaganda distributed through covert channels only",
+                    "Deliberately false information designed to deceive adversaries"
+                ],
+                correct: 1,
+                explanation: "Black propaganda is material that falsely purports to come from a source other than the true origin—for example, fabricated documents appearing to come from an adversary government. This contrasts with white (attributed) and gray (unattributed) propaganda."
+            },
+            {
+                question: "What is 'indications and warning' (I&W) intelligence designed to provide?",
+                options: [
+                    "Advance notice of significant threatening events or hostile actions allowing time for response",
+                    "Post-action assessment of intelligence failures",
+                    "Daily intelligence briefings for senior decision-makers",
+                    "Classification markings for sensitive intelligence"
+                ],
+                correct: 0,
+                explanation: "Indications and Warning (I&W) intelligence is specifically designed to provide timely notice of foreign actions, developments, or threats that could significantly affect national security, enabling leaders to take preventive or preparatory action."
+            },
+            {
+                question: "In operational security, what does 'signature reduction' aim to achieve?",
+                options: [
+                    "Minimizing paperwork and documentation in covert operations",
+                    "Decreasing observable indicators that could reveal operational activities, capabilities, or presence",
+                    "Reducing the number of personnel with access to classified operations",
+                    "Limiting the distribution of intelligence reports"
+                ],
+                correct: 1,
+                explanation: "Signature reduction involves minimizing detectable indicators (technical emissions, behavioral patterns, physical signatures) that adversaries could use to detect, identify, or characterize friendly operations, capabilities, or presence."
+            }
+        ];
+
+        function generateQuiz() {
+            const form = document.getElementById('quiz-form');
+            quizData.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question-container';
+                questionDiv.innerHTML = `
+                    <div class="question-number">Question ${index + 1} of 30</div>
+                    <div class="question-text">${q.question}</div>
+                    <div class="options">
+                        ${q.options.map((option, optIndex) => `
+                            <div class="option">
+                                <input type="radio" id="q${index}_opt${optIndex}" name="question${index}" value="${optIndex}" onchange="updateProgress()" required>
+                                <label for="q${index}_opt${optIndex}">${option}</label>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                form.appendChild(questionDiv);
+            });
+        }
+
+        function updateProgress() {
+            const totalQuestions = quizData.length;
+            let answered = 0;
+            for (let i = 0; i < totalQuestions; i++) {
+                if (document.querySelector(`input[name="question${i}"]:checked`)) {
+                    answered++;
+                }
+            }
+            const percentage = (answered / totalQuestions) * 100;
+            document.getElementById('progress-fill').style.width = percentage + '%';
+            document.getElementById('progress-fill').setAttribute('aria-valuenow', Math.round(percentage));
+            document.getElementById('submit-btn').disabled = answered < totalQuestions;
+        }
+
+        function submitQuiz(event) {
+            event.preventDefault();
+
+            let score = 0;
+            const userAnswers = [];
+
+            quizData.forEach((q, index) => {
+                const selected = document.querySelector(`input[name="question${index}"]:checked`);
+                const userAnswer = selected ? parseInt(selected.value) : -1;
+                userAnswers.push(userAnswer);
+
+                if (userAnswer === q.correct) {
+                    score++;
+                }
+            });
+
+            displayResults(score, userAnswers);
+        }
+
+        function displayResults(score, userAnswers) {
+            const percentage = Math.round((score / quizData.length) * 100);
+            const quizSection = document.getElementById('quiz-section');
+            const resultsSection = document.getElementById('results-section');
+
+            quizSection.style.display = 'none';
+            resultsSection.style.display = 'block';
+
+            let feedback = '';
+            let quartile = 0;
+
+            if (percentage >= 75) {
+                feedback = "🎖️ <strong>Expert Level Intelligence Officer – Outstanding!</strong><br>Your mastery of advanced tradecraft demonstrates exceptional professional competence. You have internalized the principles that define excellence in the intelligence profession.";
+                quartile = 4;
+                createConfetti();
+            } else if (percentage >= 50) {
+                feedback = "✅ <strong>Strong Grasp of Tradecraft – Well Done!</strong><br>You demonstrate solid understanding of intelligence principles and methods. Continue refining your expertise through operational experience and professional development.";
+                quartile = 3;
+            } else if (percentage >= 25) {
+                feedback = "📚 <strong>Intermediate Understanding – Honing Your Skills</strong><br>You have foundational knowledge but would benefit from deeper study of tradecraft principles and operational methods. Focus on areas where you struggled.";
+                quartile = 2;
+            } else {
+                feedback = "🌱 <strong>Tradecraft Novice – Great Potential to Grow!</strong><br>Everyone starts somewhere in their intelligence journey. Use this assessment to identify learning priorities and invest in professional development.";
+                quartile = 1;
+            }
+
+            let resultsHTML = `
+                <div class="results" tabindex="0">
+                    <h2 style="color: #2a5298; margin-bottom: 20px;">Your Results</h2>
+                    <div class="score-display">${score}/30</div>
+                    <div class="score-percentage">${percentage}%</div>
+                    <div class="feedback">${feedback}</div>
+                    <button class="retake-btn" onclick="retakeQuiz()" aria-label="Retake quiz">Retake Quiz</button>
+                </div>
+
+                <div class="answer-review">
+                    <h3 style="margin-bottom: 20px; color: #2a5298; font-variant: small-caps; letter-spacing: 1px;">Answer Review</h3>
+            `;
+
+            quizData.forEach((q, index) => {
+                const userAnswer = userAnswers[index];
+                const isCorrect = userAnswer === q.correct;
+
+                resultsHTML += `
+                    <div class="review-item ${isCorrect ? 'correct' : 'incorrect'}">
+                        <div class="review-question"><strong>Question ${index + 1}:</strong> ${q.question}</div>
+                        ${!isCorrect ? `<div class="review-answer your-answer">Your answer: ${userAnswer >= 0 ? q.options[userAnswer] : 'Not answered'}</div>` : ''}
+                        <div class="review-answer correct-answer">Correct answer: ${q.options[q.correct]}</div>
+                        <div class="explanation"><strong>Explanation:</strong> ${q.explanation}</div>
+                    </div>
+                `;
+            });
+
+            resultsHTML += `</div>`;
+
+            resultsSection.innerHTML = resultsHTML;
+
+            // Scroll to results for accessibility
+            resultsSection.focus();
+        }
+
+        function createConfetti() {
+            const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#f9ca24', '#6c5ce7', '#a29bfe'];
+            const confettiCount = 150;
+
+            for (let i = 0; i < confettiCount; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                    confetti.style.animationDelay = Math.random() + 's';
+                    document.body.appendChild(confetti);
+
+                    setTimeout(() => confetti.remove(), 5000);
+                }, i * 20);
+            }
+        }
+
+        function retakeQuiz() {
+            document.getElementById('quiz-section').style.display = 'block';
+            document.getElementById('results-section').style.display = 'none';
+            document.getElementById('quiz-form').reset();
+            updateProgress();
+            window.scrollTo(0, 0);
+        }
+
+        // Initialize quiz on page load
+        generateQuiz();
+        document.getElementById('submit-btn').disabled = true;
+    </script>
+</body>
+</html>
