@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>EIPIO OSINT Glossary Widget</title>
+<!-- Cloudflare Web Analytics -->
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "22466d27b8c14ef98293d50b38526660"}'></script>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    color: #333;
+    padding-top: 48px;
+    padding-bottom: 80px;
+  }
+  /* Top branding bar */
+  #iselin-top-bar {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%;
+    height: 48px;
+    background: linear-gradient(to right, rgba(30,30,30,0.9), rgba(50,50,50,0.7));
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    font-size: 12px;
+    font-variant: small-caps;
+    letter-spacing: 1px;
+    color: #ccc;
+    z-index: 9999;
+  }
+  #iselin-top-bar .left,
+  #iselin-top-bar .center,
+  #iselin-top-bar .right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+  }
+  #iselin-top-bar .right img {
+    height: 28px;
+    border-radius: 4px;
+    object-fit: contain;
+    filter: brightness(180%) contrast(120%);
+  }
+
+  /* Bottom branding bar */
+  #iselin-bottom-bar {
+    position: fixed;
+    bottom: 0; left: 0;
+    width: 100%;
+    background: #1e3c72;
+    color: #a9b4c2;
+    font-size: 11px;
+    font-variant: small-caps;
+    letter-spacing: 0.8px;
+    padding: 12px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 -2px 8px rgba(0,0,0,0.5);
+    z-index: 9999;
+  }
+  #iselin-bottom-bar .left {
+    font-weight: 600;
+  }
+  #iselin-bottom-bar .right {
+    max-width: 75%;
+    line-height: 1.3;
+  }
+
+  /* Container */
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 30px 20px;
+    background: rgba(255,255,255,0.98);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  }
+
+  h1 {
+    font-size: 26px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+  }
+
+  .intro {
+    margin-bottom: 20px;
+    font-size: 14px;
+    color: #222;
+  }
+
+  /* Search box styles */
+  #searchBox {
+    width: 100%;
+    padding: 12px 15px;
+    font-size: 14px;
+    border: 2px solid #ccc;
+    border-radius: 6px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  #searchBox:focus {
+    border-color: #2a5298;
+  }
+
+  /* Glossary list styles */
+  #glossary {
+    margin-top: 20px;
+  }
+  .term {
+    border-bottom: 1px solid #e0e0e0;
+    padding: 10px 0;
+  }
+  button.fold-button {
+    width: 100%;
+    background: transparent;
+    border: none;
+    text-align: left;
+    padding: 0;
+    font-size: 16px;
+    color: #2a5298;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  button.fold-button:after {
+    content: ' ▼';
+    float: right;
+    font-size: 14px;
+  }
+  button.fold-button.collapsed:after {
+    content: ' ▶';
+  }
+  .definition {
+    max-height: 0;
+    overflow: hidden;
+    margin-top: 8px;
+    transition: max-height 0.4s ease, padding 0.4s ease;
+  }
+  .definition.show {
+    max-height: 500px; /* arbitrary max height for expansion */
+    padding: 10px 0;
+  }
+
+  /* Footer note */
+  .footer-note {
+    font-size: 10px;
+    color: #777;
+    margin-top: 20px;
+  }
+</style>
+</head>
+<body>
+<!-- Top branding bar -->
+<div id="iselin-top-bar" aria-label="Iselin Group Top Branding Bar">
+  <div class="left">Iselin Group - Strategic Consulting</div>
+  <div class="center">iselingroup.com - brian.iselin(@)iselingroup.com</div>
+  <div class="right">
+    <img src="https://brianiselin.github.io/widgets-public/Iselin_Group_Logo_1024_x.jpg" alt="Iselin Group Logo" />
+  </div>
+</div>
+
+<!-- Main container -->
+<div class="container" role="main" aria-label="OSINT Glossary">
+  <h1>OSINT Glossary</h1>
+  <div class="intro">
+    <p><strong>Search OSINT terms or browse alphabetically.</strong></p>
+    <input type="text" id="searchBox" placeholder="Search terms..." aria-label="Search terms" onkeyup="filterTerms()">
+  </div>
+  <div id="glossary" aria-busy="false" aria-label="Glossary list"></div>
+</div>
+
+<!-- Bottom branding bar -->
+<div id="iselin-bottom-bar" aria-label="Iselin Group Bottom Branding Bar">
+  <div class="left">Iselin Group - Strategic Consulting</div>
+  <div class="right">
+    <div>© Iselin Group. “EIPIO OSINT Glossary” – brian.iselin(@)iselingroup.com.</div>
+    <div class="footer-note">The content is curated by European Institute of Professional Intelligence Officers (EIPIO) and Iselin Group.</div>
+  </div>
+</div>
+
+<script>
+const terms = [
+  { term: "API (Application Programming Interface)", definition: "A set of rules and protocols for building and interacting with software applications, especially for accessing web-based services." },
+  { term: "Archiving", definition: "The process of collecting, storing, and maintaining web or data sources for future reference and analysis." },
+  { term: "Attention Mining", definition: "Techniques used to identify areas or sources requiring detailed attention within large datasets." },
+  { term: "Automated Search", definition: "Use of algorithms and tools to perform keyword or pattern searches across multiple data sources." },
+  { term: "Beacon", definition: "A small data packet or signal used in tracking or geolocation techniques." },
+  { term: "Boolean Search", definition: "A logical search method using operators like AND, OR, NOT to refine search results." },
+  { term: "Cache", definition: "A temporary storage of web content to speed up loading or access." },
+  { term: "Data Mining", definition: "The process of discovering patterns and relationships in large datasets." },
+  { term: "Deep Web", definition: "Parts of the internet not indexed by standard search engines, often requiring direct access or credentials." },
+  { term: "Domain Squatting", definition: "Registering similar or misspelled domain names to exploit traffic or deceive users." },
+  { term: "Dorking", definition: "Advanced search technique using specialized operators to find specific info on the web." },
+  { term: "Granularity", definition: "The level of detail in data or information, affecting analysis precision." },
+  { term: "Hashing", definition: "A process of converting data into a fixed-size string of characters, often for security." },
+  { term: "Hole-Punching", definition: "A technique used in networking to establish connections through firewalls." },
+  { term: "Intelligence Gathering", definition: "The systematic collection of information from open sources to support decision-making." },
+  { term: "Link Analysis", definition: "Method to identify relationships among entities, often visualized graphically." },
+  { term: "Metadata", definition: "Data about data, such as timestamps, source, or file characteristics." },
+  { term: "Open Source", definition: "Data, software, or information freely available and publicly accessible." },
+  { term: "OSINT (Open Source Intelligence)", definition: "The practice of collecting and analyzing publicly available information for intelligence purposes." },
+  { term: "Payload", definition: "The part of malware or data transmission that is the actual transmitted data or malicious code." },
+  { term: "Proxy", definition: "A server acting as an intermediary to hide the user's IP address or locations." },
+  { term: "Query", definition: "A specific request for data or information made to a database or search engine." },
+  { term: "Scraping", definition: "The automated extraction of data from websites." },
+  { term: "Session Replay", definition: "Capturing user interactions on websites for analysis or tracking." },
+  { term: "Signal", definition: "The meaningful data extracted from noise or large datasets." },
+  { term: "Social Engineering", definition: "Manipulating people into divulging confidential information." },
+  { term: "Source Validation", definition: "The process of verifying the reliability and credibility of information sources." },
+  { term: "Trolling", definition: "Deliberate posting of provocative content to elicit reactions." },
+  { term: "Vandalism", definition: "Deliberate defacement or destruction of data or web content." },
+  { term: "Vulnerability Analysis", definition: "Assessment of security weaknesses in systems or data." },
+  { term: "Webhook", definition: "A method for one system to send real-time data to another via HTTP callbacks." },
+  { term: "YARA", definition: "An open-source tool used to identify and classify malware samples based on patterns." },
+  // More terms can be added here
+];
+
+function createTerms() {
+  const container = document.getElementById('glossary');
+  let currentLetter = '';
+  terms.sort((a, b) => a.term.localeCompare(b.term));
+  terms.forEach((entry, index) => {
+    const firstLetter = entry.term[0].toUpperCase();
+    if (firstLetter !== currentLetter) {
+      currentLetter = firstLetter;
+      const letterHeader = document.createElement('h2');
+      letterHeader.textContent = currentLetter;
+      container.appendChild(letterHeader);
+    }
+
+    const termDiv = document.createElement('div');
+    termDiv.className = 'term';
+
+    const button = document.createElement('button');
+    button.className = 'fold-button collapsed';
+    button.setAttribute('aria-expanded', 'false');
+    button.setAttribute('aria-controls', 'def' + index);
+    button.innerHTML = entry.term;
+    button.onclick = () => {
+      const defDiv = document.getElementById('def' + index);
+      const isShown = defDiv.classList.toggle('show');
+      button.className = 'fold-button' + (isShown ? '' : ' collapsed');
+      button.setAttribute('aria-expanded', isShown ? 'true' : 'false');
+    };
+
+    const defDiv = document.createElement('div');
+    defDiv.id = 'def' + index;
+    defDiv.className = 'definition';
+    defDiv.innerHTML = `<p>${entry.definition}</p>`;
+
+    termDiv.appendChild(button);
+    termDiv.appendChild(defDiv);
+    container.appendChild(termDiv);
+  });
+}
+
+function filterTerms() {
+  const input = document.getElementById('searchBox');
+  const filter = input.value.toLowerCase();
+  const terms = document.querySelectorAll('.term');
+  terms.forEach(term => {
+    const txt = term.querySelector('.fold-button').textContent.toLowerCase();
+    if (txt.includes(filter)) {
+      term.style.display = '';
+    } else {
+      term.style.display = 'none';
+    }
+  });
+}
+
+window.onload = () => {
+  createTerms();
+};
+</script>
+</body>
+</html>
