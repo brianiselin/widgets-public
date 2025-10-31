@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>EIPIO Advanced Analytical Methods Test</title>
+    <!-- Cloudflare Web Analytics -->
+    <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "22466d27b8c14ef98293d50b38526660"}'></script>
+    <style>
+        /* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            padding-top: 48px;
+            padding-bottom: 80px;
+            position: relative;
+            color: #333;
+        }
+        a {
+            color: #2a5298;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Iselin Group Top Branding Bar */
+        #iselin-top-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 48px;
+            background: linear-gradient(to right, rgba(30, 30, 30, 0.9), rgba(50, 50, 50, 0.7));
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            font-size: 12px;
+            font-variant: small-caps;
+            letter-spacing: 1px;
+            color: #ccc;
+            z-index: 9999;
+        }
+        #iselin-top-bar .left,
+        #iselin-top-bar .center,
+        #iselin-top-bar .right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+        #iselin-top-bar .right img {
+            height: 28px;
+            width: auto;
+            border-radius: 4px;
+            object-fit: contain;
+            filter: brightness(180%) contrast(120%);
+        }
+
+        /* Iselin Group Bottom Branding Bar */
+        #iselin-bottom-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: #1e3c72;
+            color: #a9b4c2;
+            font-size: 11px;
+            font-variant: small-caps;
+            letter-spacing: 0.8px;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 -2px 8px rgba(0,0,0,0.5);
+            z-index: 9999;
+        }
+        #iselin-bottom-bar .left {
+            font-weight: 600;
+        }
+        #iselin-bottom-bar .right {
+            max-width: 75%;
+            text-align: right;
+            line-height: 1.3;
+            font-weight: 400;
+        }
+
+        /* Container & main content */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            padding-bottom: 30px;
+            padding-top: 30px;
+        }
+        .header {
+            background: rgba(30, 60, 114, 0.95);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 25px 30px;
+            color: #fff;
+            border-radius: 12px 12px 0 0;
+        }
+        .header h1 {
+            font-size: 26px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+        .header .subtitle {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.85);
+            font-variant: small-caps;
+            letter-spacing: 1px;
+        }
+        .content {
+            padding: 0 30px 40px 30px;
+        }
+        .intro {
+            margin-bottom: 30px;
+            line-height: 1.6;
+            color: #333;
+        }
+        .question-container {
+            margin-bottom: 35px;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #2a5298;
+        }
+        .question-number {
+            font-variant: small-caps;
+            color: #2a5298;
+            font-weight: 600;
+            font-size: 13px;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+        .question-text {
+            font-size: 16px;
+            font-weight: 500;
+            color: #1a1a1a;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 14px 18px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .option:hover {
+            border-color: #2a5298;
+            background: #f0f4f8;
+        }
+        .option input[type="radio"] {
+            margin-right: 12px;
+            cursor: pointer;
+        }
+        .option label {
+            cursor: pointer;
+            flex: 1;
+            color: #333;
+            line-height: 1.4;
+        }
+        .submit-btn, .retake-btn {
+            background: #2a5298;
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: background 0.3s ease;
+            font-variant: small-caps;
+            letter-spacing: 1px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .submit-btn:hover, .retake-btn:hover {
+            background: #1e3c72;
+        }
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .results {
+            text-align: center;
+        }
+        .score-display {
+            font-size: 72px;
+            font-weight: 700;
+            color: #2a5298;
+            margin: 30px 0;
+        }
+        .score-percentage {
+            font-size: 28px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+        .feedback {
+            font-size: 20px;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin: 30px 0;
+            line-height: 1.6;
+            color: #333;
+        }
+        .answer-review {
+            text-align: left;
+            margin-top: 40px;
+        }
+        .review-item {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .review-item.correct {
+            border-left: 4px solid #28a745;
+        }
+        .review-item.incorrect {
+            border-left: 4px solid #dc3545;
+        }
+        .review-question {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #1a1a1a;
+        }
+        .review-answer {
+            margin: 8px 0;
+            font-size: 14px;
+        }
+        .your-answer {
+            color: #dc3545;
+        }
+        .correct-answer {
+            color: #28a745;
+            font-weight: 600;
+        }
+        .explanation {
+            margin-top: 12px;
+            padding: 12px;
+            background: white;
+            border-radius: 4px;
+            font-size: 14px;
+            line-height: 1.5;
+            color: #555;
+        }
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #f0f;
+            position: absolute;
+            animation: confetti-fall 3s linear infinite;
+            pointer-events: none;
+            z-index: 10000;
+        }
+        @keyframes confetti-fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        .progress-bar {
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: #2a5298;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div id="iselin-top-bar" aria-label="Iselin Group Top Branding Bar">
+        <div class="left">Iselin Group - Strategic Consulting</div>
+        <div class="center">iselingroup.com - brian.iselin(@)iselingroup.com</div>
+        <div class="right">
+            <img src="https://brianiselin.github.io/widgets-public/Iselin_Group_Logo_1024_x.jpg" alt="Iselin Group Logo" />
+        </div>
+    </div>
+
+    <div class="container" role="main" aria-label="EIPIO Advanced Analytical Methods Test container">
+        <div class="header" role="banner">
+            <h1>EIPIO Advanced Analytical Methods Test</h1>
+            <div class="subtitle">European Institute of Professional Intelligence Officers</div>
+        </div>
+
+        <div class="content">
+            <section id="quiz-section">
+                <div class="intro" tabindex="0">
+                    <p><strong>Welcome to the EIPIO Advanced Analytical Methods Test.</strong></p>
+                    <p style="margin-top: 12px;">This assessment evaluates your understanding and application of advanced analytical techniques including hypothesis testing, cognitive bias mitigation, structured analytic techniques, and both qualitative and quantitative assessment methods. The test contains 30 challenging questions designed for professional intelligence analysts.</p>
+                    <p style="margin-top: 12px;">Select the best answer for each question. Good luck!</p>
+                </div>
+
+                <div class="progress-bar" aria-label="Test progress">
+                    <div class="progress-fill" id="progress-fill" style="width: 0%" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+                </div>
+
+                <form id="quiz-form" aria-live="polite" aria-relevant="additions" aria-label="Analytical Methods Test form">
+                    <!-- Questions dynamically inserted here -->
+                </form>
+
+                <button type="button" class="submit-btn" id="submit-btn" onclick="submitQuiz(event)" disabled>Submit Test</button>
+            </section>
+
+            <section id="results-section" style="display: none;" role="region" aria-live="polite" aria-label="Test results"></section>
+        </div>
+    </div>
+
+    <div id="iselin-bottom-bar" aria-label="Iselin Group Bottom Branding Bar">
+        <div class="left">Iselin Group - Strategic Consulting</div>
+        <div class="right">
+            © Iselin Group. “EIPIO Advanced Analytical Methods Test” – brian.iselin(@)iselingroup.com. The underlying decision‑integrity model, logic, and UI are proprietary to
+            Iselin Group and may not be reproduced, adapted, or deployed in whole or in part without prior written consent; all rights reserved.
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                question: "Which structured analytic technique focuses on systematically generating and analyzing multiple hypotheses to reduce confirmation bias?",
+                options: [
+                    "Brainstorming",
+                    "Key Assumptions Check",
+                    "Analysis of Competing Hypotheses (ACH)",
+                    "SWOT Analysis"
+                ],
+                correct: 2,
+                explanation: "ACH is specifically designed to test multiple competing hypotheses against evidence objectively, reducing the risk of confirmation bias in intelligence analysis."
+            },
+            {
+                question: "What cognitive bias describes the tendency to seek, interpret, and remember information that confirms one's preconceptions?",
+                options: [
+                    "Anchoring bias",
+                    "Confirmation bias",
+                    "Availability heuristic",
+                    "Groupthink"
+                ],
+                correct: 1,
+                explanation: "Confirmation bias leads analysts to favor information supporting existing beliefs and dismiss contradictory data, which can distort judgments."
+            },
+            {
+                question: "Which quantitative method is frequently used to evaluate the likelihood of future events based on historical data?",
+                options: [
+                    "Bayesian probability",
+                    "Delphi Method",
+                    "Scenario planning",
+                    "Qualitative coding"
+                ],
+                correct: 0,
+                explanation: "Bayesian probability updates likelihood estimates as new data become available, making it valuable for probabilistic intelligence forecasts."
+            },
+            {
+                question: "What is the primary goal of the Key Assumptions Check analytic technique?",
+                options: [
+                    "To identify and evaluate the assumptions driving an analysis",
+                    "To generate alternative hypotheses",
+                    "To prioritize intelligence collection requirements",
+                    "To test the validity of sources"
+                ],
+                correct: 0,
+                explanation: "Key Assumptions Check focuses on validating the underlying assumptions, which if incorrect, could undermine the analysis' conclusions."
+            },
+            {
+                question: "In structured analytic techniques, what does the 'Red Team' approach entail?",
+                options: [
+                    "An adversarial analytical perspective challenging prevailing assumptions",
+                    "Collaborative brainstorming session with multiple analysts",
+                    "Quantitative data validation",
+                    "Risk assessment of intelligence operations"
+                ],
+                correct: 0,
+                explanation: "Red Team analysis provides an independent viewpoint to challenge biases and assumptions, helping reveal vulnerabilities and alternative interpretations."
+            },
+            {
+                question: "Which analytic error involves relying too heavily on the first piece of information encountered?",
+                options: [
+                    "Confirmation bias",
+                    "Anchoring bias",
+                    "Hindsight bias",
+                    "Overconfidence bias"
+                ],
+                correct: 1,
+                explanation: "Anchoring bias causes analysts to fixate on initial information and insufficiently adjust as additional data emerge."
+            },
+            {
+                question: "What technique uses the identification of strengths, weaknesses, opportunities, and threats?",
+                options: [
+                    "SWOT Analysis",
+                    "Delphi Method",
+                    "Scenario Forecasting",
+                    "Monte Carlo Simulation"
+                ],
+                correct: 0,
+                explanation: "SWOT Analysis assesses both internal and external factors impacting decisions or intelligence questions."
+            },
+            {
+                question: "The Delphi Method is best described as:",
+                options: [
+                    "A consensus-building process among experts through iterative questionnaires",
+                    "A quantitative simulation technique for risk modeling",
+                    "A form of structured brainstorming",
+                    "A cross impact analysis method"
+                ],
+                correct: 0,
+                explanation: "The Delphi Method anonymously gathers expert judgments iteratively to produce more reliable forecasts."
+            },
+            {
+                question: "What is ‘cognitive priming’ in the context of intelligence analysis?",
+                options: [
+                    "The use of leading questions to influence interviewee answers",
+                    "Exposure to information that shapes subsequent perception and analysis",
+                    "A technique to enhance memory recall in analysts",
+                    "A method for data normalization"
+                ],
+                correct: 1,
+                explanation: "Cognitive priming influences how new information is interpreted, which can cause bias if not recognized and mitigated."
+            },
+            {
+                question: "What does the 'scenario analysis' technique primarily provide?",
+                options: [
+                    "A detailed historical account of events",
+                    "Possible future outcomes based on varying assumptions",
+                    "Statistical probabilities of specific outcomes",
+                    "Verification of source reliability"
+                ],
+                correct: 1,
+                explanation: "Scenario analysis helps analysts consider alternative futures and prepare for uncertainty by exploring different plausible developments."
+            },
+            {
+                question: "Which method can help analysts mitigate 'groupthink' in collaborative environments?",
+                options: [
+                    "Encouraging devil’s advocacy",
+                    "Restricting team sizes",
+                    "Prioritizing senior opinions",
+                    "Using only quantitative methods"
+                ],
+                correct: 0,
+                explanation: "Devil’s advocacy assigns roles to argue against consensus ideas, preventing premature or biased agreement."
+            },
+            {
+                question: "What is 'base rate neglect' in analytic reasoning?",
+                options: [
+                    "Ignoring prior probabilities in favor of specific case information",
+                    "Over-reliance on past intelligence failures",
+                    "Disregarding numerical data due to qualitative factors",
+                    "Misclassification of intelligence data"
+                ],
+                correct: 0,
+                explanation: "Analysts who neglect base rates give disproportionate weight to anecdotal evidence, undermining probabilistic accuracy."
+            },
+            {
+                question: "Which technique visualizes and analyzes relationships among entities and events?",
+                options: [
+                    "Link Analysis",
+                    "Red Teaming",
+                    "Bayesian Updating",
+                    "Monte Carlo Simulation"
+                ],
+                correct: 0,
+                explanation: "Link analysis maps connections to reveal hidden networks, influence, and patterns in intelligence data."
+            },
+            {
+                question: "What is the primary use of Monte Carlo Simulation in intelligence analysis?",
+                options: [
+                    "Evaluating uncertainty and variability through repeated random sampling",
+                    "Creating alternative competitor hypotheses",
+                    "Forecasting consensus expert opinion",
+                    "Conducting qualitative source evaluations"
+                ],
+                correct: 0,
+                explanation: "Monte Carlo Simulation helps model the impact of uncertainty by running numerous scenarios with varying inputs probabilistically."
+            },
+            {
+                question: "To reduce bias, what practice should analysts perform regularly?",
+                options: [
+                    "Peer review and structured analytic techniques",
+                    "Avoiding cross-disciplinary inputs",
+                    "Accepting initial hypotheses",
+                    "Excluding dissenting opinions"
+                ],
+                correct: 0,
+                explanation: "Peer review and structured techniques help reveal overlooked assumptions and errors."
+            },
+            {
+                question: "What analytic technique forces consideration of how current intelligence might be wrong?",
+                options: [
+                    "What If Analysis",
+                    "Key Assumptions Check",
+                    "Inverse Analysis",
+                    "Gap Analysis"
+                ],
+                correct: 2,
+                explanation: "Inverse analysis interrogates the current line of reasoning by exploring what evidence would contradict it."
+            },
+            {
+                question: "Which of the following is NOT a benefit of structured analytic techniques?",
+                options: [
+                    "Reducing cognitive biases",
+                    "Facilitating collaboration",
+                    "Eliminating uncertainty",
+                    "Improving analytic rigor"
+                ],
+                correct: 2,
+                explanation: "While structured techniques improve analysis quality, no method can completely eliminate uncertainty."
+            },
+            {
+                question: "What describes 'signal-to-noise' ratio in intelligence analysis?",
+                options: [
+                    "Ratio of credible information to irrelevant or misleading data",
+                    "Balance between HUMINT and SIGINT inputs",
+                    "Proportion of classified to open source intelligence",
+                    "Time spent on analysis versus collection"
+                ],
+                correct: 0,
+                explanation: "A high signal-to-noise ratio means analysts can more easily identify valuable intelligence amid background clutter."
+            },
+            {
+                question: "What is a 'black swan' event in analytical forecasting?",
+                options: [
+                    "A highly probable outcome",
+                    "An unforeseeable event with significant impact",
+                    "A routine intelligence failure",
+                    "A misinformation campaign"
+                ],
+                correct: 1,
+                explanation: "Black swan events are rare, unexpected occurrences that have major consequences."
+            },
+            {
+                question: "Why is 'anchoring bias' often dangerous in collaborative analysis?",
+                options: [
+                    "It encourages overconfidence in new hypotheses",
+                    "Teams fixate on early ideas limiting creative alternatives",
+                    "It causes analysts to disregard data",
+                    "It increases the speed of decision-making"
+                ],
+                correct: 1,
+                explanation: "Anchoring can limit open discussion by making early viewpoints disproportionately influential."
+            },
+            {
+                question: "What best practice improves accuracy in probability estimates in intelligence analysis?",
+                options: [
+                    "Relying on expert intuition only",
+                    "Using calibrated probabilistic judgments with feedback",
+                    "Ignoring statistical models",
+                    "Avoiding consensus"
+                ],
+                correct: 1,
+                explanation: "Calibration with feedback trains analysts to better align subjective probability estimates with outcomes."
+            },
+            {
+                question: "Which method helps identify intelligence gaps impacting analysis?",
+                options: [
+                    "Gap Analysis",
+                    "Red Teaming",
+                    "SWOT Analysis",
+                    "Delphi Method"
+                ],
+                correct: 0,
+                explanation: "Gap analysis systematically identifies missing or incomplete data that degrade analytic conclusions."
+            },
+            {
+                question: "What is meant by 'competing hypotheses' in intelligence analytic methods?",
+                options: [
+                    "Conflicting source reports",
+                    "Alternative plausible explanations of evidence",
+                    "Divergent collection requirements",
+                    "Opposing government policies"
+                ],
+                correct: 1,
+                explanation: "Competing hypotheses represent different explanations to be tested against available evidence for validity."
+            },
+            {
+                question: "Which concept warns analysts to be wary of explanations that fit data too perfectly?",
+                options: [
+                    "Occam’s Razor",
+                    "Overfitting",
+                    "Cognitive Ease",
+                    "False Causality"
+                ],
+                correct: 1,
+                explanation: "Overfitting involves models so tightly tailored to current data they may not reliably predict new cases."
+            },
+            {
+                question: "What does 'Bayesian updating' accomplish in analytic reasoning?",
+                options: [
+                    "Ignoring new evidence to avoid confusion",
+                    "Adjusting probabilities in light of new information",
+                    "Deciding final conclusions early",
+                    "Group consensus building"
+                ],
+                correct: 1,
+                explanation: "Bayesian updating revises prior probability estimates systematically as new evidence is incorporated."
+            },
+            {
+                question: "What is 'anchoring heuristic' and how can it be mitigated?",
+                options: [
+                    "Relying on first information; mitigated by considering diverse viewpoints",
+                    "Overconfidence in numeric data; mitigated by ignoring statistics",
+                    "Selection bias in data sources; mitigated by restricting analysis",
+                    "Group bias towards leader; mitigated by removing leadership"
+                ],
+                correct: 0,
+                explanation: "Anchoring heuristic is the undue weight given to initial info; mitigation includes deliberate viewpoint expansion and re-evaluation."
+            },
+            {
+                question: "How does 'indicator analysis' contribute to structured assessment?",
+                options: [
+                    "Collects quantitative data only",
+                    "Focuses on observable evidence to support hypotheses",
+                    "Establishes covert sources",
+                    "Generates random scenarios"
+                ],
+                correct: 1,
+                explanation: "Indicator analysis correlates discrete pieces of observable evidence to strengthen or weaken analytic conclusions."
+            },
+            {
+                question: "What is 'reverse engineering' in intelligence analysis?",
+                options: [
+                    "Analyzing competitor’s strategies to replicate",
+                    "Deconstructing adversary capabilities or plans from observed evidence",
+                    "Developing new hypotheses through brainstorming",
+                    "Predicting economic outcomes"
+                ],
+                correct: 1,
+                explanation: "Reverse engineering is piecing together adversary intentions and methods by analyzing indirect data."
+            },
+            {
+                question: "What role does 'scenario branching' play in analytic forecasting?",
+                options: [
+                    "Limits forecasts to a single outcome scenario",
+                    "Maps alternative future developments for contingency planning",
+                    "Focuses exclusively on historical events",
+                    "Filters out low probability events"
+                ],
+                correct: 1,
+                explanation: "Scenario branching helps analysts prepare for multiple plausible futures by differentiating based on key variables."
+            },
+            {
+                question: "Why is 'structured brainstorming' superior to traditional brainstorming?",
+                options: [
+                    "It limits contributions to a single expert",
+                    "It organizes idea generation systematically to reduce group biases",
+                    "It avoids input from junior analysts",
+                    "It uses only quantitative data"
+                ],
+                correct: 1,
+                explanation: "Structured brainstorming uses defined rules and facilitation to ensure diverse ideas surface and biases are reduced."
+            }
+        ];
+
+        function generateQuiz() {
+            const form = document.getElementById('quiz-form');
+            quizData.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question-container';
+                questionDiv.innerHTML = `
+                    <div class="question-number">Question ${index + 1} of 30</div>
+                    <div class="question-text">${q.question}</div>
+                    <div class="options">
+                        ${q.options.map((option, optIndex) => `
+                            <div class="option">
+                                <input type="radio" id="q${index}_opt${optIndex}" name="question${index}" value="${optIndex}" onchange="updateProgress()" required>
+                                <label for="q${index}_opt${optIndex}">${option}</label>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                form.appendChild(questionDiv);
+            });
+        }
+
+        function updateProgress() {
+            const totalQuestions = quizData.length;
+            let answered = 0;
+            for (let i = 0; i < totalQuestions; i++) {
+                if (document.querySelector(`input[name="question${i}"]:checked`)) {
+                    answered++;
+                }
+            }
+            const percentage = (answered / totalQuestions) * 100;
+            document.getElementById('progress-fill').style.width = percentage + '%';
+            document.getElementById('progress-fill').setAttribute('aria-valuenow', Math.round(percentage));
+            document.getElementById('submit-btn').disabled = answered < totalQuestions;
+        }
+
+        function submitQuiz(event) {
+            event.preventDefault();
+
+            let score = 0;
+            const userAnswers = [];
+
+            quizData.forEach((q, index) => {
+                const selected = document.querySelector(`input[name="question${index}"]:checked`);
+                const userAnswer = selected ? parseInt(selected.value) : -1;
+                userAnswers.push(userAnswer);
+
+                if (userAnswer === q.correct) {
+                    score++;
+                }
+            });
+
+            displayResults(score, userAnswers);
+        }
+
+        function displayResults(score, userAnswers) {
+            const percentage = Math.round((score / quizData.length) * 100);
+            const quizSection = document.getElementById('quiz-section');
+            const resultsSection = document.getElementById('results-section');
+
+            quizSection.style.display = 'none';
+            resultsSection.style.display = 'block';
+
+            let feedback = '';
+            let quartile = 0;
+
+            if (percentage >= 75) {
+                feedback = "🎖️ <strong>Expert Analyst – Outstanding Mastery!</strong><br>Your deep command of advanced analytical methods showcases exemplary professional expertise.";
+                quartile = 4;
+                createConfetti();
+            } else if (percentage >= 50) {
+                feedback = "✅ <strong>Strong Analytic Grasp – Well Done!</strong><br>You demonstrate solid competence in analytical techniques. Continued practice will further refine your skills.";
+                quartile = 3;
+            } else if (percentage >= 25) {
+                feedback = "📚 <strong>Intermediate Understanding – Developing Rigor</strong><br>You show good foundational knowledge but should deepen your understanding of analytic methods.";
+                quartile = 2;
+            } else {
+                feedback = "🌱 <strong>Analytical Novice – Building Foundations</strong><br>This assessment highlights areas for growth in analytic rigor. Focused study and experience will enhance your expertise.";
+                quartile = 1;
+            }
+
+            let resultsHTML = `
+                <div class="results" tabindex="0">
+                    <h2 style="color: #2a5298; margin-bottom: 20px;">Your Results</h2>
+                    <div class="score-display">${score}/30</div>
+                    <div class="score-percentage">${percentage}%</div>
+                    <div class="feedback">${feedback}</div>
+                    <button class="retake-btn" onclick="retakeQuiz()" aria-label="Retake test">Retake Test</button>
+                </div>
+
+                <div class="answer-review">
+                    <h3 style="margin-bottom: 20px; color: #2a5298; font-variant: small-caps; letter-spacing: 1px;">Answer Review</h3>
+            `;
+
+            quizData.forEach((q, index) => {
+                const userAnswer = userAnswers[index];
+                const isCorrect = userAnswer === q.correct;
+
+                resultsHTML += `
+                    <div class="review-item ${isCorrect ? 'correct' : 'incorrect'}">
+                        <div class="review-question"><strong>Question ${index + 1}:</strong> ${q.question}</div>
+                        ${!isCorrect ? `<div class="review-answer your-answer">Your answer: ${userAnswer >= 0 ? q.options[userAnswer] : 'Not answered'}</div>` : ''}
+                        <div class="review-answer correct-answer">Correct answer: ${q.options[q.correct]}</div>
+                        <div class="explanation"><strong>Explanation:</strong> ${q.explanation}</div>
+                    </div>
+                `;
+            });
+
+            resultsHTML += `</div>`;
+
+            resultsSection.innerHTML = resultsHTML;
+
+            // Scroll to results for accessibility
+            resultsSection.focus();
+        }
+
+        function createConfetti() {
+            const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#f9ca24', '#6c5ce7', '#a29bfe'];
+            const confettiCount = 150;
+
+            for (let i = 0; i < confettiCount; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                    confetti.style.animationDelay = Math.random() + 's';
+                    document.body.appendChild(confetti);
+
+                    setTimeout(() => confetti.remove(), 5000);
+                }, i * 20);
+            }
+        }
+
+        function retakeQuiz() {
+            document.getElementById('quiz-section').style.display = 'block';
+            document.getElementById('results-section').style.display = 'none';
+            document.getElementById('quiz-form').reset();
+            updateProgress();
+            window.scrollTo(0, 0);
+        }
+
+        // Initialize test on page load
+        generateQuiz();
+        document.getElementById('submit-btn').disabled = true;
+    </script>
+</body>
+</html>
