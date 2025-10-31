@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Europe-Taiwan Relations Quiz - Iselin Group</title>
+
+<!-- Cloudflare Web Analytics -->
+<script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "22466d27b8c14ef98293d50b38526660"}'></script>
+
+<style>
+  body, html {
+    margin: 0; padding: 0;
+    font-family: Arial, sans-serif;
+    background: #f9f9f9;
+    color: #222;
+  }
+  a {color: #0a6ebd;}
+  
+  .top-bar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 40px;
+    background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0));
+    border-bottom: 1px solid #444;
+    color: #eee;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    font-size: 14px;
+    z-index: 10000;
+    user-select: none;
+  }
+  .top-bar .left,
+  .top-bar .center,
+  .top-bar .right {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .top-bar .center {
+    text-align: center;
+    font-variant: small-caps;
+    font-size: 13px;
+  }
+  .top-bar .right {
+    text-align: right;
+  }
+  .top-bar img {
+    height: 24px;
+    vertical-align: middle;
+    border-radius: 3px;
+    margin-left: 6px;
+  }
+
+  .bottom-bar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: #222;
+    color: #888;
+    font-variant: small-caps;
+    font-size: 12px;
+    padding: 6px 12px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    line-height: 1.3;
+    z-index: 10000;
+    user-select: none;
+  }
+  .bottom-bar .left,
+  .bottom-bar .right {
+    flex: 1;
+  }
+  .bottom-bar .right {
+    text-align: right;
+    font-size: 10px;
+    color: #666;
+  }
+
+  main {
+    max-width: 900px;
+    margin: 70px auto 70px auto;
+    background: white;
+    padding: 20px 30px 40px 30px;
+    border-radius: 6px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  }
+
+  h1 {
+    font-weight: normal;
+    color: #222;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .question-number {
+    font-variant: small-caps;
+    color: #555;
+    margin-bottom: 10px;
+  }
+  .question-text {
+    font-size: 1.15em;
+    font-weight: 600;
+    margin-bottom: 15px;
+  }
+  fieldset {
+    border: none;
+    margin: 0 0 30px 0;
+    padding: 0;
+  }
+  label {
+    display: block;
+    margin-bottom: 10px;
+    cursor: pointer;
+    line-height: 1.3;
+    font-size: 1em;
+    user-select: none;
+  }
+
+  input[type="radio"] {
+    margin-right: 10px;
+    vertical-align: middle;
+  }
+
+  button {
+    display: block;
+    margin: 20px auto 0 auto;
+    font-size: 16px;
+    background-color: #0a6ebd;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 12px 24px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  button:disabled {
+    background-color: #999;
+    cursor: not-allowed;
+  }
+  button:hover:not(:disabled) {
+    background-color: #084f8c;
+  }
+
+  .explanation {
+    font-style: italic;
+    font-size: 0.9em;
+    margin-top: 18px;
+    margin-bottom: 20px;
+    color: #444;
+  }
+
+  .result {
+    text-align: center;
+    padding: 25px;
+  }
+  .result-score {
+    font-size: 3em;
+    font-weight: 700;
+    color: #0a6ebd;
+  }
+  .result-msg {
+    margin-top: 10px;
+    font-size: 1.2em;
+  }
+</style>
+</head>
+<body>
+
+<div class="top-bar" role="banner" aria-label="Iselin Group branding">
+  <div class="left">Iselin Group - Strategic Consulting</div>
+  <div class="center">iselingroup.com - brian.iselin(@)iselingroup.com</div>
+  <div class="right">
+    <img src="https://brianiselin.github.io/widgets-public/Iselin_Group_Logo_1024_x.jpg" alt="Iselin Group Logo" />
+  </div>
+</div>
+
+<main role="main" aria-labelledby="quizTitle" aria-live="polite">
+  <h1 id="quizTitle">Europe-Taiwan Relations Quiz</h1>
+  <form id="quizForm" aria-describedby="instructions">
+    <p id="instructions" style="font-style: italic; font-size: 0.9em; color:#555; margin-bottom: 25px;">
+      30 questions. Select the best answer for each and submit your quiz to see your score as a percentage.
+    </p>
+
+    <div id="question-container">
+    </div>
+
+    <button type="submit" id="submitBtn" aria-label="Submit Quiz">Submit Quiz</button>
+  </form>
+  <section id="result" role="region" aria-live="polite" style="display:none;"></section>
+</main>
+
+<footer class="bottom-bar" role="contentinfo">
+  <div class="left">
+    Iselin Group - Strategic Consulting<br />
+    © Iselin Group. “Europe-Taiwan Relations Quiz”— brian.iselin(@)iselingroup.com.
+  </div>
+  <div class="right" style="font-size: 10px; color: #666;">
+    The underlying decision‑integrity model, logic, and UI are proprietary to Iselin Group and may not be reproduced, adapted, or deployed in whole or in part without prior written consent; all rights reserved.
+  </div>
+</footer>
+
+<script>
+  const questions = [
+    {question: "Which European country hosts the European Semiconductor Manufacturing Company (ESMC) joint venture with Taiwan?", answers: ["France", "Germany", "Italy", "Spain"], correctIndex: 1, explanation: "Germany leads the joint venture with TSMC through the ESMC in Dresden."},
+    {question: "Approximately how many Taiwanese students studied across Europe in 2018?", answers: ["1,200", "2,500", "3,800", "5,000"], correctIndex: 2, explanation: "Data shows about 3,814 Taiwanese students studied in Europe in 2018."},
+    {question: "In which sector are Europe and Taiwan significantly collaborating through hydrogen technology and renewable energy?", answers: ["Agriculture", "Green Technology", "Automotive", "Textiles"], correctIndex: 1, explanation: "Europe and Taiwan collaborate actively on green technology like green hydrogen."},
+    {question: "What is the combined annual quota range for Taiwanese working holiday participants in Europe?", answers: ["300–600", "800–1,500", "2,000–3,000", "3,000–4,000"], correctIndex: 1, explanation: "The total estimated quota across 12 European countries is between 800 and 1,500."},
+    {question: "When did several European countries start strengthening partnerships with Taiwan in technology and trade?", answers: ["Since 1990s", "Since early 2000s", "Since 2010s", "Since 2020s"], correctIndex: 2, explanation: "The 2010s saw growing cooperation in technology and trade ties."},
+    {question: "Which European economic framework is relevant for carbon market collaborations with Taiwan?", answers: ["EU ETS", "NAFTA", "ASEAN Free Trade Area", "Mercosur"], correctIndex: 0, explanation: "The EU’s Emissions Trading Scheme (ETS) is a major carbon market mechanism discussed with Taiwan."},
+    {question: "What is a key challenge for Europe-Taiwan relations in geopolitics?", answers: ["Language barriers", "One China policy and China’s pressure", "Visa requirements", "Currency exchange"], correctIndex: 1, explanation: "The One China policy and China’s political pressure remain challenges."},
+    {question: "Which organization facilitates student exchanges across Europe for Taiwanese students?", answers: ["Erasmus+", "NAFTA", "UNESCO", "APEC"], correctIndex: 0, explanation: "Erasmus+ facilitates many student exchanges between Taiwan and Europe."},
+    {question: "What kind of business collaboration is most prominent between Europe and Taiwan?", answers: ["Textile manufacturing", "Semiconductor and tech development", "Oil and Gas", "Automobile exports"], correctIndex: 1, explanation: "Semiconductor and tech development are core focuses."},
+    {question: "What is the estimated annual trade volume in goods between Taiwan and Europe as of recent years?", answers: ["$10 billion", "$30 billion", "$50 billion", "$77 billion"], correctIndex: 3, explanation: "Bilateral trade volume is estimated around $77 billion."},
+    {question: "Which European city is home to TSMC’s semiconductor manufacturing joint venture?", answers: ["Dresden", "Berlin", "Paris", "Amsterdam"], correctIndex: 0, explanation: "TSMC’s joint venture is located in Dresden, Germany."},
+    {question: "Which renewable energy technology is a focus for Europe and Taiwan cooperation?", answers: ["Solar Panels", "Green Hydrogen", "Wind Turbines", "Nuclear Energy"], correctIndex: 1, explanation: "Green hydrogen is a prominent cooperative technology."},
+    {question: "How does Europe typically address the security concerns around Taiwan?", answers: ["Military deployment", "Promotion of dialogue and peaceful solutions", "No involvement", "Economic sanctions"], correctIndex: 1, explanation: "Europe promotes peaceful dialogue and security."},
+    {question: "Which program provides working holiday opportunities between Taiwan and European countries?", answers: ["Working Holiday Visa program", "Schengen Travel Pass", "EuroSkills", "World Youth Exchange"], correctIndex: 0, explanation: "The Working Holiday Visa program enables youth exchanges."},
+    {question: "Taiwan’s semiconductor cluster is critical for which European industry's supply chain?", answers: ["Textiles", "Electronics and Automotives", "Agriculture", "Pharmaceuticals"], correctIndex: 1, explanation: "Electronics and automotive industries rely heavily on Taiwan’s semiconductors."},
+    {question: "Which European-wide policy influences Europe's relations with Taiwan?", answers: ["Common Agricultural Policy", "One China Policy", "EU Digital Act", "European Green Deal"], correctIndex: 1, explanation: "One China Policy shapes EU member states’ Taiwan diplomacy."},
+    {question: "How many Taiwanese students participated in Erasmus+ programs annually circa 2019?", answers: ["About 200", "About 784", "Over 2,000", "Over 5,000"], correctIndex: 1, explanation: "About 784 Taiwanese participants annually."},
+    {question: "Which sector has NOT been a major focus of Europe-Taiwan cooperation?", answers: ["Semiconductor", "Green Technology", "Textile Manufacturing", "Digital Innovation"], correctIndex: 2, explanation: "Textile manufacturing is less prominent."},
+    {question: "What is a recent forum discussed for EU-Taiwan semiconductor collaboration?", answers: ["Semiconductor Supply Chain Forum 2023", "Digital Economy Summit 2021", "Climate Change Forum 2022", "Trade and Tourism Forum 2024"], correctIndex: 0, explanation: "The Semiconductor Supply Chain Forum in 2023 was significant."},
+    {question: "Which country has established a semiconductor manufacturing joint venture with Taiwan?", answers: ["Luxembourg", "Germany", "Belgium", "Finland"], correctIndex: 1, explanation: "Germany hosts the joint venture ESMC with TSMC."},
+    {question: "Taiwan's renewable energy investments in Europe mainly target which technology?", answers: ["Nuclear power", "Green Hydrogen", "Coal plants", "Hydroelectric"], correctIndex: 1, explanation: "Taiwan invests significantly in Europe’s green hydrogen projects."},
+    {question: "What kind of educational exchanges exist between Taiwan and Europe?", answers: ["Student exchanges and research partnerships", "Only vocational training", "Military academies", "No formal exchanges"], correctIndex: 0, explanation: "A variety of student and research collaborations exist."},
+    {question: "What is one key objective of Europe-Taiwan economic cooperation?", answers: ["Trade liberalization and technology sharing", "Restricting exports", "Currency union", "Limiting tourism"], correctIndex: 0, explanation: "Focus is on trade liberalization and tech cooperation."},
+    {question: "How does Europe generally approach Taiwan’s political status in international forums?", answers: ["Remain neutral and support peaceful dialogue", "Recognize Taiwan as a sovereign state", "Boycott Taiwan", "Support military interventions"], correctIndex: 0, explanation: "Europe supports peaceful dialogue consistent with One China Policy."},
+    {question: "Which sector is emerging as a joint focus for future Europe-Taiwan collaborations?", answers: ["AI and Digital Transformation", "Textile industry", "Automobile exports", "Coal mining"], correctIndex: 0, explanation: "AI and digital innovation is a growing focus area."},
+    {question: "What role does Taiwan play in European supply chains?", answers: ["Key supplier of critical semiconductor components", "Minor agricultural exporter", "Primarily a tourist destination", "No role"], correctIndex: 0, explanation: "Taiwan provides essential semiconductor parts for Europe."},
+    {question: "How many annual working holiday participants is estimated collectively across European countries with Taiwan?", answers: ["Around 100", "500-700", "800-1,500", "2,500+"], correctIndex: 2, explanation: "Estimated quotas are between 800 and 1,500."},
+    {question: "Which European initiative is most mentioned in relation to Taiwan’s investment climate?", answers: ["EU Green Deal", "European Digital Strategy", "EU Emissions Trading Scheme", "Schengen Agreement"], correctIndex: 2, explanation: "ETS influences carbon market collaborations with Taiwan."},
+    {question: "Where do large numbers of Taiwanese students in Europe mostly attend?", answers: ["Goethe University Frankfurt and similar institutions", "Oxford University solely", "Only technical colleges", "No exchanges"], correctIndex: 0, explanation: "Several leading universities like Goethe University facilitate exchanges."},
+    {question: "What best describes Europe’s approach to China-Taiwan tensions?", answers: ["Support for peaceful conflict resolution", "Economic sanctions on Taiwan", "Military alliance with Taiwan", "Neutral in all discussions"], correctIndex: 0, explanation: "Europe advocates peaceful resolution and dialogue."}
+  ];
+
+  const questionContainer = document.getElementById('question-container');
+  const quizForm = document.getElementById('quizForm');
+  const submitBtn = document.getElementById('submitBtn');
+  const resultSection = document.getElementById('result');
+
+  function createQuestions() {
+    questions.forEach((q, i) => {
+      const fieldset = document.createElement('fieldset');
+      fieldset.setAttribute('aria-labelledby', `q${i+1}label`);
+      fieldset.tabIndex = 0;
+
+      const legend = document.createElement('legend');
+      legend.id = `q${i+1}label`;
+      legend.className = "question-text";
+      legend.textContent = `Q${i+1}. ${q.question}`;
+      fieldset.appendChild(legend);
+
+      q.answers.forEach((answer, j) => {
+        const label = document.createElement('label');
+        label.htmlFor = `q${i}_a${j}`;
+        label.tabIndex = -1;
+
+        const input = document.createElement('input');
+        input.type = "radio";
+        input.name = `q${i}`;
+        input.id = `q${i}_a${j}`;
+        input.value = j;
+        // input.required = true;
+
+        label.appendChild(input);
+        label.appendChild(document.createTextNode(answer));
+
+        fieldset.appendChild(label);
+      });
+
+      const explanation = document.createElement('div');
+      explanation.className = 'explanation';
+      explanation.id = `explanation${i}`;
+      explanation.style.display = "none";
+      fieldset.appendChild(explanation);
+
+      questionContainer.appendChild(fieldset);
+    });
+  }
+
+  quizForm.addEventListener('change', (e) => {
+    if (e.target.name) {
+      const questionIndex = parseInt(e.target.name.slice(1));
+      const explanationDiv = document.getElementById(`explanation${questionIndex}`);
+      const answerIndex = parseInt(e.target.value);
+      explanationDiv.textContent = questions[questionIndex].explanation;
+      explanationDiv.style.display = "block";
+    }
+  });
+
+ quizForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+  let score = 0;
+  for(let i=0; i<questions.length; i++) {
+    const selected = quizForm.elements[`q${i}`] ? quizForm.elements[`q${i}`].value : undefined;
+    if(parseInt(selected) === questions[i].correctIndex) {
+      score++;
+    }
+  }
+  const percent = Math.round((score / questions.length) * 100);
+
+  // Emoji and celebration logic
+  let emoji = "😐";
+  let msg = "Keep learning about Europe-Taiwan!";
+  if (percent >= 75) {
+    emoji = "🎉🥳🎊";
+    msg = "Excellent! You are a Europe-Taiwan relations pro!";
+    // Optional: Snow/confetti celebration for top quartile
+    confettiParty();
+  } else if (percent >= 50) {
+    emoji = "👏🙂";
+    msg = "Good job! You know quite a bit.";
+  } else if (percent >= 25) {
+    emoji = "👍";
+    msg = "Nice try—keep exploring to learn more!";
+  } else {
+    emoji = "🤔";
+    msg = "Give it another shot and level up your Europe-Taiwan knowledge!";
+  }
+
+  quizForm.style.display = "none";
+  resultSection.style.display = "block";
+  resultSection.innerHTML = `
+    <div class="result">
+      <div style="font-size:3em;">${emoji}</div>
+      <div class="result-score" aria-live="assertive">${percent}%</div>
+      <div class="result-msg">
+        Your score: ${score} out of ${questions.length} correct.<br/>
+        ${msg}<br>
+        Thank you for learning about the growing and vital relations between Europe and Taiwan. Explore more on our site!
+      </div>
+    </div>
+  `;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+// (Optional) Confetti Party effect for top quartile
+function confettiParty() {
+  // Light, simple confetti effect
+  let confettiDiv = document.createElement('div');
+  confettiDiv.style.position = 'fixed';
+  confettiDiv.style.top = '0';
+  confettiDiv.style.left = '0';
+  confettiDiv.style.width = '100vw';
+  confettiDiv.style.height = '100vh';
+  confettiDiv.style.pointerEvents = 'none';
+  confettiDiv.style.zIndex = '99999';
+  confettiDiv.id = "confetti-party";
+  document.body.appendChild(confettiDiv);
+
+  let colors = ["#FFC700", "#FF0000", "#2E3192", "#41BBC7", "#8DC63F", "#E94E77"];
+  for (let i=0; i<150; i++) {
+    let conf = document.createElement('div');
+    conf.style.position = 'absolute';
+    conf.style.width = "8px";
+    conf.style.height = "12px";
+    conf.style.background = colors[Math.floor(Math.random()*colors.length)];
+    conf.style.left = (Math.random() * 100) + "vw";
+    conf.style.top = (-Math.random()*10) + "vh";
+    conf.style.opacity = Math.random() + 0.2;
+    conf.style.borderRadius = "2px";
+    conf.style.transform = `rotate(${Math.random()*360}deg)`;
+    conf.style.transition = "top 2s linear";
+    confettiDiv.appendChild(conf);
+    setTimeout(() => {
+      conf.style.top = (90 + Math.random()*10) + "vh";
+    }, 10 + i*3);
+  }
+  setTimeout(() => confettiDiv.remove(), 2100);
+}
+
+  createQuestions();
+</script>
+
+</body>
+</html>
