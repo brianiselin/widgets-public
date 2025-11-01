@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Advanced Health System Financing Comparator</title>
+<style>
+  /* Reset and base */
+  body, html {
+    margin: 0; padding: 0;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background: #f8f9fa;
+    color: #222;
+    box-sizing: border-box;
+    padding-top: 50px; /* top bar space */
+    padding-bottom: 110px; /* bottom bar space */
+  }
+  /* Branding Bars */
+  #top-bar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 50px;
+    background: linear-gradient(rgba(30,30,30,0.85), rgba(30,30,30,0.65));
+    border-bottom: 1px solid #444;
+    color: #ddd;
+    display: flex;
+    align-items: center;
+    font-variant: small-caps;
+    font-weight: 600;
+    padding: 0 1rem;
+    z-index: 10000;
+  }
+  #top-bar .left, #top-bar .centre, #top-bar .right {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  #top-bar .centre {
+    justify-content: center;
+    font-variant: normal;
+    font-weight: 400;
+    font-size: 0.85rem;
+    color: #aaa;
+  }
+  #top-bar .right {
+    justify-content: flex-end;
+  }
+  #top-bar img {
+    height: 32px;
+    width: auto;
+    border-radius: 3px;
+  }
+
+  #bottom-bar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: #1e1e1e;
+    color: #999;
+    font-variant: small-caps;
+    font-size: 0.85rem;
+    padding: 0.6rem 1rem;
+    display: flex;
+    align-items: flex-start;
+    border-top: 1px solid #333;
+    line-height: 1.2em;
+    z-index: 10000;
+    flex-wrap: wrap;
+  }
+  #bottom-bar .left {
+    flex: 1 1 200px;
+    font-weight: 600;
+  }
+  #bottom-bar .right {
+    flex: 3 1 600px;
+    font-variant: small-caps;
+    font-size: 0.7rem;
+    color: #666;
+    padding-left: 2rem;
+  }
+  #bottom-bar .right .ip-notice {
+    margin-top: 0.2rem;
+    font-style: normal;
+    opacity: 0.7;
+  }
+
+  /* Main container */
+  #widget-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 1rem 1.5rem 2rem 1.5rem;
+  }
+
+  h1 {
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+  p.description {
+    text-align: center;
+    font-size: 1rem;
+    color: #444;
+    margin-bottom: 2rem;
+  }
+
+  /* Controls Panel */
+  #controls {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(260px,1fr));
+    gap: 1.4rem 2.2rem;
+    margin-bottom: 2rem;
+  }
+  .control-group {
+    background: #fff;
+    padding: 1rem;
+    border-radius: 6px;
+    box-shadow: 0 2px 6px rgb(0 0 0 / 0.07);
+  }
+  .control-group h3 {
+    margin-top: 0;
+    margin-bottom: 0.8rem;
+    font-weight: 700;
+    font-size: 1.1rem;
+  }
+  label {
+    display: block;
+    margin-top: 0.6rem;
+    font-weight: 600;
+    font-variant: small-caps;
+    color: #222;
+  }
+  input[type=number], input[type=range], select {
+    width: 100%;
+    margin-top: 0.25rem;
+    padding: 0.3rem 0.4rem;
+    border-radius: 3px;
+    border: 1px solid #aaa;
+    font-size: 1rem;
+  }
+  input[type=range] {
+    width: 100%;
+  }
+  select[multiple] {
+    height: 6rem;
+  }
+  .description-small {
+    font-size: 0.85rem;
+    color: #666;
+    margin-top: 0.25rem;
+    font-style: italic;
+  }
+
+  /* Chart container */
+  #charts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(340px,1fr));
+    gap: 2.2rem;
+  }
+  .chart-block {
+    background: #fff;
+    border-radius: 6px;
+    box-shadow: 0 2px 7px rgb(0 0 0 / 0.1);
+    padding: 1rem 1rem 1.5rem 1rem;
+  }
+  .chart-block h2 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin: 0 0 1rem 0;
+    text-align: center;
+  }
+
+  /* Tooltip style */
+  .tooltip {
+    position: absolute;
+    background: rgba(30,30,30,0.9);
+    color: #eee;
+    padding: 6px 10px;
+    border-radius: 5px;
+    font-size: 0.85rem;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+    max-width: 280px;
+    z-index: 100000;
+    user-select: none;
+  }
+
+  /* Responsive and misc */
+  @media (max-width:600px){
+    body {
+      padding-left: 0.5rem; padding-right: 0.5rem;
+    }
+    #bottom-bar {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.4rem;
+      font-size: 0.75rem;
+    }
+  }
+</style>
+
+<!-- Cloudflare Web Analytics -->
+<script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "22466d27b8c14ef98293d50b38526660"}'></script>
+<!-- End Cloudflare Web Analytics -->
+
+</head>
+<body>
+
+<!-- Top Branding Bar -->
+<div id="top-bar" role="banner" aria-label="Top Branding Bar">
+  <div class="left">Iselin Group - Strategic Consulting</div>
+  <div class="centre" aria-live="polite">iselingroup.com - brian.iselin(@)iselingroup.com</div>
+  <div class="right" aria-label="Brand Logo">
+    <img src="https://brianiselin.github.io/widgets-public/Iselin_Group_Logo_1024_x.jpg" alt="Iselin Group Logo" />
+  </div>
+</div>
+
+<!-- Main Widget Container -->
+<div id="widget-container" role="main" aria-labelledby="main-title">
+  <h1 id="main-title">Advanced Health System Financing Comparator</h1>
+  <p class="description">
+    A professional, educational tool for development aid stakeholders to explore and compare complex health financing models, cost drivers, coverage, and health outcomes by adjusting multidimensional parameters.
+  </p>
+
+  <!-- Controls Panel -->
+  <div id="controls" role="region" aria-label="Financing model parameters and scenario inputs">
+
+    <div class="control-group" aria-live="polite" aria-atomic="true">
+      <h3>Health Financing Models</h3>
+      <label for="model-select">Select Models to Compare:</label>
+      <select id="model-select" multiple aria-describedby="model-desc" size="6" aria-label="Select one or more health financing models">
+        <option value="beveridge">Beveridge Model</option>
+        <option value="bismarck">Bismarck Model</option>
+        <option value="single_payer">Single-Payer Model</option>
+        <option value="out_of_pocket">Out-of-Pocket Model</option>
+        <option value="mixed">Mixed Model</option>
+        <option value="aid_dependent">Development Aid Dependent Model</option>
+      </select>
+      <span id="model-desc" class="description-small">Select multiple using Ctrl/Shift.</span>
+    </div>
+
+    <div class="control-group">
+      <h3>Financing Parameters</h3>
+      <label for="public-spend">Public Expenditure (% of Total Health Spend):</label>
+      <input type="number" id="public-spend" min="0" max="100" step="1" value="60" aria-label="Public expenditure percentage"/>
+      <label for="private-insurance">Private Insurance Coverage (% Population):</label>
+      <input type="number" id="private-insurance" min="0" max="100" step="1" value="25" aria-label="Private insurance coverage percentage"/>
+      <label for="out-pocket">Out-of-Pocket Expenditure (% Total Spend):</label>
+      <input type="number" id="out-pocket" min="0" max="100" step="1" value="10" aria-label="Out-of-pocket expenditure percentage"/>
+      <label for="aid-funds">Development Aid Funds (% Total Finance):</label>
+      <input type="number" id="aid-funds" min="0" max="50" step="1" value="5" aria-label="Development aid funds percentage"/>
+    </div>
+
+    <div class="control-group">
+      <h3>Health System Capacity</h3>
+      <label for="workforce-ratio">Health Workforce Ratio (per 1000 population):</label>
+      <input type="number" id="workforce-ratio" min="0" max="15" step="0.1" value="3.5" aria-label="Health workforce ratio"/>
+      <label for="pop-coverage">Population Coverage (%):</label>
+      <input type="number" id="pop-coverage" min="0" max="100" step="1" value="85" aria-label="Population coverage percentage"/>
+      <label for="admin-costs">Administrative Costs (% of Total Spend):</label>
+      <input type="number" id="admin-costs" min="0" max="30" step="0.5" value="10" aria-label="Administrative costs percentage"/>
+      <label for="provider-pay">Main Provider Payment Mechanism:</label>
+      <select id="provider-pay" aria-label="Select main provider payment mechanism">
+        <option value="fee_for_service">Fee-for-Service</option>
+        <option value="capitation">Capitation</option>
+        <option value="salary">Salary</option>
+        <option value="mixed">Mixed Methods</option>
+      </select>
+    </div>
+
+    <div class="control-group">
+      <h3>Health & Socioeconomic Factors</h3>
+      <label for="infra-index">Health Infrastructure Quality (1=Low to 10=High):</label>
+      <input type="number" id="infra-index" min="1" max="10" step="1" value="5" aria-label="Health infrastructure quality index"/>
+      <label for="quality-index">Quality of Care Index (0-100):</label>
+      <input type="number" id="quality-index" min="0" max="100" step="1" value="70" aria-label="Quality of care index"/>
+      <label for="ncd-burden">Non-Communicable Disease Burden (% of total DALYs):</label>
+      <input type="number" id="ncd-burden" min="0" max="100" step="1" value="55" aria-label="Non-communicable disease burden percentage"/>
+      <label for="comm-burden">Communicable Disease Burden (% of total DALYs):</label>
+      <input type="number" id="comm-burden" min="0" max="100" step="1" value="30" aria-label="Communicable disease burden percentage"/>
+      <label for="poverty-rate">Population below Poverty Line (%):</label>
+      <input type="number" id="poverty-rate" min="0" max="100" step="1" value="25" aria-label="Poverty rate percentage"/>
+      <label for="urbanisation-rate">Urbanisation Rate (%):</label>
+      <input type="number" id="urbanisation-rate" min="0" max="100" step="1" value="60" aria-label="Urbanisation rate percentage"/>
+    </div>
+
+  </div>
+
+  <button id="run-scenario" aria-label="Run scenario simulation" style="display:block; margin:0 auto 1.8rem auto; padding:0.6rem 1.4rem; font-weight: 600; font-variant: small-caps; font-size:1rem; background:#2c7bb6; color:#fff; border:none; border-radius: 5px; cursor:pointer;">
+    Run Scenario
+  </button>
+
+  <!-- Charts Output -->
+  <div id="charts" aria-live="polite" aria-atomic="true">
+    <section class="chart-block" aria-label="Resource Allocation Flow">
+      <h2>Resource Allocation Flow</h2>
+      <canvas id="sankey-chart" aria-describedby="sankey-desc" style="height:340px;"></canvas>
+      <p id="sankey-desc" class="description-small visually-hidden">Sankey diagram showing financial flows from sources to health service outputs.</p>
+    </section>
+    <section class="chart-block" aria-label="Cost and Coverage Projections">
+      <h2>Cost, Coverage, and Outcomes</h2>
+      <canvas id="multibar-chart" aria-describedby="multibar-desc" style="height:340px;"></canvas>
+      <p id="multibar-desc" class="description-small visually-hidden">Bar chart depicting cost per capita, population coverage, life expectancy, and financial protection metrics.</p>
+    </section>
+  </div>
+
+  <!-- Scenario Summary Table -->
+  <section id="scenario-summary" style="margin-top: 2rem; background:#fff; padding:1rem; border-radius:6px; box-shadow:0 2px 6px rgba(0,0,0,0.1); max-width:1100px; margin-left:auto; margin-right:auto;">
+    <h2>Scenario Summary</h2>
+    <table aria-label="Scenario output summary table" style="width: 100%; border-collapse: collapse;">
+      <thead>
+        <tr style="background-color:#2c7bb6; color:#fff;">
+          <th style="padding:0.6rem; text-align:left;">Indicator</th>
+          <th style="padding:0.6rem; text-align:left;">Value</th>
+          <th style="padding:0.6rem; text-align:left;">Unit</th>
+          <th style="padding:0.6rem; text-align:left;">Description</th>
+        </tr>
+      </thead>
+      <tbody id="summary-body" style="font-variant: normal;">
+        <!-- Populated by JS -->
+      </tbody>
+    </table>
+  </section>
+</div>
+
+<!-- Tooltip -->
+<div id="tooltip" class="tooltip" role="tooltip" aria-hidden="true"></div>
+
+<!-- Bottom Branding Bar -->
+<div id="bottom-bar" role="contentinfo" aria-label="Bottom Branding Bar">
+  <div class="left">Iselin Group - Strategic Consulting</div>
+  <div class="right">
+    © Iselin Group. “Advanced Health System Financing Comparator”— brian.iselin(@)iselingroup.com.<br />
+    <span class="ip-notice">The underlying decision‑integrity model, logic, and UI are proprietary to Iselin Group and may not be reproduced, adapted, or deployed in whole or in part without prior written consent; all rights reserved.</span>
+  </div>
+</div>
+
+<!-- Dependency: Chart.js + Sankey Plugin -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.2.1/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-chart-sankey@0.5.0/dist/chartjs-chart-sankey.min.js"></script>
+
+<script>
+  const tooltip = document.getElementById('tooltip');
+
+  // Elements for inputs
+  const modelSelect = document.getElementById('model-select');
+  const inputs = {
+    publicSpend: document.getElementById('public-spend'),
+    privateInsurance: document.getElementById('private-insurance'),
+    outOfPocket: document.getElementById('out-pocket'),
+    aidFunds: document.getElementById('aid-funds'),
+    workforceRatio: document.getElementById('workforce-ratio'),
+    popCoverage: document.getElementById('pop-coverage'),
+    adminCosts: document.getElementById('admin-costs'),
+    providerPay: document.getElementById('provider-pay'),
+    infraIndex: document.getElementById('infra-index'),
+    qualityIndex: document.getElementById('quality-index'),
+    ncdBurden: document.getElementById('ncd-burden'),
+    commBurden: document.getElementById('comm-burden'),
+    povertyRate: document.getElementById('poverty-rate'),
+    urbanisation: document.getElementById('urbanisation-rate')
+  };
+
+  // Scenario Summary table body
+  const summaryBody = document.getElementById('summary-body');
+
+  // Charts
+  let sankeyChart = null;
+  let multibarChart = null;
+
+  // Baseline archetypes for models (for example only, actual would require rigorous data)
+  const baseModels = {
+    beveridge: {
+      fundingSources: { public: 80, privateInsurance: 10, outOfPocket: 5, developmentAid: 5 },
+      serviceOutputs: { prevention: 35, curative: 50, administrative: 15 },
+      outcomes: { lifeExpectancy: 82, financialProtection: 90, equityIndex: 85 },
+      costPerCapita: 3500
+    },
+    bismarck: {
+      fundingSources: { public: 60, privateInsurance: 30, outOfPocket: 5, developmentAid: 5 },
+      serviceOutputs: { prevention: 30, curative: 55, administrative: 15 },
+      outcomes: { lifeExpectancy: 80, financialProtection: 75, equityIndex: 75 },
+      costPerCapita: 3200
+    },
+    single_payer: {
+      fundingSources: { public: 85, privateInsurance: 5, outOfPocket: 5, developmentAid: 5 },
+      serviceOutputs: { prevention: 33, curative: 52, administrative: 15 },
+      outcomes: { lifeExpectancy: 83, financialProtection: 92, equityIndex: 87 },
+      costPerCapita: 3600
+    },
+    out_of_pocket: {
+      fundingSources: { public: 10, privateInsurance: 15, outOfPocket: 65, developmentAid: 10 },
+      serviceOutputs: { prevention: 20, curative: 60, administrative: 20 },
+      outcomes: { lifeExpectancy: 70, financialProtection: 40, equityIndex: 50 },
+      costPerCapita: 1500
+    },
+    mixed: {
+      fundingSources: { public: 50, privateInsurance: 35, outOfPocket: 10, developmentAid: 5 },
+      serviceOutputs: { prevention: 30, curative: 54, administrative: 16 },
+      outcomes: { lifeExpectancy: 78, financialProtection: 70, equityIndex: 68 },
+      costPerCapita: 2800
+    },
+    aid_dependent: {
+      fundingSources: { public: 20, privateInsurance: 10, outOfPocket: 20, developmentAid: 50 },
+      serviceOutputs: { prevention: 40, curative: 45, administrative: 15 },
+      outcomes: { lifeExpectancy: 68, financialProtection: 60, equityIndex: 65 },
+      costPerCapita: 1200
+    }
+  };
+
+  // Utility: Clamp values
+  function clamp(value, min, max) { return Math.min(Math.max(value, min), max); }
+
+  // Scenario Simulation Logic
+  function simulateScenario(selectedModels, params) {
+    if (selectedModels.length === 0) return null;
+
+    // Aggregate weighted averages by model count
+    const totalModels = selectedModels.length;
+
+    // Aggregated variables
+    let agg = {
+      funding: { public: 0, privateInsurance: 0, outOfPocket: 0, developmentAid: 0 },
+      serviceOutputs: { prevention: 0, curative: 0, administrative: 0 },
+      outcomes: { lifeExpectancy: 0, financialProtection: 0, equityIndex: 0 },
+      costPerCapita: 0
+    };
+
+    // Weighting function for model & param influence: simple equal weight for demonstration
+    selectedModels.forEach(mod => {
+      const base = baseModels[mod];
+      if (!base) return;
+
+      // Apply user parameters as modifiers to base model:
+      // Example: Adjust funding sources according to user inputs (clamped 0-100)
+      // We adjust proportions proportionally by publicSpend param and others while respecting 100% total
+
+      // Calculate funding source shares:
+      // Priority:
+      // - Public % fixed by params.publicSpend, adjust others proportionally
+      // - Maintain proportions among privateInsurance, outOfPocket, developmentAid if possible
+
+      const totalOtherFund = 100 - params.publicSpend;
+      const baseOtherTotal = base.fundingSources.privateInsurance + base.fundingSources.outOfPocket + base.fundingSources.developmentAid;
+      const propPrivate = base.fundingSources.privateInsurance / baseOtherTotal || 0;
+      const propOOP = base.fundingSources.outOfPocket / baseOtherTotal || 0;
+      const propAid = base.fundingSources.developmentAid / baseOtherTotal || 0;
+
+      agg.funding.public += params.publicSpend;
+      agg.funding.privateInsurance += clamp(params.privateInsurance, 0, totalOtherFund) * propPrivate;
+      agg.funding.outOfPocket += clamp(params.outOfPocket, 0, totalOtherFund) * propOOP;
+      agg.funding.developmentAid += clamp(params.aidFunds, 0, totalOtherFund) * propAid;
+
+      // Service outputs scale by workforce ratio, infrastructure and quality indexes
+      // Example: Better infrastructure and workforce improve prevention and curative shares
+      const workforceFactor = Math.min(params.workforceRatio / 6, 2); // up to double effect
+      const infraFactor = params.infraIndex / 10;
+      const qualityFactor = params.qualityIndex / 100;
+
+      agg.serviceOutputs.prevention += base.serviceOutputs.prevention * workforceFactor * infraFactor * qualityFactor;
+      agg.serviceOutputs.curative += base.serviceOutputs.curative * workforceFactor * infraFactor * qualityFactor;
+      agg.serviceOutputs.administrative += base.serviceOutputs.administrative; // mostly fixed
+
+      // Outcomes influenced by quality, coverage, burden and poverty
+      const baseLifeExp = base.outcomes.lifeExpectancy;
+      const baseFinProt = base.outcomes.financialProtection;
+      const baseEquity = base.outcomes.equityIndex;
+
+      const diseaseBurdenFactor = 1 - (params.ncdBurden * 0.004 + params.commBurden * 0.006); // heuristic
+      const povertyFactor = 1 - (params.povertyRate * 0.005); // poverty reduces outcomes
+      const coverageFactor = params.popCoverage / 100;
+      const urbanFactor = params.urbanisation / 100;
+
+      agg.outcomes.lifeExpectancy += (baseLifeExp * diseaseBurdenFactor * povertyFactor * coverageFactor * urbanFactor + qualityFactor * 5);
+      agg.outcomes.financialProtection += baseFinProt * coverageFactor * (params.publicSpend / 100);
+      agg.outcomes.equityIndex += baseEquity * (coverageFactor * 0.6 + (params.publicSpend / 100) * 0.4);
+
+      // Cost per capita adjusted by admin costs, workforce ratio, and payment mechanisms
+      const adminFactor = 1 + (params.adminCosts / 100);
+      const workforceCostFactor = params.workforceRatio / 5;
+      let providerPayCostFactor = 1.0;
+      switch (params.providerPay) {
+        case 'fee_for_service': providerPayCostFactor = 1.2; break;
+        case 'capitation': providerPayCostFactor = 0.9; break;
+        case 'salary': providerPayCostFactor = 1.0; break;
+        default: providerPayCostFactor = 1.0;
+      }
+
+      agg.costPerCapita += base.costPerCapita * adminFactor * workforceCostFactor * providerPayCostFactor;
+    });
+
+    // Average final aggregates
+    ['public', 'privateInsurance', 'outOfPocket', 'developmentAid'].forEach(k => {
+      agg.funding[k] = clamp(agg.funding[k] / totalModels, 0, 100);
+    });
+
+    ['prevention', 'curative', 'administrative'].forEach(k => {
+      agg.serviceOutputs[k] = clamp(agg.serviceOutputs[k] / totalModels, 0, 100);
+    });
+
+    ['lifeExpectancy', 'financialProtection', 'equityIndex'].forEach(k => {
+      agg.outcomes[k] = clamp(agg.outcomes[k] / totalModels, 0, 100);
+    });
+
+    agg.costPerCapita = clamp(agg.costPerCapita / totalModels, 100, 10000);
+
+    return agg;
+  }
+
+  // Chart instances
+  const ctxSankey = document.getElementById('sankey-chart').getContext('2d');
+  const ctxMultibar = document.getElementById('multibar-chart').getContext('2d');
+
+  let sankeyInstance = null;
+  let multibarInstance = null;
+
+  function drawSankey(data) {
+    // Sankey Inputs: sources funding -> services outputs mapping
+    if (sankeyInstance) sankeyInstance.destroy();
+
+    // Create nodes dynamically from data keys
+    const fundingNodes = ['Public', 'Private Insurance', 'Out-of-Pocket', 'Development Aid'];
+    const serviceNodes = ['Prevention', 'Curative Services', 'Administrative Costs'];
+
+    const nodes = [];
+    fundingNodes.forEach(name => nodes.push({ label: name }));
+    serviceNodes.forEach(name => nodes.push({ label: name }));
+
+    // Links from funding to services - proportional to serviceOutputs weights
+    const links = [];
+
+    fundingNodes.forEach((funding, i) => {
+      serviceNodes.forEach((service, j) => {
+        // Link value proportional to funding percentage times service output proportion
+        const value = data.funding[funding.toLowerCase().replace(/\s/g, '')] * data.serviceOutputs[service.toLowerCase().replace(/\s/g, '')] / 100;
+        if (value > 0) {
+          links.push({
+            source: i,
+            target: fundingNodes.length + j,
+            value: Number(value.toFixed(2))
+          });
+        }
+      });
+    });
+
+    sankeyInstance = new Chart(ctxSankey, {
+      type: 'sankey',
+      data: { nodes, links },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            enabled: true,
+            callbacks: {
+              label: function(ctx) {
+                const link = ctx.raw;
+                if(link.source !== undefined) {
+                  return `${nodes[link.source].label} → ${nodes[link.target].label}: ${link.value.toFixed(2)}%`;
+                }
+                return ctx.label;
+              }
+            }
+          },
+          title: {
+            display: false,
+          }
+        }
+      }
+    });
+  }
+
+  function drawMultibar(data) {
+    if (multibarInstance) multibarInstance.destroy();
+
+    multibarInstance = new Chart(ctxMultibar, {
+      type: 'bar',
+      data: {
+        labels: [
+          'Cost Per Capita (USD)',
+          'Population Coverage (%)',
+          'Life Expectancy (years)',
+          'Financial Protection (%)',
+          'Equity Index (%)'
+        ],
+        datasets: [{
+          label: 'Scenario Metrics',
+          data: [
+            Number(data.costPerCapita.toFixed(2)),
+            Number(inputs.popCoverage.value),
+            Number(data.outcomes.lifeExpectancy.toFixed(2)),
+            Number(data.outcomes.financialProtection.toFixed(2)),
+            Number(data.outcomes.equityIndex.toFixed(2))
+          ],
+          backgroundColor: [
+            '#4e79a7',
+            '#59a14f',
+            '#9c755f',
+            '#f28e2b',
+            '#edc949'
+          ],
+          borderRadius: 5,
+          borderSkipped: false
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true,
+            suggestedMax: 100,
+            ticks: {
+              color: '#222',
+              font: { size: 14 }
+            },
+            grid: {
+              color: '#ddd'
+            }
+          },
+          x: {
+            ticks: {
+              color: '#222',
+              font: { size: 14 }
+            },
+            grid: {
+              display: false
+            }
+          }
+        },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            enabled: true
+          },
+          title: {
+            display: false
+          }
+        }
+      }
+    });
+  }
+
+  // Populate Summary Table with key outputs
+  function updateSummary(data) {
+    if (!data) {
+      summaryBody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No model selected</td></tr>';
+      return;
+    }
+
+    const rows = [
+      ['Total Health Spend per Capita', data.costPerCapita.toFixed(2), 'USD', 'Estimated average health system cost per person per annum.'],
+      ['Population Coverage', inputs.popCoverage.value, '%', 'Percentage of population covered by health services.'],
+      ['Public Expenditure Share', inputs.publicSpend.value || inputs.publicSpend, '%', 'Portion of total health spend funded by public sector.'],
+      ['Private Insurance Coverage', inputs.privateInsurance.value || inputs.privateInsurance, '%', 'Proportion of population covered by private insurance.'],
+      ['Out-of-Pocket Expenditure', inputs.outOfPocket.value || inputs.outOfPocket, '%', 'Percentage of health spending borne directly by individuals.'],
+      ['Development Aid Funding', inputs.aidFunds.value || inputs.aidFunds, '%', 'Share of health financing from external development aid.'],
+      ['Life Expectancy', data.outcomes.lifeExpectancy.toFixed(2), 'Years', 'Average expected lifespan under the scenario.'],
+      ['Financial Protection Index', data.outcomes.financialProtection.toFixed(2), '%', 'Measure of protection against catastrophic health costs.'],
+      ['Equity Index', data.outcomes.equityIndex.toFixed(2), '%', 'Measure of equitable access to services across population groups.'],
+      ['Health Workforce Ratio', inputs.workforceRatio.value || inputs.workforceRatio, 'per 1,000', 'Number of health workers per 1,000 population.'],
+      ['Administrative Costs', inputs.adminCosts.value || inputs.adminCosts, '%', 'Health system administrative expenses share.'],
+      ['Infrastructure Quality Index', inputs.infraIndex.value || inputs.infraIndex, '1-10', 'Qualitative health infrastructure rating.'],
+      ['Provider Payment Mechanism', inputs.providerPay.value || inputs.providerPay, '', 'Primary mechanism for health provider payments.'],
+      ['Non-Communicable Disease Burden', inputs.ncdBurden.value || inputs.ncdBurden, '% DALYs', 'Share of disease burden from NCDs (disability adjusted life years).'],
+      ['Communicable Disease Burden', inputs.commBurden.value || inputs.commBurden, '% DALYs', 'Share of disease burden from communicable diseases.'],
+      ['Poverty Rate', inputs.povertyRate.value || inputs.povertyRate, '%', 'Percentage of population below poverty line.'],
+      ['Urbanisation Rate', inputs.urbanisation.value || inputs.urbanisation, '%', 'Percentage of population living in urban areas.']
+    ];
+
+    summaryBody.innerHTML = rows.map(([label, val, unit, desc]) => `
+      <tr>
+        <td style="padding:0.4rem;">${label}</td>
+        <td style="padding:0.4rem; font-weight:600;">${val}</td>
+        <td style="padding:0.4rem;">${unit}</td>
+        <td style="padding:0.4rem; font-style:italic; color:#555;">${desc}</td>
+      </tr>
+    `).join('');
+  }
+
+  // On Run Scenario
+  document.getElementById('run-scenario').addEventListener('click', () => {
+    const selectedModels = Array.from(modelSelect.selectedOptions).map(o => o.value);
+    // Sanitize and parse inputs
+    const params = {
+      publicSpend: clamp(Number(inputs.publicSpend.value), 0, 100),
+      privateInsurance: clamp(Number(inputs.privateInsurance.value), 0, 100),
+      outOfPocket: clamp(Number(inputs.outOfPocket.value), 0, 100),
+      aidFunds: clamp(Number(inputs.aidFunds.value), 0, 50),
+      workforceRatio: clamp(Number(inputs.workforceRatio.value), 0, 15),
+      popCoverage: clamp(Number(inputs.popCoverage.value), 0, 100),
+      adminCosts: clamp(Number(inputs.adminCosts.value), 0, 30),
+      providerPay: inputs.providerPay.value,
+      infraIndex: clamp(Number(inputs.infraIndex.value), 1, 10),
+      qualityIndex: clamp(Number(inputs.qualityIndex.value), 0, 100),
+      ncdBurden: clamp(Number(inputs.ncdBurden.value), 0, 100),
+      commBurden: clamp(Number(inputs.commBurden.value), 0, 100),
+      povertyRate: clamp(Number(inputs.povertyRate.value), 0, 100),
+      urbanisation: clamp(Number(inputs.urbanisation.value), 0, 100)
+    };
+
+    // Simulate scenario
+    const simulation = simulateScenario(selectedModels, params);
+    if (!simulation) {
+      alert("Please select at least one health financing model.");
+      return;
+    }
+
+    drawSankey(simulation);
+    drawMultibar(simulation);
+    updateSummary(simulation);
+  });
+
+  // Initial state: preselect first 2 models and run simulation
+  modelSelect.options[0].selected = true;
+  modelSelect.options[1].selected = true;
+  document.getElementById('run-scenario').click();
+
+</script>
+
+</body>
+</html>
