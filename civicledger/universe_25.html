@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>EU Fertility Cliff – The Civic Ledger</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 24px 12px 32px;
+            background: #050610;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            color: #f5f5f7;
+            display: flex;
+            justify-content: center;
+        }
+
+        .widget-container {
+            width: 100%;
+            max-width: 960px;
+            background: radial-gradient(circle at top, #15182a 0, #050610 55%, #030308 100%);
+            border-radius: 18px;
+            border: 1px solid rgba(255, 255, 255, 0.10);
+            box-shadow: 0 18px 45px rgba(0, 0, 0, 0.7);
+            overflow: hidden;
+        }
+
+        /* Top branding bar – Civic Ledger */
+        .top-bar {
+            width: 100%;
+            padding: 10px 18px;
+            background: linear-gradient(
+                to right,
+                rgba(5, 7, 20, 0.96),
+                rgba(10, 15, 35, 0.96)
+            );
+            border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .top-bar img {
+            display: block;
+            max-height: 32px;
+            height: auto;
+            width: auto;
+        }
+
+        .top-bar-left,
+        .top-bar-right {
+            display: flex;
+            align-items: center;
+        }
+
+        .chart-inner {
+            padding: 18px 18px 8px;
+        }
+
+        .chart-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            margin: 4px 0 4px;
+            color: #ffffff;
+        }
+
+        .chart-subtitle {
+            font-size: 0.86rem;
+            color: rgba(235, 235, 245, 0.78);
+            margin: 0 0 10px;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            width: 100%;
+            min-height: 260px;
+        }
+
+        canvas {
+            width: 100% !important;
+            height: auto !important;
+        }
+
+        .chart-note {
+            font-size: 0.76rem;
+            color: rgba(220, 220, 235, 0.75);
+            margin-top: 6px;
+        }
+
+        .copyright-bar {
+            width: 100%;
+            padding: 6px 14px 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            text-align: right;
+            font-size: 0.72rem;
+            color: rgba(215, 215, 230, 0.78);
+            background: radial-gradient(circle at bottom, #0b0d1a 0, #050610 52%, #020206 100%);
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding: 12px 8px 20px;
+            }
+
+            .widget-container {
+                border-radius: 14px;
+            }
+
+            .top-bar {
+                padding: 8px 12px;
+            }
+
+            .top-bar img {
+                max-height: 26px;
+            }
+
+            .chart-inner {
+                padding: 12px 12px 6px;
+            }
+
+            .chart-title {
+                font-size: 1rem;
+            }
+
+            .chart-subtitle {
+                font-size: 0.8rem;
+            }
+
+            .chart-note {
+                font-size: 0.7rem;
+            }
+
+            .copyright-bar {
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="widget-container">
+    <!-- Top Branding Bar: The Civic Ledger + Iselin Group -->
+    <div class="top-bar">
+        <div class="top-bar-left">
+            <!-- Direct image link from GitHub raw -->
+            <img
+                src="https://raw.githubusercontent.com/brianiselin/widgets-public/main/civicledger/civic_ledger_logo_lockup_1200w.jpg"
+                alt="The Civic Ledger Logo">
+        </div>
+        <div class="top-bar-right">
+            <img
+                src="https://brianiselin.github.io/widgets-public/Iselin_Group_Logo_1024_x.jpg"
+                alt="Iselin Group Logo">
+        </div>
+    </div>
+
+    <div class="chart-inner">
+        <div class="chart-title">
+            Europe’s Fertility Cliff: EU Total Fertility Rate, 1960–2023
+        </div>
+        <div class="chart-subtitle">
+            Official Eurostat data: from post-war boom to a historic low, in one collapsing line.
+        </div>
+
+        <div class="chart-wrapper">
+            <canvas id="euFertilityChart"></canvas>
+        </div>
+
+        <div class="chart-note">
+            Total fertility rate (live births per woman), EU(*), selected years. Source: Eurostat, 
+            <em>Fertility statistics</em>, Table&nbsp;1 “Total fertility rate, 1960–2023”.
+            Replacement level shown at 2.1.
+        </div>
+    </div>
+
+    <div class="copyright-bar">
+        © 2025 The Civic Ledger &amp; Iselin Group. All rights reserved.
+    </div>
+</div>
+
+<script>
+    // Eurostat Table 1 – EU(*) total fertility rate, 1960–2023 (exact values for listed years)
+    // 1960, 1970, 1980, 1990, 2000, 2003, 2013, 2021, 2022, 2023
+    const years = [1960, 1970, 1980, 1990, 2000, 2003, 2013, 2021, 2022, 2023];
+
+    const tfrValues = [
+        2.54, // 1960
+        2.25, // 1970
+        1.68, // 1980
+        1.62, // 1990
+        1.57, // 2000
+        1.44, // 2003
+        1.51, // 2013
+        1.53, // 2021
+        1.46, // 2022
+        1.38  // 2023
+    ];
+
+    // Replacement-level line (2.1 births per woman)
+    const replacementLevel = 2.1;
+    const replacementData = years.map(() => replacementLevel);
+
+    const ctx = document.getElementById('euFertilityChart').getContext('2d');
+
+    // Annotation plugin: mark three anchor points
+    const annotationPlugin = {
+        id: 'keyPointAnnotations',
+        afterDatasetsDraw(chart, args, options) {
+            const { ctx, scales } = chart;
+            const xAxis = scales.x;
+            const yAxis = scales.y;
+
+            ctx.save();
+            ctx.font = '11px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+            ctx.fillStyle = 'rgba(240,240,255,0.92)';
+            ctx.textAlign = 'center';
+
+            const labelsToMark = [
+                { year: 1960, label: '1960 baby-boom era' },
+                { year: 2000, label: '2000 low point' },
+                { year: 2023, label: '2023 record low' }
+            ];
+
+            labelsToMark.forEach(item => {
+                const index = years.indexOf(item.year);
+                if (index === -1) return;
+
+                const x = xAxis.getPixelForValue(index);
+                const y = yAxis.getPixelForValue(tfrValues[index]);
+
+                // Marker dot
+                ctx.beginPath();
+                ctx.arc(x, y, 3, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Label slightly above the point
+                const offsetY = -12;
+                ctx.fillText(item.label, x, y + offsetY);
+            });
+
+            ctx.restore();
+        }
+    };
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: years,
+            datasets: [
+                {
+                    label: 'EU total fertility rate (live births per woman)',
+                    data: tfrValues,
+                    borderColor: 'rgba(255, 99, 132, 0.95)',
+                    backgroundColor: 'rgba(255, 99, 132, 0.15)',
+                    borderWidth: 3,
+                    tension: 0.25,
+                    pointRadius: 3,
+                    pointHoverRadius: 5,
+                    pointHitRadius: 7
+                },
+                {
+                    label: 'Replacement level (2.1)',
+                    data: replacementData,
+                    borderColor: 'rgba(180, 180, 200, 0.8)',
+                    borderWidth: 1.5,
+                    borderDash: [6, 5],
+                    pointRadius: 0,
+                    pointHitRadius: 0,
+                    tension: 0
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            layout: {
+                padding: {
+                    top: 4,
+                    right: 12,
+                    bottom: 6,
+                    left: 6
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(10, 12, 28, 0.95)',
+                    borderColor: 'rgba(255, 255, 255, 0.08)',
+                    borderWidth: 1,
+                    padding: 8,
+                    titleFont: {
+                        size: 12,
+                        weight: '600'
+                    },
+                    bodyFont: {
+                        size: 11
+                    },
+                    displayColors: false,
+                    callbacks: {
+                        label(context) {
+                            if (context.datasetIndex === 0) {
+                                return `TFR: ${context.parsed.y.toFixed(2)} births per woman`;
+                            }
+                            if (context.datasetIndex === 1) {
+                                return 'Replacement level: 2.10 births per woman';
+                            }
+                            return context.formattedValue;
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.06)'
+                    },
+                    ticks: {
+                        color: 'rgba(230, 230, 245, 0.9)',
+                        maxRotation: 0,
+                        autoSkip: false,
+                        font: {
+                            size: 11
+                        }
+                    }
+                },
+                y: {
+                    min: 1.2,
+                    max: 2.8,
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.08)'
+                    },
+                    ticks: {
+                        color: 'rgba(230, 230, 245, 0.9)',
+                        stepSize: 0.2,
+                        callback: value => value.toFixed(1)
+                    },
+                    title: {
+                        display: true,
+                        text: 'Live births per woman',
+                        color: 'rgba(220, 220, 240, 0.95)',
+                        font: {
+                            size: 11.5,
+                            weight: '500'
+                        }
+                    }
+                }
+            }
+        },
+        plugins: [annotationPlugin]
+    });
+</script>
+</body>
+</html>
