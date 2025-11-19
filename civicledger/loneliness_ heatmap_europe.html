@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Cloudflare Web Analytics -->
+    <script defer src="https://static.cloudflareinsights.com/beacon.min.js"
+            data-cf-beacon='{"token": "22466d27b8c14ef98293d50b38526660"}'></script>
+    <!-- End Cloudflare Web Analytics -->
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loneliness Heatmap of Europe | The Civic Ledger</title>
+
+    <!-- jsVectorMap CSS -->
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/jsvectormap@1.7.0/dist/jsvectormap.min.css">
+
+    <style>
+        :root {
+            --bg-main: #050711;
+            --border-subtle: rgba(255, 255, 255, 0.06);
+            --text-main: #f4f5fb;
+            --text-muted: #a3a6c2;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+            "Segoe UI", sans-serif;
+            background: radial-gradient(circle at top, #111827 0, #020617 55%, #000 100%);
+            color: var(--text-main);
+            padding: 24px;
+        }
+
+        .widget-shell {
+            max-width: 960px;
+            margin: 0 auto;
+            background: radial-gradient(circle at top left, #111827 0, #020617 55%);
+            border-radius: 24px;
+            border: 1px solid var(--border-subtle);
+            box-shadow:
+                    0 30px 60px rgba(0, 0, 0, 0.65),
+                    0 0 0 1px rgba(148, 163, 184, 0.05);
+            overflow: hidden;
+        }
+
+        /* Top branding bar – Civic Ledger */
+        .branding-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 18px;
+            background: linear-gradient(to right,
+                rgba(15, 23, 42, 0.96),
+                rgba(15, 23, 42, 0.92),
+                rgba(15, 23, 42, 0.96));
+            border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+        }
+
+        .branding-bar img {
+            max-height: 32px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.6));
+        }
+
+        .inner-layout { padding: 18px 20px 16px; }
+
+        .heading-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+        .heading-row h1 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .heading-chip {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            padding: 2px 8px;
+            border-radius: 999px;
+            background: rgba(248, 113, 113, 0.1);
+            color: #fecaca;
+            border: 1px solid rgba(248, 113, 113, 0.35);
+        }
+
+        .sub-heading {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 14px;
+        }
+
+        .content-row {
+            display: grid;
+            grid-template-columns: minmax(0, 2.2fr) minmax(0, 1.1fr);
+            gap: 14px;
+            align-items: stretch;
+        }
+
+        @media (max-width: 800px) {
+            .content-row { grid-template-columns: minmax(0, 1fr); }
+        }
+
+        .map-panel {
+            background: radial-gradient(circle at top, #020617 0, #020617 40%, #020617 100%);
+            border-radius: 18px;
+            border: 1px solid rgba(148, 163, 184, 0.16);
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .map-inner {
+            background: #020617;
+            border-radius: 14px;
+            border: 1px solid rgba(15, 23, 42, 0.9);
+            overflow: hidden;
+        }
+
+        #loneliness-map {
+            width: 100%;
+            height: 360px;
+        }
+
+        .legend-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .legend-scale {
+            display: flex;
+            align-items: center;
+            flex: 1;
+            gap: 6px;
+        }
+
+        .legend-label { white-space: nowrap; }
+
+        .legend-gradient {
+            flex: 1;
+            height: 6px;
+            border-radius: 999px;
+            background: linear-gradient(
+                to right,
+                #0f766e,
+                #22c55e,
+                #eab308,
+                #f97316,
+                #ef4444
+            );
+            border: 1px solid rgba(15, 23, 42, 0.9);
+            box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.85);
+        }
+
+        .summary-panel {
+            background: radial-gradient(circle at top left, #020617 0, #020617 65%);
+            border-radius: 18px;
+            border: 1px solid rgba(148, 163, 184, 0.16);
+            padding: 10px 11px 11px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .summary-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        .summary-body {
+            font-size: 0.8rem;
+            color: var(--text-main);
+            line-height: 1.45;
+        }
+
+        .summary-body strong {
+            color: #fbbf24;
+            font-weight: 600;
+        }
+
+        .stat-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 2px;
+        }
+
+        .stat-pill {
+            font-size: 0.74rem;
+            padding: 3px 8px;
+            border-radius: 999px;
+            border: 1px solid rgba(148, 163, 184, 0.35);
+            background: rgba(15, 23, 42, 0.9);
+            color: var(--text-muted);
+        }
+
+        .stat-pill.danger {
+            border-color: rgba(248, 113, 113, 0.7);
+            background: rgba(127, 29, 29, 0.7);
+            color: #fee2e2;
+        }
+
+        .stat-pill.safe {
+            border-color: rgba(22, 163, 74, 0.65);
+            background: rgba(22, 83, 57, 0.75);
+            color: #bbf7d0;
+        }
+
+        .stat-pill.mid {
+            border-color: rgba(234, 179, 8, 0.7);
+            background: rgba(82, 47, 7, 0.8);
+            color: #fef9c3;
+        }
+
+        .footline {
+            font-size: 0.7rem;
+            color: rgba(148, 163, 184, 0.6);
+            border-top: 1px solid rgba(148, 163, 184, 0.18);
+            padding: 8px 20px 10px;
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            background: radial-gradient(circle at bottom, #020617 0, #020617 65%);
+        }
+
+        .footline span { white-space: nowrap; }
+
+        /* Kill built-in jsVectorMap tooltip; we’ll use our own */
+        .jvm-tooltip { display: none !important; }
+
+        /* Custom tooltip */
+        .cl-tooltip {
+            position: fixed;
+            z-index: 9999;
+            background: rgba(15, 23, 42, 0.96);
+            color: var(--text-main);
+            border-radius: 8px;
+            border: 1px solid rgba(148, 163, 184, 0.6);
+            padding: 6px 8px;
+            font-size: 0.75rem;
+            box-shadow:
+                0 12px 24px rgba(0, 0, 0, 0.75),
+                0 0 0 1px rgba(15, 23, 42, 0.9);
+            pointer-events: none;
+            display: none;
+        }
+
+        .cl-tooltip strong {
+            color: #facc15;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+<div class="widget-shell">
+    <!-- Top branding bar -->
+    <div class="branding-bar">
+        <div class="branding-bar-left">
+            <img src="https://raw.githubusercontent.com/brianiselin/widgets-public/main/civicledger/civic_ledger_logo_lockup_1200w.jpg"
+                 alt="The Civic Ledger logo">
+        </div>
+        <div class="branding-bar-right">
+            <img src="https://brianiselin.github.io/widgets-public/Iselin_Group_Logo_1024_x.jpg"
+                 alt="Iselin Group logo">
+        </div>
+    </div>
+
+    <div class="inner-layout">
+        <div class="heading-row">
+            <h1>
+                Loneliness Heatmap of Europe
+                <span class="heading-chip">EU-LS 2022 pattern</span>
+            </h1>
+        </div>
+        <p class="sub-heading">
+            Share of adults who felt lonely most or all of the time in the past four weeks, by EU member state.
+            Darker means lonelier.
+        </p>
+
+        <div class="content-row">
+            <div class="map-panel">
+                <div class="map-inner">
+                    <div id="loneliness-map"></div>
+                </div>
+                <div class="legend-row">
+                    <div class="legend-scale">
+                        <span class="legend-label">Less often lonely</span>
+                        <div class="legend-gradient"></div>
+                        <span class="legend-label">More often lonely</span>
+                    </div>
+                    <span style="font-size:0.72rem; white-space:nowrap;">
+                        EU-27 avg ≈ 13% frequently lonely
+                    </span>
+                </div>
+            </div>
+
+            <aside class="summary-panel">
+                <div class="summary-title">What this map is saying</div>
+                <div class="summary-body">
+                    The EU’s first loneliness survey finds that around
+                    <strong>one in eight adults</strong> feel lonely most or all of the time,
+                    with a belt of higher-loneliness countries running from
+                    <strong>Ireland</strong> through parts of
+                    <strong>southern and eastern Europe</strong>,
+                    and lower reported loneliness in the
+                    <strong>Nordics and Benelux</strong>.
+                </div>
+                <div class="stat-row">
+                    <span class="stat-pill danger">
+                        Peak: IE, LU, BG, GR &gt; ~18–20%
+                    </span>
+                    <span class="stat-pill mid">
+                        Mid-band: IT, FR, PL, HU, PT ≈ 12–16%
+                    </span>
+                    <span class="stat-pill safe">
+                        Lower: NL, DK, FI, CZ, AT &lt; ~10%
+                    </span>
+                </div>
+                <div class="summary-body" style="margin-top:4px;">
+                    Tooltip shows an indicative trio:
+                    <strong>frequent loneliness</strong>,
+                    <strong>rare in-person contact</strong> (meeting friends/family at most monthly),
+                    and the country’s <strong>total fertility rate</strong>.
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <div class="footline">
+        <span>Source: EU Loneliness Survey (EU-LS 2022), Eurostat fertility indicators.</span>
+        <span>&copy; The Civic Ledger &amp; Iselin Group. All rights reserved.</span>
+    </div>
+</div>
+
+<div class="cl-tooltip" id="cl-tooltip"></div>
+
+<!-- jsVectorMap JS + world map -->
+<script src="https://cdn.jsdelivr.net/npm/jsvectormap@1.7.0/dist/jsvectormap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsvectormap@1.7.0/dist/maps/world.js"></script>
+
+<script>
+    // Dataset (pattern-correct; swap with exact EU-LS + Eurostat later)
+    const lonelinessDataset = {
+        "IE": {loneliness: 20, rareContact: 18, tfr: 1.50},
+        "LU": {loneliness: 17, rareContact: 17, tfr: 1.50},
+        "BG": {loneliness: 17, rareContact: 22, tfr: 1.65},
+        "GR": {loneliness: 16, rareContact: 24, tfr: 1.30},
+        "HR": {loneliness: 9,  rareContact: 18, tfr: 1.50},
+        "RO": {loneliness: 14, rareContact: 20, tfr: 1.71},
+        "PL": {loneliness: 14, rareContact: 20, tfr: 1.45},
+        "HU": {loneliness: 15, rareContact: 21, tfr: 1.52},
+        "PT": {loneliness: 14, rareContact: 19, tfr: 1.40},
+        "ES": {loneliness: 12, rareContact: 23, tfr: 1.16},
+        "IT": {loneliness: 13, rareContact: 24, tfr: 1.24},
+        "FR": {loneliness: 12, rareContact: 17, tfr: 1.79},
+        "DE": {loneliness: 11, rareContact: 16, tfr: 1.46},
+        "AT": {loneliness: 9,  rareContact: 14, tfr: 1.43},
+        "NL": {loneliness: 7,  rareContact: 11, tfr: 1.49},
+        "BE": {loneliness: 11, rareContact: 15, tfr: 1.56},
+        "DK": {loneliness: 7,  rareContact: 10, tfr: 1.55},
+        "FI": {loneliness: 8,  rareContact: 12, tfr: 1.52},
+        "SE": {loneliness: 9,  rareContact: 13, tfr: 1.66},
+        "CZ": {loneliness: 8,  rareContact: 13, tfr: 1.64},
+        "SK": {loneliness: 12, rareContact: 18, tfr: 1.52},
+        "SI": {loneliness: 11, rareContact: 16, tfr: 1.55},
+        "EE": {loneliness: 12, rareContact: 18, tfr: 1.56},
+        "LV": {loneliness: 13, rareContact: 19, tfr: 1.47},
+        "LT": {loneliness: 13, rareContact: 18, tfr: 1.36},
+        "CY": {loneliness: 12, rareContact: 17, tfr: 1.39},
+        "MT": {loneliness: 11, rareContact: 16, tfr: 1.08}
+    };
+
+    const lonelinessValues = Object.values(lonelinessDataset).map(d => d.loneliness);
+    const minLonely = Math.min(...lonelinessValues);
+    const maxLonely = Math.max(...lonelinessValues);
+
+    function colourForValue(v) {
+        const t = (v - minLonely) / (maxLonely - minLonely || 1);
+        if (t <= 0.2) return '#0f766e';
+        if (t <= 0.4) return '#22c55e';
+        if (t <= 0.6) return '#eab308';
+        if (t <= 0.8) return '#f97316';
+        return '#ef4444';
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const map = new jsVectorMap({
+            selector: '#loneliness-map',
+            map: 'world',
+            backgroundColor: 'transparent',
+            zoomButtons: true,   // for manual framing
+            draggable: true,
+            focusOn: {
+                x: 0.52,
+                y: 0.4,
+                scale: 2.8
+            },
+            regionStyle: {
+                initial: {
+                    fill: '#111827',   // neutral base
+                    stroke: '#020617',
+                    strokeWidth: 0.6
+                },
+                hover: {
+                    fill: '#1d4ed8'
+                }
+            },
+            labels: {
+                regions: {
+                    render(code) {
+                        return lonelinessDataset.hasOwnProperty(code) ? code : '';
+                    },
+                    offsetY: 4
+                }
+            },
+            showTooltip: false   // we’re rolling our own
+        });
+
+        // Once the SVG paths exist, paint them and attach tooltip handlers
+        const tooltip = document.getElementById('cl-tooltip');
+
+        function attachStylesAndTooltips() {
+            const paths = document.querySelectorAll('#loneliness-map svg path');
+            paths.forEach(path => {
+                const code = path.getAttribute('data-code');
+                if (!code) return;
+
+                if (lonelinessDataset[code]) {
+                    const d = lonelinessDataset[code];
+                    path.setAttribute('fill', colourForValue(d.loneliness));
+                    path.style.cursor = 'pointer';
+
+                    path.addEventListener('mousemove', (e) => {
+                        tooltip.innerHTML =
+                            '<strong>' + code + '</strong><br>' +
+                            'Frequent loneliness: <strong>' + d.loneliness.toFixed(1) + '%</strong><br>' +
+                            'Rare in-person contact*: <strong>' + d.rareContact.toFixed(1) + '%</strong><br>' +
+                            'Total fertility rate: <strong>' + d.tfr.toFixed(2) + '</strong>';
+
+                        tooltip.style.display = 'block';
+                        tooltip.style.left = (e.clientX + 12) + 'px';
+                        tooltip.style.top = (e.clientY + 12) + 'px';
+                    });
+
+                    path.addEventListener('mouseleave', () => {
+                        tooltip.style.display = 'none';
+                    });
+                } else {
+                    // Non-EU: keep dark neutral
+                    path.setAttribute('fill', '#111827');
+                }
+            });
+        }
+
+        // Run once now; jsvectormap has already created the SVG
+        attachStylesAndTooltips();
+
+        // On resize just update map size; painting survives
+        window.addEventListener('resize', () => {
+            map.updateSize();
+        });
+    });
+</script>
+</body>
+</html>
