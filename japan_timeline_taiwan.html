@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Timeline of Japan’s Taiwan Turn (2015–2025)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        :root {
+            --bg-dark: #020617;
+            --bg-card-outer: #0b1120;
+            --bg-card-inner: #f9fafb;
+            --bg-timeline: #e5e7eb;
+            --text-main: #0f172a;
+            --text-muted: #4b5563;
+            --accent-legal: #2563eb;
+            --accent-shock: #ea580c;
+            --accent-opinion: #16a34a;
+            --line-color: #cbd5f5;
+            --shadow-soft: 0 18px 45px rgba(15, 23, 42, 0.45);
+            --radius-lg: 18px;
+            --radius-xl: 24px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 24px 12px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+            background: radial-gradient(circle at top, #020617 0%, #020617 30%, #020617 100%);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+        }
+
+        .widget-container {
+            max-width: 1200px;
+            width: 100%;
+            background: var(--bg-card-outer);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-soft);
+            overflow: hidden;
+            border: 1px solid rgba(148, 163, 184, 0.35);
+        }
+
+        /* Branding bar */
+
+        .branding-bar {
+            width: 100%;
+            padding: 10px 24px;
+            background: linear-gradient(90deg, rgba(15, 23, 42, 0.98), rgba(30, 64, 175, 0.94));
+            border-bottom: 1px solid rgba(148, 163, 184, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .branding-bar img {
+            max-height: 40px;
+            height: 40px;
+            width: auto;
+            display: block;
+            filter: drop-shadow(0 0 4px rgba(15, 23, 42, 0.5));
+        }
+
+        .branding-left,
+        .branding-right {
+            display: flex;
+            align-items: center;
+        }
+
+        /* Inner shell */
+
+        .timeline-shell {
+            padding: 22px;
+            background: radial-gradient(circle at top left, #111827 0%, #020617 45%, #020617 100%);
+        }
+
+        .timeline-inner {
+            background: var(--bg-card-inner);
+            border-radius: var(--radius-lg);
+            padding: 24px 26px 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .timeline-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            text-align: center;
+            color: var(--text-main);
+            letter-spacing: 0.01em;
+        }
+
+        .timeline-subtitle {
+            margin-top: 6px;
+            font-size: 0.95rem;
+            text-align: center;
+            color: var(--text-muted);
+            max-width: 720px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Timeline proper */
+
+        .timeline-wrapper {
+            margin-top: 30px;
+            padding: 18px 12px 6px;
+            background: var(--bg-timeline);
+            border-radius: 999px;
+            position: relative;
+            overflow: visible;
+        }
+
+        .timeline-track {
+            position: relative;
+            margin: 28px 40px 42px;
+            height: 4px;
+            background: linear-gradient(90deg, rgba(148, 163, 184, 0.9), rgba(209, 213, 219, 1));
+            border-radius: 999px;
+        }
+
+        .timeline-track::before,
+        .timeline-track::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            width: 14px;
+            height: 14px;
+            border-radius: 999px;
+            border: 2px solid #111827;
+            background: #f9fafb;
+            transform: translateY(-50%);
+        }
+
+        .timeline-track::before {
+            left: -7px;
+        }
+
+        .timeline-track::after {
+            right: -7px;
+        }
+
+        .timeline-track-labels {
+            position: absolute;
+            bottom: -26px;
+            left: 32px;
+            right: 32px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-weight: 600;
+        }
+
+        .timeline-events {
+            position: relative;
+            margin: -16px 24px 0;
+            height: 230px;
+        }
+
+        .timeline-event {
+            position: absolute;
+            width: 160px;
+            transform: translateX(-50%);
+            font-size: 0.8rem;
+            color: #111827;
+        }
+
+        .event-node {
+            width: 18px;
+            height: 18px;
+            border-radius: 999px;
+            border: 3px solid #0f172a;
+            background: #f9fafb;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 0 4px rgba(15, 23, 42, 0.08);
+        }
+
+        .event-node.legal {
+            background: var(--accent-legal);
+        }
+
+        .event-node.shock {
+            background: var(--accent-shock);
+        }
+
+        .event-node.opinion {
+            background: var(--accent-opinion);
+        }
+
+        .event-label {
+            position: relative;
+            background: #f9fafb;
+            border-radius: 12px;
+            padding: 8px 9px 9px;
+            box-shadow: 0 10px 20px rgba(15, 23, 42, 0.18);
+            border: 1px solid rgba(148, 163, 184, 0.45);
+        }
+
+        .event-label::before {
+            content: "";
+            position: absolute;
+            left: 50%;
+            width: 8px;
+            height: 8px;
+            background: #f9fafb;
+            border-left: 1px solid rgba(148, 163, 184, 0.45);
+            border-bottom: 1px solid rgba(148, 163, 184, 0.45);
+            transform: translateX(-50%) rotate(45deg);
+        }
+
+        .event-label.top {
+            bottom: 98px;
+        }
+
+        .event-label.top::before {
+            bottom: -5px;
+        }
+
+        .event-label.bottom {
+            top: 98px;
+        }
+
+        .event-label.bottom::before {
+            top: -5px;
+            transform: translateX(-50%) rotate(225deg);
+        }
+
+        .event-title {
+            font-weight: 700;
+            font-size: 0.82rem;
+            margin-bottom: 3px;
+        }
+
+        .event-description {
+            font-size: 0.78rem;
+            line-height: 1.25;
+            color: var(--text-muted);
+        }
+
+        /* Legend */
+
+        .legend {
+            margin-top: 22px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        .legend-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: #e5e7eb;
+            border: 1px solid rgba(148, 163, 184, 0.7);
+        }
+
+        .legend-swatch {
+            width: 11px;
+            height: 11px;
+            border-radius: 999px;
+        }
+
+        .legend-swatch.legal {
+            background: var(--accent-legal);
+        }
+
+        .legend-swatch.shock {
+            background: var(--accent-shock);
+        }
+
+        .legend-swatch.opinion {
+            background: var(--accent-opinion);
+        }
+
+        /* Copyright */
+
+        .copyright {
+            border-top: 1px solid rgba(148, 163, 184, 0.4);
+            padding: 8px 16px 10px;
+            background: #020617;
+            color: #9ca3af;
+            font-size: 0.7rem;
+            text-align: center;
+        }
+
+        /* Event positions along 2015–2025 span (kept in a safe band) */
+
+        .event-2015-laws   { left: 8%;  }
+        .event-2016-senkaku{ left: 22%; }
+        .event-2020-hk     { left: 42%; }
+        .event-2022-ukr    { left: 58%; }
+        .event-2022-nss    { left: 70%; }
+        .event-2025-remark { left: 85%; }
+        .event-2025-poll   { left: 92%; }
+
+        @media (max-width: 900px) {
+            .timeline-inner {
+                padding: 20px 16px 24px;
+            }
+
+            .timeline-track {
+                margin: 26px 22px 44px;
+            }
+
+            .timeline-events {
+                margin: -14px 14px 0;
+                height: 250px;
+            }
+
+            .timeline-event {
+                width: 140px;
+            }
+
+            .event-label.top {
+                bottom: 110px;
+            }
+
+            .event-label.bottom {
+                top: 110px;
+            }
+        }
+
+        @media (max-width: 720px) {
+            .timeline-events {
+                height: 270px;
+            }
+
+            .event-label.top {
+                bottom: 120px;
+            }
+
+            .event-label.bottom {
+                top: 120px;
+            }
+
+            .timeline-track-labels {
+                font-size: 0.68rem;
+            }
+
+            .branding-bar {
+                padding: 8px 16px;
+            }
+
+            .branding-bar img {
+                max-height: 32px;
+                height: 32px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="widget-container">
+    <div class="branding-bar">
+        <div class="branding-left">
+            <img src="https://raw.githubusercontent.com/brianiselin/widgets-public/main/strategicedge/EDGE_avatar_1024.jpg" alt="The Strategic Edge Logo">
+        </div>
+        <div class="branding-right">
+            <img src="https://brianiselin.github.io/widgets-public/Iselin_Group_Logo_1024_x.jpg" alt="Iselin Group Logo">
+        </div>
+    </div>
+
+    <div class="timeline-shell">
+        <div class="timeline-inner">
+            <div class="timeline-title">
+                Timeline of Japan’s Taiwan Turn (2015–2025)
+            </div>
+            <div class="timeline-subtitle">
+                From security laws and island clashes to Ukraine, new strategy documents and Taiwan polling, a decade pushed Japan towards the frontline.
+            </div>
+
+            <div class="timeline-wrapper">
+                <div class="timeline-track">
+                    <div class="timeline-track-labels">
+                        <span>2015</span>
+                        <span>2020</span>
+                        <span>2025</span>
+                    </div>
+                </div>
+
+                <div class="timeline-events">
+                    <!-- 2015 – Security Laws Passed -->
+                    <div class="timeline-event event-2015-laws">
+                        <div class="event-node legal"></div>
+                        <div class="event-label top">
+                            <div class="event-title">2015 – Security Laws Passed</div>
+                            <div class="event-description">
+                                Diet approves Legislation for Peace and Security, enabling limited collective self-defence under reinterpreted Article&nbsp;9.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2016–2017 – Senkaku Flashpoints -->
+                    <div class="timeline-event event-2016-senkaku">
+                        <div class="event-node shock"></div>
+                        <div class="event-label bottom">
+                            <div class="event-title">2016–2017 – Senkaku Flashpoints</div>
+                            <div class="event-description">
+                                Chinese coast guard and fishing vessels surge around the Senkaku Islands, turning grey-zone pressure into a constant.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2019–2020 – Hong Kong Crackdown -->
+                    <div class="timeline-event event-2020-hk">
+                        <div class="event-node shock"></div>
+                        <div class="event-label top">
+                            <div class="event-title">2019–2020 – Hong Kong Crackdown</div>
+                            <div class="event-description">
+                                Beijing imposes a national security law on Hong Kong and crushes dissent, eroding trust in “one country, two systems”.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Feb 2022 – Russia Invades Ukraine -->
+                    <div class="timeline-event event-2022-ukr">
+                        <div class="event-node shock"></div>
+                        <div class="event-label bottom">
+                            <div class="event-title">Feb&nbsp;2022 – Russia Invades Ukraine</div>
+                            <div class="event-description">
+                                Full-scale war in Europe shocks Tokyo and hardens debates about deterrence, alliances and a Taiwan contingency.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dec 2022 – New Defence Strategy -->
+                    <div class="timeline-event event-2022-nss">
+                        <div class="event-node legal"></div>
+                        <div class="event-label top">
+                            <div class="event-title">Dec&nbsp;2022 – New Defence Strategy</div>
+                            <div class="event-description">
+                                Japan adopts a new National Security Strategy and three defence documents, planning to lift spending towards 2% of GDP.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Nov 7, 2025 – Takaichi’s Taiwan Remarks -->
+                    <div class="timeline-event event-2025-remark">
+                        <div class="event-node legal"></div>
+                        <div class="event-label bottom">
+                            <div class="event-title">Nov&nbsp;2025 – Takaichi’s Taiwan Line</div>
+                            <div class="event-description">
+                                Prime minister tells the Diet that Chinese force against Taiwan could be a “survival-threatening situation” for Japan.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Nov 16, 2025 – Kyodo Taiwan Poll -->
+                    <div class="timeline-event event-2025-poll">
+                        <div class="event-node opinion"></div>
+                        <div class="event-label top">
+                            <div class="event-title">Nov&nbsp;2025 – Kyodo Taiwan Poll</div>
+                            <div class="event-description">
+                                Kyodo finds 48.8% support using collective self-defence if China attacks Taiwan, with 60.4% backing faster defence build-up.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="legend">
+                <div class="legend-item">
+                    <span class="legend-swatch legal"></span>
+                    <span>Legal &amp; strategic decisions</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-swatch shock"></span>
+                    <span>Regional shocks &amp; crises</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-swatch opinion"></span>
+                    <span>Public opinion shift</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="copyright">
+        © 2025 The Strategic Edge / Iselin Group. All rights reserved.
+    </div>
+</div>
+</body>
+</html>
