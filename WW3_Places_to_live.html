@@ -130,7 +130,21 @@
       </div>
     </div>
 
-    <p class="foot">Method sketch: survival is adjusted by policy switches, then combined with happiness using the selected mean. We normalise scales (survival 0–100, happiness 0–10 → 0–100). The geometric mean (default) gently penalises lopsided places; the harmonic mean punishes them hard; the linear mean is most forgiving.</p>
+    <p class="foot">Method sketch: survival i<div class="methodology">
+    <h3>⚠️ Methodology (Sort Of)</h3>
+    <p>
+        We've built a half-serious, half-sardonic "WW3 Happiness Index" by combining each country's
+        estimated <strong>nuclear war survival probability</strong> (remoteness, target profile, food and
+        energy resilience) with its <strong>2024 life satisfaction score</strong>. Survival is first adjusted
+        with simple policy switches: penalties if you're an active combatant, a nuclear triad state, or a
+        primary target hub; small bonuses if you're a remote island or run mostly on renewables. Then we
+        blend survival and happiness on the same 0–100 scale using a weighted mean (60% Survival, 40% Happiness),
+        with a default <strong>geometric mean</strong> that gently punishes lopsided countries. You can switch to
+        a harsher <strong>harmonic mean</strong> or a simple <strong>linear mean</strong> if you want to see how
+        your favourite moves when the maths gets less forgiving. Higher scores mean places that are both
+        more likely to survive and more bearable to live in when the sirens sound.
+    </p>
+</div>
     <p class="copyright">© Iselin Group. “WW3 Happiness Index.” UI & model logic are proprietary; all rights reserved.</p>
   </div>
 
