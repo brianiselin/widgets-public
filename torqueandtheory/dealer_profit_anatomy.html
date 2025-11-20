@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>How EVs Shrink the Dealer Profit Stack | Torque & Theory</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        :root {
+            --bg-page: #020617;
+            --card-bg: #020617;
+            --card-border: #1f2937;
+            --text-main: #e5e7eb;
+            --text-muted: #9ca3af;
+            --ev-sales: #38bdf8;
+            --ev-service: #22c55e;
+            --ice-sales: #38bdf8;   /* match EV sales */
+            --ice-service: #f97316;
+            --accent-shadow: rgba(15,23,42,0.9);
+            --brand-border: rgba(148, 163, 184, 0.6);
+            --radius-lg: 18px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: radial-gradient(circle at top, #020617 0, #020617 25%, #020617 55%, #020617 100%);
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            color: var(--text-main);
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .widget-shell {
+            width: 100%;
+            max-width: 960px;
+            background: linear-gradient(145deg, rgba(15,23,42,0.98), rgba(15,23,42,0.96));
+            border-radius: 20px;
+            border: 1px solid var(--card-border);
+            box-shadow: 0 28px 80px rgba(15,23,42,0.80);
+            overflow: hidden;
+        }
+
+        /* Branding bar */
+        .branding-bar {
+            width: 100%;
+            background: linear-gradient(to right, rgba(15,23,42,0.96), rgba(15,23,42,0.92));
+            border-bottom: 1px solid var(--brand-border);
+            padding: 10px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .branding-bar img {
+            display: block;
+            height: 34px;
+            max-width: 100%;
+            object-fit: contain;
+        }
+
+        .branding-left img {
+            max-width: 260px;
+        }
+
+        .branding-right img {
+            max-width: 72px;
+        }
+
+        @media (max-width: 600px) {
+            .branding-bar {
+                padding: 8px 12px;
+            }
+            .branding-bar img {
+                height: 28px;
+            }
+        }
+
+        /* Content */
+        .widget-body {
+            padding: 22px 22px 12px 22px;
+        }
+
+        .widget-header {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 20px;
+        }
+
+        .widget-kicker {
+            text-transform: uppercase;
+            letter-spacing: .12em;
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+
+        .widget-title {
+            font-size: 22px;
+            font-weight: 650;
+        }
+
+        .widget-subtitle {
+            font-size: 13px;
+            color: var(--text-muted);
+            max-width: 560px;
+        }
+
+        .chart-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--card-border);
+            padding: 18px 20px 18px 20px;
+        }
+
+        .chart-header-row {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 18px;
+        }
+
+        .chart-title {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .chart-note {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-align: right;
+        }
+
+        /* Simple 4-bar layout */
+        .chart-layout {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .y-label {
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+
+        .bars-area {
+            display: flex;
+            justify-content: space-evenly;
+            gap: 18px;
+            align-items: flex-end;      /* shared baseline */
+            height: 200px;              /* max tower height */
+            border-bottom: 1px solid rgba(31,41,55,0.9); /* implied x-axis */
+        }
+
+        .bar-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            flex: 0 0 22%;
+        }
+
+        .bar-tower {
+            position: relative;
+            width: 42px;                /* narrow bar */
+            border-radius: 999px;
+            box-shadow: 0 18px 40px rgba(15,23,42,0.85);
+            border: 1px solid rgba(15,23,42,0.9);
+            overflow: hidden;
+        }
+
+        /* Heights loosely reflect ≈20/25/20/60% */
+        .bar-tower.ev-sale {
+            height: 80px;
+            background: linear-gradient(180deg, var(--ev-sales), #0369a1);
+        }
+
+        .bar-tower.ev-service {
+            height: 100px;
+            background: linear-gradient(180deg, var(--ev-service), #15803d);
+        }
+
+        .bar-tower.ice-sale {
+            height: 80px;
+            background: linear-gradient(180deg, var(--ice-sales), #0369a1);
+        }
+
+        .bar-tower.ice-service {
+            height: 180px;
+            background: linear-gradient(180deg, var(--ice-service), #b45309);
+        }
+
+        .bar-tag {
+            position: absolute;
+            bottom: 6px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 2px 6px;
+            font-size: 8.5px;
+            border-radius: 999px;
+            background: rgba(15,23,42,0.92);
+            color: #f9fafb;
+            max-width: 80%;
+            text-align: center;
+            white-space: normal;      /* allow wrapping */
+            line-height: 1.15;
+            text-shadow: 0 0 4px rgba(0,0,0,0.8);
+        }
+
+        .bar-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        .bar-metric {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        .bar-metric strong {
+            color: var(--text-main);
+        }
+
+        /* Callout */
+        .callout-row {
+            margin-top: 16px;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .callout-pill {
+            border-radius: 999px;
+            padding: 4px 10px;
+            background: rgba(15,23,42,0.8);
+            border: 1px solid rgba(148,163,184,0.7);
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: .12em;
+            color: #c4b5fd;
+            white-space: nowrap;
+        }
+
+        .callout-text strong {
+            color: var(--text-main);
+        }
+
+        .callout-text span {
+            color: #4ade80;
+        }
+
+        .footnote {
+            margin-top: 14px;
+            font-size: 10px;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        .copyright {
+            padding: 8px 18px 12px 18px;
+            font-size: 10px;
+            color: var(--text-muted);
+            text-align: center;
+            border-top: 1px solid rgba(31,41,55,0.9);
+            background: radial-gradient(circle at top, #020617 0, #020617 55%, #020617 100%);
+        }
+
+        @media (max-width: 720px) {
+            .widget-body {
+                padding: 16px 14px 10px 14px;
+            }
+            .widget-title {
+                font-size: 18px;
+            }
+            .widget-subtitle {
+                font-size: 12px;
+            }
+        }
+
+        @media (max-width: 540px) {
+            .bars-area {
+                gap: 10px;
+            }
+            .bar-wrapper {
+                flex: 0 0 24%;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="widget-shell">
+    <!-- Branding Bar -->
+    <div class="branding-bar">
+        <div class="branding-left">
+            <img src="https://brianiselin.github.io/widgets-public/torqueandtheory/torque_theory_horizontal.png" alt="Torque &amp; Theory">
+        </div>
+        <div class="branding-right">
+            <img src="https://brianiselin.github.io/widgets-public/Iselin_Group_Logo_1024_x.jpg" alt="Iselin Group">
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="widget-body">
+        <div class="widget-header">
+            <div class="widget-kicker">Torque &amp; Theory | Dealer Economics</div>
+            <div class="widget-title">How EVs Shrink the Dealer Profit Stack</div>
+            <div class="widget-subtitle">
+                Same thin profit on the sale. Very different pay-off in the service bay. 
+                EV after-sales is where the money tower drops.
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <div class="chart-header-row">
+                <div class="chart-title">Approximate Profit per Customer over ~8 Years</div>
+                <div class="chart-note">
+                    Stylised towers based on dealer and fixed-ops commentary.<br>
+                    Heights roughly reflect each slice of profit from one owner.
+                </div>
+            </div>
+
+            <div class="chart-layout">
+                <div class="y-label"><strong>Relative profit per owner</strong> (EV vs ICE, sale vs after-sales)</div>
+
+                <div class="bars-area">
+                    <!-- EV sale -->
+                    <div class="bar-wrapper">
+                        <div class="bar-tower ev-sale">
+                            <div class="bar-tag">Thin margin</div>
+                        </div>
+                        <div class="bar-label">EV – New Vehicle</div>
+                        <div class="bar-metric">
+                            <strong>≈20% of profit</strong><br>
+                            Similar front-end hit to ICE
+                        </div>
+                    </div>
+
+                    <!-- EV service -->
+                    <div class="bar-wrapper">
+                        <div class="bar-tower ev-service">
+                            <div class="bar-tag">Shrunk stack</div>
+                        </div>
+                        <div class="bar-label">EV – Service &amp; Parts</div>
+                        <div class="bar-metric">
+                            <strong>≈20–25% of profit</strong><br>
+                            Fewer visits, smaller bills
+                        </div>
+                    </div>
+
+                    <!-- ICE sale -->
+                    <div class="bar-wrapper">
+                        <div class="bar-tower ice-sale">
+                            <div class="bar-tag">Thin margin</div>
+                        </div>
+                        <div class="bar-label">ICE – New Vehicle</div>
+                        <div class="bar-metric">
+                            <strong>≈20% of profit</strong><br>
+                            Same skinny sale profit as EV
+                        </div>
+                    </div>
+
+                    <!-- ICE service -->
+                    <div class="bar-wrapper">
+                        <div class="bar-tower ice-service">
+                            <div class="bar-tag">Fat stack</div>
+                        </div>
+                        <div class="bar-label">ICE – Service &amp; Parts</div>
+                        <div class="bar-metric">
+                            <strong>≈50–60% of profit</strong><br>
+                            Oil, fluids, exhaust, repairs
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Callout -->
+            <div class="callout-row">
+                <div class="callout-pill">Follow the Money</div>
+                <div class="callout-text">
+                    EVs leave the blue bars the same and chop down the orange ones. 
+                    <strong>Your cheaper after-sales is their missing profit.</strong>
+                </div>
+            </div>
+
+            <div class="footnote">
+                Illustration only – real splits vary by brand, region, and store. 
+                The point is the shape: internal-combustion service and parts form a much taller profit tower than EV after-sales.
+            </div>
+        </div>
+    </div>
+
+    <!-- Copyright -->
+    <div class="copyright">
+        © 2025 Torque &amp; Theory and Iselin Group. All Rights Reserved.
+    </div>
+</div>
+</body>
+</html>

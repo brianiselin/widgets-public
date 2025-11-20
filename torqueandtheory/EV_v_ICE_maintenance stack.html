@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ten Years of Wrench Time: Gas vs EV | Torque & Theory</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        :root {
+            --bg-page: #0b1120;
+            --card-bg: #020617;
+            --card-border: #1f2937;
+            --text-main: #e5e7eb;
+            --text-muted: #9ca3af;
+            --accent-ice-1: #f97316;
+            --accent-ice-2: #facc15;
+            --accent-ice-3: #22c55e;
+            --accent-ice-4: #38bdf8;
+            --accent-ice-5: #a855f7;
+            --accent-ev-1: #22c55e;
+            --accent-ev-2: #2dd4bf;
+            --accent-ev-3: #38bdf8;
+            --accent-ev-4: #a855f7;
+            --brand-border: rgba(148, 163, 184, 0.6);
+            --radius-lg: 18px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: radial-gradient(circle at top, #020617 0, #020617 25%, #020617 55%, #020617 100%);
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            color: var(--text-main);
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .widget-shell {
+            width: 100%;
+            max-width: 960px;
+            background: linear-gradient(145deg, rgba(15,23,42,0.98), rgba(15,23,42,0.96));
+            border-radius: 20px;
+            border: 1px solid var(--card-border);
+            box-shadow: 0 28px 80px rgba(15,23,42,0.80);
+            overflow: hidden;
+        }
+
+        /* Branding bar */
+        .branding-bar {
+            width: 100%;
+            background: linear-gradient(to right, rgba(15,23,42,0.96), rgba(15,23,42,0.92));
+            border-bottom: 1px solid var(--brand-border);
+            padding: 10px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .branding-bar img {
+            display: block;
+            height: 34px;
+            max-width: 100%;
+            object-fit: contain;
+        }
+
+        .branding-left img {
+            max-width: 260px;
+        }
+
+        .branding-right img {
+            max-width: 72px;
+        }
+
+        @media (max-width: 600px) {
+            .branding-bar {
+                padding: 8px 12px;
+            }
+            .branding-bar img {
+                height: 28px;
+            }
+        }
+
+        /* Content */
+        .widget-body {
+            padding: 22px 22px 12px 22px;
+        }
+
+        .widget-header {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 20px;
+        }
+
+        .widget-kicker {
+            text-transform: uppercase;
+            letter-spacing: .12em;
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+
+        .widget-title {
+            font-size: 22px;
+            font-weight: 650;
+        }
+
+        .widget-subtitle {
+            font-size: 13px;
+            color: var(--text-muted);
+            max-width: 540px;
+        }
+
+        .chart-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--card-border);
+            padding: 16px 18px 18px 18px;
+        }
+
+        .chart-header-row {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .chart-title {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .chart-note {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .rows {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-top: 6px;
+        }
+
+        .row-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .row-label span:last-child {
+            font-size: 11px;
+            opacity: 0.85;
+        }
+
+        .stack-bar {
+            display: flex;
+            width: 100%;
+            border-radius: 999px;
+            overflow: hidden;
+            border: 1px solid rgba(148,163,184,0.6);
+            background: radial-gradient(circle at left, rgba(15,23,42,0.9), rgba(15,23,42,0.98));
+        }
+
+        .segment {
+            position: relative;
+            padding: 6px 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            white-space: nowrap;
+        }
+
+        .segment span {
+            z-index: 2;
+            text-shadow: 0 0 4px rgba(0,0,0,0.45);
+        }
+
+        .segment::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            opacity: .15;
+            mix-blend-mode: screen;
+        }
+
+        /* ICE segments */
+        .ice-oil       { background: linear-gradient(135deg, #9a3412, var(--accent-ice-1)); }
+        .ice-fluids    { background: linear-gradient(135deg, #854d0e, var(--accent-ice-2)); }
+        .ice-brakes    { background: linear-gradient(135deg, #166534, var(--accent-ice-3)); }
+        .ice-fuel      { background: linear-gradient(135deg, #075985, var(--accent-ice-4)); }
+        .ice-misc      { background: linear-gradient(135deg, #6b21a8, var(--accent-ice-5)); }
+
+        /* EV segments */
+        .ev-tires      { background: linear-gradient(135deg, #166534, var(--accent-ev-1)); }
+        .ev-brakes     { background: linear-gradient(135deg, #0f766e, var(--accent-ev-2)); }
+        .ev-fluids     { background: linear-gradient(135deg, #075985, var(--accent-ev-3)); }
+        .ev-misc       { background: linear-gradient(135deg, #6b21a8, var(--accent-ev-4)); }
+
+        /* Legend */
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 16px;
+            margin-top: 16px;
+        }
+
+        .legend-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+
+        .legend-swatch {
+            width: 12px;
+            height: 12px;
+            border-radius: 4px;
+        }
+
+        .sw-ice-oil       { background: linear-gradient(135deg, #9a3412, var(--accent-ice-1)); }
+        .sw-ice-fluids    { background: linear-gradient(135deg, #854d0e, var(--accent-ice-2)); }
+        .sw-ice-brakes    { background: linear-gradient(135deg, #166534, var(--accent-ice-3)); }
+        .sw-ice-fuel      { background: linear-gradient(135deg, #075985, var(--accent-ice-4)); }
+        .sw-ice-misc      { background: linear-gradient(135deg, #6b21a8, var(--accent-ice-5)); }
+
+        .sw-ev-tires      { background: linear-gradient(135deg, #166534, var(--accent-ev-1)); }
+        .sw-ev-brakes     { background: linear-gradient(135deg, #0f766e, var(--accent-ev-2)); }
+        .sw-ev-fluids     { background: linear-gradient(135deg, #075985, var(--accent-ev-3)); }
+        .sw-ev-misc       { background: linear-gradient(135deg, #6b21a8, var(--accent-ev-4)); }
+
+        .footnote {
+            margin-top: 18px;
+            font-size: 10px;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        .copyright {
+            padding: 8px 18px 12px 18px;
+            font-size: 10px;
+            color: var(--text-muted);
+            text-align: center;
+            border-top: 1px solid rgba(31,41,55,0.9);
+            background: radial-gradient(circle at top, #020617 0, #020617 55%, #020617 100%);
+        }
+
+        @media (max-width: 640px) {
+            .widget-body {
+                padding: 16px 14px 10px 14px;
+            }
+            .widget-title {
+                font-size: 18px;
+            }
+            .widget-subtitle {
+                font-size: 12px;
+            }
+            .segment {
+                padding: 6px 6px;
+                font-size: 9px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="widget-shell">
+    <!-- Branding Bar -->
+    <div class="branding-bar">
+        <div class="branding-left">
+            <img src="https://brianiselin.github.io/widgets-public/torqueandtheory/torque_theory_horizontal.png" alt="Torque &amp; Theory">
+        </div>
+        <div class="branding-right">
+            <img src="https://brianiselin.github.io/widgets-public/Iselin_Group_Logo_1024_x.jpg" alt="Iselin Group">
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div class="widget-body">
+        <div class="widget-header">
+            <div class="widget-kicker">Torque &amp; Theory | Visual Explainer</div>
+            <div class="widget-title">Ten Years of Wrench Time: Gas vs EV</div>
+            <div class="widget-subtitle">
+                Same driver, same miles. Two very different service stacks — and two very different profit stories for your dealer.
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <div class="chart-header-row">
+                <div class="chart-title">Estimated 10-Year Maintenance &amp; Repair Stack</div>
+                <div class="chart-note">Indexed cost: Gas SUV = 100 &nbsp;&bull;&nbsp; Typical mixed driving, U.S. ownership</div>
+            </div>
+
+            <div class="rows">
+                <!-- Gas SUV row -->
+                <div>
+                    <div class="row-label">
+                        <span>Typical Gas SUV</span>
+                        <span>Higher total maintenance &amp; more line items</span>
+                    </div>
+                    <div class="stack-bar">
+                        <div class="segment ice-oil" style="width: 28%;">
+                            <span>Oil &amp; Filters</span>
+                        </div>
+                        <div class="segment ice-fluids" style="width: 22%;">
+                            <span>Fluids &amp; Belts</span>
+                        </div>
+                        <div class="segment ice-brakes" style="width: 18%;">
+                            <span>Brakes</span>
+                        </div>
+                        <div class="segment ice-fuel" style="width: 20%;">
+                            <span>Fuel / Exhaust / Emissions</span>
+                        </div>
+                        <div class="segment ice-misc" style="width: 12%;">
+                            <span>Misc. Repairs</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- EV row -->
+                <div>
+                    <div class="row-label">
+                        <span>Comparable Electric SUV</span>
+                        <span>~40–50% lower maintenance outlay</span>
+                    </div>
+                    <div class="stack-bar">
+                        <div class="segment ev-tires" style="width: 32%;">
+                            <span>Tires</span>
+                        </div>
+                        <div class="segment ev-brakes" style="width: 18%;">
+                            <span>Brakes (Regen Assist)</span>
+                        </div>
+                        <div class="segment ev-fluids" style="width: 24%;">
+                            <span>Cabin Filter &amp; Fluids</span>
+                        </div>
+                        <div class="segment ev-misc" style="width: 10%;">
+                            <span>Misc. Repairs</span>
+                        </div>
+                        <div class="segment" style="width: 16%; background: radial-gradient(circle at top, #020617, #020617); color: var(--text-muted);">
+                            <span>Service Gap vs Gas</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Legend -->
+            <div class="legend">
+                <div class="legend-item">
+                    <span class="legend-swatch sw-ice-oil"></span>
+                    <span>Gas: Oil &amp; Filter Services</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-swatch sw-ice-fluids"></span>
+                    <span>Gas: Fluids, Belts, Cooling</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-swatch sw-ice-brakes"></span>
+                    <span>Gas: Brake Components</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-swatch sw-ice-fuel"></span>
+                    <span>Gas: Fuel, Exhaust, Emissions</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-swatch sw-ice-misc"></span>
+                    <span>Gas: Misc. Repairs</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-swatch sw-ev-tires"></span>
+                    <span>EV: Tires</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-swatch sw-ev-brakes"></span>
+                    <span>EV: Brakes</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-swatch sw-ev-fluids"></span>
+                    <span>EV: Cabin Filter &amp; Fluids</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-swatch sw-ev-misc"></span>
+                    <span>EV: Misc. Repairs</span>
+                </div>
+            </div>
+
+            <div class="footnote">
+                Indexed shares reflect public data from AAA, Consumer Reports, and U.S. DOE/Argonne on lifetime EV vs ICE maintenance.
+                Designed as an illustrative comparison, not a quote.
+            </div>
+        </div>
+    </div>
+
+    <!-- Copyright -->
+    <div class="copyright">
+        © 2025 Torque &amp; Theory and Iselin Group. All Rights Reserved.
+    </div>
+</div>
+</body>
+</html>

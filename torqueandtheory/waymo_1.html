@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Your Robotaxi Future | Static Widget</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        :root {
+            --bg-dark: #050816;
+            --bg-card: #0f172a;
+            --accent-green: #22c55e;
+            --accent-amber: #f59e0b;
+            --accent-red: #ef4444;
+            --text-main: #f9fafb;
+            --text-muted: #9ca3af;
+            --border-subtle: #1f2937;
+            --highlight: #38bdf8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        body {
+            background: radial-gradient(circle at top left, #1e293b 0, #020617 45%, #020617 100%);
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 24px;
+        }
+
+        .widget-wrapper {
+            max-width: 1200px;
+            width: 100%;
+            background: linear-gradient(145deg, rgba(15, 23, 42, 0.95), rgba(15, 23, 42, 0.96));
+            border-radius: 24px;
+            border: 1px solid var(--border-subtle);
+            box-shadow:
+                0 32px 80px rgba(0, 0, 0, 0.8),
+                0 0 0 1px rgba(148, 163, 184, 0.18);
+            padding: 24px 28px 26px;
+        }
+
+        /* Top Branding Bar */
+        .branding-bar {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 10px;
+            margin: -6px -4px 18px;
+            background: linear-gradient(
+                to right,
+                rgba(15, 23, 42, 0.96),
+                rgba(15, 23, 42, 0.9)
+            );
+            border-bottom: 1px solid rgba(148, 163, 184, 0.4);
+        }
+
+        .branding-logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .branding-logo img {
+            max-height: 26px;
+            height: auto;
+            width: auto;
+            display: block;
+        }
+
+        .branding-logo.left img {
+            max-height: 26px;
+        }
+
+        .branding-logo.right img {
+            max-height: 26px;
+        }
+
+        @media (max-width: 720px) {
+            .branding-bar {
+                padding: 6px 8px;
+            }
+            .branding-logo img {
+                max-height: 20px;
+            }
+        }
+
+        .widget-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .widget-title-block h1 {
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .widget-title-block h1 span.pulse-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 999px;
+            background: radial-gradient(circle, var(--accent-green) 0, #065f46 65%, transparent 100%);
+            box-shadow: 0 0 10px rgba(34, 197, 94, 0.8);
+        }
+
+        .widget-title-block p {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-top: 6px;
+        }
+
+        .widget-tag {
+            text-align: right;
+        }
+
+        .widget-tag-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .widget-tag-pill {
+            font-size: 11px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            border: 1px solid rgba(148, 163, 184, 0.5);
+            color: var(--highlight);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.08), transparent 55%);
+        }
+
+        .widget-tag-pill span.dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 999px;
+            background: var(--highlight);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+
+        .city-card {
+            background: radial-gradient(circle at top, #020617 0, #020617 40%, #020617 100%);
+            border-radius: 18px;
+            border: 1px solid rgba(148, 163, 184, 0.35);
+            padding: 10px 12px 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .city-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at top center, rgba(56, 189, 248, 0.18), transparent 60%);
+            opacity: 0.35;
+            pointer-events: none;
+        }
+
+        .city-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            position: relative;
+            z-index: 1;
+        }
+
+        .city-name {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .city-badge {
+            font-size: 10px;
+            padding: 4px 7px;
+            border-radius: 999px;
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(148, 163, 184, 0.55);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--accent-amber);
+        }
+
+        .city-body {
+            margin-top: 8px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .status-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+        }
+
+        .status-value {
+            font-size: 12px;
+            margin-top: 2px;
+        }
+
+        .go-live-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 6px;
+            padding: 3px 7px;
+            border-radius: 999px;
+            background: rgba(22, 163, 74, 0.15);
+            color: var(--accent-green);
+            font-size: 10px;
+        }
+
+        .go-live-pill span {
+            width: 7px;
+            height: 7px;
+            border-radius: 999px;
+            background: var(--accent-green);
+        }
+
+        .city-foot {
+            margin-top: 7px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+
+        .city-foot span.icon {
+            font-size: 11px;
+        }
+
+        .safety-section {
+            margin-top: 6px;
+            padding-top: 10px;
+            border-top: 1px dashed rgba(148, 163, 184, 0.35);
+            display: grid;
+            grid-template-columns: 2fr 3fr;
+            gap: 18px;
+            align-items: center;
+        }
+
+        .safety-text h2 {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .safety-text p {
+            font-size: 12px;
+            color: var(--text-main);
+        }
+
+        .bars {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .bar-label-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 2px;
+        }
+
+        .bar-track {
+            width: 100%;
+            height: 12px;
+            border-radius: 999px;
+            background: radial-gradient(circle at left, #020617 0, #020617 40%, #020617 100%);
+            border: 1px solid rgba(31, 41, 55, 0.9);
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            border-radius: 999px;
+            background: linear-gradient(90deg, #22c55e, #4ade80);
+        }
+
+        .bar-fill.human {
+            width: 100%;
+            background: linear-gradient(90deg, rgba(248, 113, 113, 0.2), rgba(248, 113, 113, 0.7));
+        }
+
+        .bar-fill.waymo {
+            width: 12%;
+        }
+
+        .bar-footnote {
+            font-size: 10px;
+            color: var(--text-muted);
+            text-align: right;
+            margin-top: 2px;
+        }
+
+        .legend-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 6px;
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+
+        .legend-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .legend-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 999px;
+        }
+
+        .legend-dot.green {
+            background: var(--accent-green);
+        }
+
+        .legend-dot.red {
+            background: var(--accent-red);
+        }
+
+        .copyright {
+            margin-top: 16px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(15, 23, 42, 0.9);
+            font-size: 10px;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        @media (max-width: 900px) {
+            .grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+            .widget-wrapper {
+                padding: 18px 16px 20px;
+            }
+            .widget-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .safety-section {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="widget-wrapper">
+
+    <!-- Top Branding Bar -->
+    <div class="branding-bar">
+        <div class="branding-logo left">
+            <img src="https://raw.githubusercontent.com/brianiselin/widgets-public/main/torqueandtheory/torque_theory_horizontal.png" alt="Torque & Theory Logo">
+        </div>
+        <div class="branding-logo right">
+            <img src="https://brianiselin.github.io/widgets-public/Iselin_Group_Logo_1024_x.jpg" alt="Iselin Group Logo">
+        </div>
+    </div>
+
+    <div class="widget-header">
+        <div class="widget-title-block">
+            <h1>
+                <span class="pulse-dot"></span>
+                Your Robotaxi Future
+            </h1>
+            <p>How Waymo’s driverless rollout hits <strong>your city</strong> and changes your daily miles.</p>
+        </div>
+        <div class="widget-tag">
+            <div class="widget-tag-label">Service rollout</div>
+            <div class="widget-tag-pill">
+                <span class="dot"></span>
+                Waymo robotaxis · 2024–2026
+            </div>
+        </div>
+    </div>
+
+    <div class="grid">
+        <!-- Miami -->
+        <div class="city-card">
+            <div class="city-header">
+                <div class="city-name">Miami</div>
+                <div class="city-badge">Live testing</div>
+            </div>
+            <div class="city-body">
+                <div class="status-label">Current phase</div>
+                <div class="status-value">Driverless, employees only</div>
+                <div class="go-live-pill">
+                    <span></span>
+                    Public rides: 2026
+                </div>
+                <div class="city-foot">
+                    <span><span class="icon">🚕</span> Nightlife & airport runs</span>
+                    <span>Launch city</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dallas -->
+        <div class="city-card">
+            <div class="city-header">
+                <div class="city-name">Dallas</div>
+                <div class="city-badge">Next up</div>
+            </div>
+            <div class="city-body">
+                <div class="status-label">Current phase</div>
+                <div class="status-value">Safety drivers, going driverless</div>
+                <div class="go-live-pill">
+                    <span></span>
+                    Public rides: 2026
+                </div>
+                <div class="city-foot">
+                    <span><span class="icon">🏟️</span> Game-day traffic</span>
+                    <span>Sunbelt zone</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Houston -->
+        <div class="city-card">
+            <div class="city-header">
+                <div class="city-name">Houston</div>
+                <div class="city-badge">Next up</div>
+            </div>
+            <div class="city-body">
+                <div class="status-label">Current phase</div>
+                <div class="status-value">Safety drivers, going driverless</div>
+                <div class="go-live-pill">
+                    <span></span>
+                    Public rides: 2026
+                </div>
+                <div class="city-foot">
+                    <span><span class="icon">🏙️</span> Crosstown commutes</span>
+                    <span>Heat & highways</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- San Antonio -->
+        <div class="city-card">
+            <div class="city-header">
+                <div class="city-name">San Antonio</div>
+                <div class="city-badge">Training</div>
+            </div>
+            <div class="city-body">
+                <div class="status-label">Current phase</div>
+                <div class="status-value">First responders in training</div>
+                <div class="go-live-pill">
+                    <span></span>
+                    Public rides: 2026
+                </div>
+                <div class="city-foot">
+                    <span><span class="icon">🚑</span> Emergency ready</span>
+                    <span>Alamo City</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Orlando -->
+        <div class="city-card">
+            <div class="city-header">
+                <div class="city-name">Orlando</div>
+                <div class="city-badge">Tourist grid</div>
+            </div>
+            <div class="city-body">
+                <div class="status-label">Current phase</div>
+                <div class="status-value">Safety drivers, going driverless</div>
+                <div class="go-live-pill">
+                    <span></span>
+                    Public rides: 2026
+                </div>
+                <div class="city-foot">
+                    <span><span class="icon">🎢</span> Parks & hotels</span>
+                    <span>Resort belt</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="safety-section">
+        <div class="safety-text">
+            <h2>Safety snapshot</h2>
+            <p>
+                Waymo’s autonomous miles show fewer crash and injury claims than typical human drivers.
+                This is what that gap looks like for <strong>you</strong>.
+            </p>
+            <div class="legend-row">
+                <div class="legend-item">
+                    <span class="legend-dot.green"></span>
+                    <span>Waymo robotaxis · lower claim rates</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-dot.red"></span>
+                    <span>Average human drivers · baseline</span>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div class="bars">
+                <div>
+                    <div class="bar-label-row">
+                        <span>Property damage claims</span>
+                        <span>Waymo vs human drivers</span>
+                    </div>
+                    <div class="bar-track">
+                        <div class="bar-fill human"></div>
+                    </div>
+                    <div class="bar-track" style="margin-top:4px;">
+                        <div class="bar-fill waymo"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="bar-footnote">
+                Waymo safety data vs U.S. human driver benchmarks, millions of autonomous miles.
+            </div>
+        </div>
+    </div>
+
+    <div class="copyright">
+        © 2024 Torque & Theory · The Iselin Group. All rights reserved.
+    </div>
+
+</div>
+</body>
+</html>

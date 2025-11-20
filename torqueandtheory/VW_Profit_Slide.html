@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>VW Regional Profit Change 2024–2025</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f9f9f9;
+    color: #222;
+    margin: 0; padding: 0;
+  }
+  .container {
+    max-width: 700px;
+    margin: 22px auto 20px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 6px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.09);
+  }
+  .branding-bar {
+    width: 100%;
+    box-sizing: border-box;
+    background: #003366;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 16px;
+    font-weight: bold;
+    font-size: 1.2em;
+    border-radius: 6px 6px 0 0;
+    margin: 0 0 20px 0;
+  }
+  .branding-left, .branding-right {
+    display: flex;
+    align-items: center;
+  }
+  .branding-left img, .branding-right img {
+    vertical-align: middle;
+  }
+  .branding-left span {
+    margin-left: 12px;
+  }
+  h2 {
+    text-align: center;
+    color: #003366;
+    margin-bottom: 28px;
+  }
+  .bar-chart {
+    margin: 0 auto 20px auto;
+    padding: 16px 12px 16px 0;
+    max-width: 620px;
+  }
+  .bar-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+  .region {
+    width: 120px;
+    font-weight: bold;
+    color: #003366;
+  }
+  .bar-outer {
+    flex: 1;
+    position: relative;
+    height: 32px;
+    background: #e0e7ef;
+    border-radius: 4px;
+    margin-right: 16px;
+    overflow: visible;
+  }
+  .bar {
+    height: 32px;
+    border-radius: 4px;
+    position: absolute;
+    top: 0; left: 0;
+    background: #ff6600;
+    min-width: 3px;
+    display: flex;
+    align-items: center;
+    transition: width 0.6s;
+    font-weight: bold;
+    color: white;
+    padding-left: 8px;
+    box-shadow: 1px 2px 7px rgba(255, 102, 0, .07);
+  }
+  .bar-positive {
+    background: #339933;
+  }
+  .bar-value {
+    margin-left: 12px;
+    font-weight: bold;
+    font-size: 1.02em;
+    color: #444;
+    min-width: 52px;
+    text-align: left;
+  }
+  .legend {
+    margin-top: 0;
+    margin-bottom: 18px;
+    font-size: 0.98em;
+    color: #444;
+    text-align: left;
+  }
+  .legend-box {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    vertical-align: middle;
+    margin-right: 6px;
+    background: #ff6600;
+    border-radius: 4px;
+    margin-left: 5px;
+  }
+  .legend-box.positive { background: #339933; }
+  .sources {
+    font-size: 0.95em;
+    color: #666;
+    margin: 12px 0 2px 0;
+    text-align: right;
+  }
+  @media (max-width: 670px) {
+    .container, .bar-chart { max-width: 99vw; }
+    .region { font-size: 0.97em;}
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <div class="branding-bar">
+      <div class="branding-left">
+        <a href="https://iselingroup.com" target="_blank">
+          <img src="https://brianiselin.github.io/widgets-public/Iselin_Group_Logo_1024_x.jpg" alt="Iselin Group Logo" style="height:40px; margin-right:12px;">
+        </a>
+        <span>Iselin Group</span>
+      </div>
+      <div class="branding-right">
+        <a href="https://torqueandtheory.brianiselin.com" target="_blank">
+          <img src="https://brianiselin.github.io/widgets-public/torqueandtheory/torque_theory_horizontal.png" alt="Torque &amp; Theory Logo" style="height:34px;">
+        </a>
+      </div>
+    </div>
+    <h2>Volkswagen Profit Change by Region (2024–2025)</h2>
+    <div class="legend"><span class="legend-box"></span> Percent Change in Profit Margin</div>
+    <div class="bar-chart" role="region" aria-label="Bar chart showing profit margin percent change by region for Volkswagen from 2024 to 2025">
+      <div class="bar-row">
+        <div class="region">United States</div>
+        <div class="bar-outer">
+          <div class="bar" style="width: 92%;" title="-67% drop">-67%</div>
+        </div>
+        <div class="bar-value" style="color:#b00;">Big Loss</div>
+      </div>
+      <div class="bar-row">
+        <div class="region">Europe</div>
+        <div class="bar-outer">
+          <div class="bar bar-positive" style="width: 8%;" title="-3% drop">-3%</div>
+        </div>
+        <div class="bar-value">Slight Drop</div>
+      </div>
+      <div class="bar-row">
+        <div class="region">Asia-Pacific</div>
+        <div class="bar-outer">
+          <div class="bar bar-positive" style="width: 5%;" title="-1.5% drop">-1.5%</div>
+        </div>
+        <div class="bar-value">Stable</div>
+      </div>
+      <div class="bar-row">
+        <div class="region">Other Regions</div>
+        <div class="bar-outer">
+          <div class="bar bar-positive" style="width: 8%;" title="+2% gain">+2%</div>
+        </div>
+        <div class="bar-value" style="color:#236d2f;">Slight Gain</div>
+      </div>
+    </div>
+    <div class="sources">
+      Sources:&nbsp;
+      <a href="https://www.volkswagen-group.com/en/publications" target="_blank" style="color:#007acc;">Volkswagen Group H1 2025 Financial Report</a>,
+      <a href="https://www.euronews.com/business/2025/07/25/hammered-by-us-tariffs-volkswagens-profit-drops-sharply" target="_blank" style="color:#007acc;">Euronews</a>,
+      <a href="https://www.just-auto.com/news/us-tariffs-dent-vw-group-operating-profit-in-h1-2025/" target="_blank" style="color:#007acc;">Just Auto</a>,
+      <a href="https://finance.yahoo.com/news/us-tariffs-dent-vw-group-operating-profit-in-h1-2025-112804586.html" target="_blank" style="color:#007acc;">Yahoo Finance</a>.
+    </div>
+  </div>
+</body>
+</html>

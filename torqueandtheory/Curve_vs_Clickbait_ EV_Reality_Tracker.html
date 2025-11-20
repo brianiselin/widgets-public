@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>EV Surge vs ‘ICE Comeback’ — 2015–2030</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #020617;
+      color: #e5e7eb;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: flex-start;
+      min-height: 100vh;
+    }
+
+    .branding-bar {
+      width: 100%;
+      background: #020617;
+      color: #f9fafb;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      height: 60px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.25);
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.8);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 13px;
+    }
+
+    .branding-left {
+      font-weight: 700;
+    }
+
+    .branding-right {
+      font-weight: 500;
+      opacity: 0.8;
+    }
+
+    .widget-wrapper {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .card {
+      width: 1280px;
+      height: 720px;
+      max-width: 100%;
+      background: radial-gradient(circle at top left, #0f172a 0, #020617 55%, #020617 100%);
+      border-radius: 24px;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      box-shadow:
+        0 24px 60px rgba(15, 23, 42, 0.85),
+        0 0 0 1px rgba(15, 23, 42, 0.9);
+      padding: 32px 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .card-header {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .card-header h1 {
+      font-size: 24px;
+      font-weight: 650;
+      letter-spacing: 0.02em;
+      color: #f9fafb;
+    }
+
+    .card-header p {
+      font-size: 14px;
+      color: #cbd5f5;
+      max-width: 640px;
+    }
+
+    .legend {
+      display: flex;
+      gap: 16px;
+      font-size: 12px;
+      color: #e5e7eb;
+      align-items: center;
+      margin-top: 4px;
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legend-item .swatch {
+      width: 16px;
+      height: 3px;
+      border-radius: 999px;
+    }
+
+    .legend-item.ev .swatch {
+      background: #22d3ee;
+      box-shadow: 0 0 12px rgba(34, 211, 238, 0.85);
+    }
+
+    .legend-item.ice .swatch {
+      background: #fbbf24;
+      box-shadow: 0 0 8px rgba(251, 191, 36, 0.6);
+    }
+
+    .chart-container {
+      flex: 1;
+      margin-top: 8px;
+      background: radial-gradient(circle at top, rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.5));
+      border-radius: 18px;
+      padding: 18px 20px 18px 24px;
+      border: 1px solid rgba(30, 64, 175, 0.5);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .chart-container svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .axis-label {
+      font-size: 11px;
+      fill: #9ca3af;
+    }
+
+    .tick-label {
+      font-size: 10px;
+      fill: #6b7280;
+    }
+
+    .grid-line {
+      stroke: rgba(55, 65, 81, 0.5);
+      stroke-width: 0.7;
+    }
+
+    .grid-line.grid-h {
+      stroke-dasharray: 2 4;
+    }
+
+    .grid-line.grid-v {
+      stroke-dasharray: 3 6;
+    }
+
+    .ev-line {
+      fill: none;
+      stroke: #22d3ee;
+      stroke-width: 3;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      filter: drop-shadow(0 0 6px rgba(34, 211, 238, 0.8));
+    }
+
+    .ice-line {
+      fill: none;
+      stroke: #fbbf24;
+      stroke-width: 2.4;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      opacity: 0.9;
+      filter: drop-shadow(0 0 5px rgba(251, 191, 36, 0.7));
+    }
+
+    .marker-dot.ev {
+      fill: #22d3ee;
+      stroke: rgba(15, 23, 42, 0.9);
+      stroke-width: 1;
+    }
+
+    .marker-dot.ice {
+      fill: #fbbf24;
+      stroke: rgba(15, 23, 42, 0.9);
+      stroke-width: 1;
+    }
+
+    .callout-line {
+      stroke: rgba(148, 163, 184, 0.9);
+      stroke-width: 0.9;
+    }
+
+    .callout-label {
+      font-size: 10px;
+      fill: #e5e7eb;
+      background: rgba(15, 23, 42, 0.9);
+    }
+
+    .callout-label-bg {
+      fill: rgba(15, 23, 42, 0.95);
+      stroke: rgba(55, 65, 81, 0.9);
+      stroke-width: 0.5;
+      rx: 3;
+      ry: 3;
+    }
+
+    .footnote {
+      margin-top: 4px;
+      font-size: 10px;
+      color: #9ca3af;
+      opacity: 0.85;
+    }
+  </style>
+</head>
+<body>
+  <div class="branding-bar">
+    <div class="branding-left" style="display: flex; align-items: center;">
+  <a href="https://iselingroup.com" target="_blank" style="display: inline-block;">
+    <img src="https://brianiselin.github.io/widgets-public/Iselin_Group_Logo_1024_x.jpg" alt="Iselin Group Logo" style="height: 40px; margin-right: 12px; vertical-align: middle;">
+  </a>
+  <span>Iselin Group</span>
+</div>
+
+    <div class="branding-right" style="display: flex; align-items: center;">
+  <a href="https://torqueandtheory.brianiselin.com" target="_blank" style="display: inline-block;">
+    <img src="https://brianiselin.github.io/widgets-public/torqueandtheory/torque_theory_horizontal.png" alt="Torque &amp; Theory Logo" style="height: 34px;">
+  </a>
+</div>
+
+  </div>
+
+  <div class="widget-wrapper">
+    <div class="card">
+      <div class="card-header">
+        <h1>EV Surge vs ‘ICE Comeback’ — 2015–2030</h1>
+        <p>Share of global new car sales — EVs keep climbing while ICE quietly retreats, despite the headlines.</p>
+      </div>
+
+      <div class="legend">
+        <span class="legend-item ev">
+          <span class="swatch"></span>
+          EV share of new car sales
+        </span>
+        <span class="legend-item ice">
+          <span class="swatch"></span>
+          ICE share of new car sales
+        </span>
+      </div>
+
+      <div class="chart-container">
+        <svg viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+          <!-- Background glow -->
+          <defs>
+            <radialGradient id="chartGlow" cx="50%" cy="10%" r="80%">
+              <stop offset="0%" stop-color="#1d4ed8" stop-opacity="0.25"/>
+              <stop offset="40%" stop-color="#0f172a" stop-opacity="0.0"/>
+              <stop offset="100%" stop-color="#020617" stop-opacity="0.0"/>
+            </radialGradient>
+          </defs>
+          <rect x="0" y="0" width="800" height="400" fill="url(#chartGlow)"/>
+
+          <!-- Chart area bounds -->
+          <!-- Left = 80, Right = 760, Top = 40, Bottom = 340 -->
+          <!-- Horizontal grid lines (0–100%) -->
+          <g>
+            <line class="grid-line grid-h" x1="80" y1="340" x2="760" y2="340"/>
+            <line class="grid-line grid-h" x1="80" y1="280" x2="760" y2="280"/>
+            <line class="grid-line grid-h" x1="80" y1="220" x2="760" y2="220"/>
+            <line class="grid-line grid-h" x1="80" y1="160" x2="760" y2="160"/>
+            <line class="grid-line grid-h" x1="80" y1="100" x2="760" y2="100"/>
+            <line class="grid-line grid-h" x1="80" y1="40" x2="760" y2="40"/>
+          </g>
+
+          <!-- Vertical grid lines for years -->
+          <g>
+            <line class="grid-line grid-v" x1="80" y1="40" x2="80" y2="340"/>
+            <line class="grid-line grid-v" x1="216" y1="40" x2="216" y2="340"/>
+            <line class="grid-line grid-v" x1="352" y1="40" x2="352" y2="340"/>
+            <line class="grid-line grid-v" x1="488" y1="40" x2="488" y2="340"/>
+            <line class="grid-line grid-v" x1="624" y1="40" x2="624" y2="340"/>
+            <line class="grid-line grid-v" x1="760" y1="40" x2="760" y2="340"/>
+          </g>
+
+          <!-- Axes -->
+          <line x1="80" y1="340" x2="760" y2="340" stroke="#9ca3af" stroke-width="1.2"/>
+          <line x1="80" y1="40" x2="80" y2="340" stroke="#9ca3af" stroke-width="1.2"/>
+
+          <!-- Y-axis labels -->
+          <g>
+            <text class="tick-label" x="60" y="344">0%</text>
+            <text class="tick-label" x="52" y="284">20%</text>
+            <text class="tick-label" x="52" y="224">40%</text>
+            <text class="tick-label" x="52" y="164">60%</text>
+            <text class="tick-label" x="52" y="104">80%</text>
+            <text class="tick-label" x="48" y="44">100%</text>
+            <text class="axis-label" x="26" y="190" transform="rotate(-90 26 190)">Share of global new car sales</text>
+          </g>
+
+          <!-- X-axis labels -->
+          <g>
+            <text class="tick-label" x="80" y="356" text-anchor="middle">2015</text>
+            <text class="tick-label" x="216" y="356" text-anchor="middle">2018</text>
+            <text class="tick-label" x="352" y="356" text-anchor="middle">2021</text>
+            <text class="tick-label" x="488" y="356" text-anchor="middle">2024</text>
+            <text class="tick-label" x="624" y="356" text-anchor="middle">2027</text>
+            <text class="tick-label" x="760" y="356" text-anchor="middle">2030</text>
+            <text class="axis-label" x="420" y="376" text-anchor="middle">Year</text>
+          </g>
+
+          <!-- EV line (real-world adjusted: 0.6%, 2.5%, 8.4%, 20%, 33%, 43%) -->
+          <path
+            class="ev-line"
+            d="M80 338
+               L216 332
+               L352 316
+               L488 290
+               L624 256
+               L760 235" />
+
+          <!-- ICE line (real-world adjusted: 99.4%, 97.5%, 91.6%, 79%, 67%, 57%) -->
+          <path
+            class="ice-line"
+            d="M80 41
+               L216 46
+               L352 63
+               L488 92
+               L624 124
+               L760 153" />
+
+          <!-- EV markers -->
+          <g>
+            <circle class="marker-dot ev" cx="80" cy="338" r="4"/>
+            <circle class="marker-dot ev" cx="216" cy="332" r="4"/>
+            <circle class="marker-dot ev" cx="352" cy="316" r="4"/>
+            <circle class="marker-dot ev" cx="488" cy="290" r="4"/>
+            <circle class="marker-dot ev" cx="624" cy="256" r="4"/>
+            <circle class="marker-dot ev" cx="760" cy="235" r="4"/>
+          </g>
+
+          <!-- ICE markers -->
+          <g>
+            <circle class="marker-dot ice" cx="80" cy="41" r="3.5"/>
+            <circle class="marker-dot ice" cx="216" cy="46" r="3.5"/>
+            <circle class="marker-dot ice" cx="352" cy="63" r="3.5"/>
+            <circle class="marker-dot ice" cx="488" cy="92" r="3.5"/>
+            <circle class="marker-dot ice" cx="624" cy="124" r="3.5"/>
+            <circle class="marker-dot ice" cx="760" cy="153" r="3.5"/>
+          </g>
+
+          <!-- Callouts -->
+          <!-- Porsche adjusted: 80% electrified goal by 2030 (2022) -->
+          <g>
+            <line class="callout-line" x1="420" y1="295" x2="470" y2="235"/>
+            <circle class="marker-dot ev" cx="420" cy="295" r="4"/>
+            <rect class="callout-label-bg" x="470" y="220" width="160" height="30"/>
+            <text class="callout-label" x="478" y="238">
+              Porsche: 80% electrified by 2030 (2022)
+            </text>
+          </g>
+
+          <!-- Porsche waits for demand statement (2024) -->
+          <g>
+            <line class="callout-line" x1="500" y1="286" x2="385" y2="210"/>
+            <circle class="marker-dot ev" cx="500" cy="286" r="4"/>
+            <rect class="callout-label-bg" x="220" y="190" width="170" height="30"/>
+            <text class="callout-label" x="228" y="208">
+              2024: Porsche “waits for demand”
+            </text>
+          </g>
+
+          <!-- Ferrari 40% EV target (2022), adjusted -->
+          <g>
+            <line class="callout-line" x1="360" y1="80" x2="250" y2="120"/>
+            <circle class="marker-dot ice" cx="360" cy="80" r="3.5"/>
+            <rect class="callout-label-bg" x="140" y="108" width="150" height="30"/>
+            <text class="callout-label" x="148" y="126">
+              Ferrari: 40% EV target (2022)
+            </text>
+          </g>
+
+          <!-- Ferrari cuts EV target to 20% (2030 projection updated) -->
+          <g>
+            <line class="callout-line" x1="630" y1="132" x2="700" y2="90"/>
+            <circle class="marker-dot ice" cx="630" cy="132" r="3.5"/>
+            <rect class="callout-label-bg" x="540" y="62" width="190" height="32"/>
+            <text class="callout-label" x="548" y="80">
+              2030: Ferrari trims EV share to ~20%
+            </text>
+          </g>
+
+          <!-- Toyota multi-pathway reaffirmed (2023) -->
+          <g>
+            <line class="callout-line" x1="352" y1="316" x2="262" y2="260"/>
+            <circle class="marker-dot ev" cx="352" cy="316" r="4"/>
+            <rect class="callout-label-bg" x="140" y="244" width="190" height="32"/>
+            <text class="callout-label" x="148" y="262">
+              2023: Toyota doubles down on multi-pathway
+            </text>
+          </g>
+        </svg>
+      </div>
+
+      <div class="footnote">
+        Real-world values sourced from Statista, BloombergNEF, and industry data. EV share rising continuously, ICE share declining, while luxury car makers balance EV and hybrid strategies.
+      </div>
+    </div>
+  </div>
+</body>
+</html>
