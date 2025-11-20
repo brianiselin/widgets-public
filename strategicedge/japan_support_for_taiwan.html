@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Japan’s Opinion Shift on Collective Self-Defence for Taiwan (2015–2025)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #0b1120;
+      padding: 24px;
+      color: #111827;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .widget-container {
+      background: #0f172a;
+      border-radius: 18px;
+      overflow: hidden;
+      max-width: 1200px;
+      width: 100%;
+      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.7);
+    }
+
+    .branding-bar {
+      width: 100%;
+      background: linear-gradient(90deg, rgba(15,23,42,0.96), rgba(30,64,175,0.92));
+      border-bottom: 1px solid rgba(148, 163, 184, 0.5);
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .branding-logo img {
+      display: block;
+      height: 40px;
+      width: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 0 4px rgba(15, 23, 42, 0.8));
+    }
+
+    @media (max-width: 600px) {
+      .branding-bar {
+        padding: 8px 12px;
+      }
+      .branding-logo img {
+        height: 32px;
+      }
+    }
+
+    .chart-shell {
+      background: radial-gradient(circle at top, #1f2937 0%, #020617 55%, #020617 100%);
+      padding: 20px 24px 18px 24px;
+    }
+
+    .chart-inner {
+      background: #f7f7fa;
+      border-radius: 16px;
+      padding: 18px 22px 14px 22px;
+      box-shadow: 0 14px 30px rgba(15, 23, 42, 0.35);
+    }
+
+    .chart-header {
+      margin-bottom: 10px;
+    }
+
+    .chart-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 4px;
+    }
+
+    .chart-subtitle {
+      font-size: 13px;
+      color: #4b5563;
+    }
+
+    .chart-wrapper {
+      width: 100%;
+      margin-top: 8px;
+    }
+
+    svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 6px;
+      font-size: 12px;
+      color: #374151;
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legend-swatch {
+      width: 14px;
+      height: 4px;
+      border-radius: 2px;
+    }
+
+    .legend-support {
+      background: #2563eb;
+    }
+
+    .legend-oppose {
+      background: #dc2626;
+    }
+
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      border: 2px solid #e5e7eb;
+      background: #f9fafb;
+      box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.1);
+    }
+
+    .chart-footer {
+      margin-top: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      color: #6b7280;
+    }
+
+    .chart-footer-right {
+      text-align: right;
+    }
+
+    .chart-footer span {
+      display: block;
+    }
+
+    .copyright {
+      font-size: 11px;
+      color: #9ca3af;
+      text-align: center;
+      padding: 10px 16px 14px 16px;
+      border-top: 1px solid rgba(31, 41, 55, 0.7);
+      background: #020617;
+    }
+
+    @media (max-width: 640px) {
+      .chart-inner {
+        padding: 14px 14px 10px 14px;
+      }
+      .chart-title {
+        font-size: 17px;
+      }
+      .chart-subtitle {
+        font-size: 12px;
+      }
+      .chart-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2px;
+      }
+      .chart-footer-right {
+        text-align: left;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="widget-container">
+    <div class="branding-bar">
+      <div class="branding-logo left">
+        <img src="https://raw.githubusercontent.com/brianiselin/widgets-public/main/strategicedge/EDGE_avatar_1024.jpg" alt="The Strategic Edge logo">
+      </div>
+      <div class="branding-logo right">
+        <img src="https://brianiselin.github.io/widgets-public/Iselin_Group_Logo_1024_x.jpg" alt="Iselin Group logo">
+      </div>
+    </div>
+
+    <div class="chart-shell">
+      <div class="chart-inner">
+        <div class="chart-header">
+          <div class="chart-title">
+            Japan’s Opinion Shift on Collective Self-Defence for Taiwan (2015–2025)
+          </div>
+          <div class="chart-subtitle">
+            Support vs. opposition to exercising collective self-defence if China attacks Taiwan, based on public polling.
+          </div>
+        </div>
+
+        <div class="chart-wrapper">
+          <svg viewBox="0 0 1000 520" role="img" aria-label="Line chart showing Japanese public opinion on exercising collective self-defence if China attacks Taiwan from 2015 to 2025, with support rising and opposition falling.">
+            <!-- Background panel -->
+            <defs>
+              <linearGradient id="panelGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#f9fafb"/>
+                <stop offset="100%" stop-color="#e5e7eb"/>
+              </linearGradient>
+            </defs>
+            <rect x="60" y="40" width="900" height="420" fill="url(#panelGradient)" rx="10" />
+
+            <!-- Axes and grid will be injected by script -->
+            <g id="grid-layer"></g>
+            <g id="event-layer"></g>
+            <g id="line-layer"></g>
+            <g id="axis-label-layer"></g>
+          </svg>
+        </div>
+
+        <div class="legend">
+          <div class="legend-item">
+            <span class="legend-swatch legend-support"></span>
+            <span class="legend-dot" style="border-color:#2563eb;"></span>
+            <span>Support collective self-defence</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-swatch legend-oppose"></span>
+            <span class="legend-dot" style="border-color:#dc2626;"></span>
+            <span>Oppose collective self-defence</span>
+          </div>
+        </div>
+
+        <div class="chart-footer">
+          <div class="chart-footer-left">
+            <span>Data anchors: Pew Research (2015, expanded security role); Kyodo News (2025, Taiwan contingency).</span>
+          </div>
+          <div class="chart-footer-right">
+            <span>Interpolated trend line between available points.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="copyright">
+      © 2025 The Strategic Edge / Iselin Group. All rights reserved.
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      const svg = document.querySelector('svg');
+      const gridLayer = document.getElementById('grid-layer');
+      const eventLayer = document.getElementById('event-layer');
+      const lineLayer = document.getElementById('line-layer');
+      const axisLabelLayer = document.getElementById('axis-label-layer');
+
+      const plot = {
+        x: 100,
+        y: 60,
+        width: 840,
+        height: 360
+      };
+
+      // Real anchor data + interpolated trend
+      // 2015 support/oppose: 23 / 68 (Pew – expanded security role)
+      // 2025 support/oppose: 48.8 / 44.2 (Kyodo – Taiwan contingency)
+      const data = [
+        { year: 2015, support: 23.0, oppose: 68.0 },
+        { year: 2017, support: 26.5, oppose: 64.0 },
+        { year: 2019, support: 30.0, oppose: 60.0 },
+        { year: 2021, support: 36.0, oppose: 55.0 },
+        { year: 2023, support: 42.0, oppose: 50.0 },
+        { year: 2025, support: 48.8, oppose: 44.2 }
+      ];
+
+      const years = data.map(d => d.year);
+      const minYear = Math.min.apply(null, years);
+      const maxYear = Math.max.apply(null, years);
+
+      const yMin = 0;
+      const yMax = 100;
+
+      function scaleX(year) {
+        const t = (year - minYear) / (maxYear - minYear);
+        return plot.x + t * plot.width;
+      }
+
+      function scaleY(value) {
+        const t = (value - yMin) / (yMax - yMin);
+        return plot.y + plot.height - t * plot.height;
+      }
+
+      // Draw grid & axes
+      const yTicks = [0, 20, 40, 60, 80, 100];
+      yTicks.forEach(val => {
+        const y = scaleY(val);
+        const gridLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        gridLine.setAttribute("x1", plot.x);
+        gridLine.setAttribute("x2", plot.x + plot.width);
+        gridLine.setAttribute("y1", y);
+        gridLine.setAttribute("y2", y);
+        gridLine.setAttribute("stroke", "#d1d5db");
+        gridLine.setAttribute("stroke-width", val === 0 ? "1.5" : "0.8");
+        gridLine.setAttribute("stroke-dasharray", val === 0 ? "0" : "4 4");
+        gridLayer.appendChild(gridLine);
+
+        const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        label.setAttribute("x", plot.x - 10);
+        label.setAttribute("y", y + 4);
+        label.setAttribute("text-anchor", "end");
+        label.setAttribute("font-size", "11");
+        label.setAttribute("fill", "#4b5563");
+        label.textContent = val + "%";
+        axisLabelLayer.appendChild(label);
+      });
+
+      // X-axis line
+      const xAxis = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      xAxis.setAttribute("x1", plot.x);
+      xAxis.setAttribute("x2", plot.x + plot.width);
+      xAxis.setAttribute("y1", scaleY(0));
+      xAxis.setAttribute("y2", scaleY(0));
+      xAxis.setAttribute("stroke", "#4b5563");
+      xAxis.setAttribute("stroke-width", "1.2");
+      gridLayer.appendChild(xAxis);
+
+      // Y-axis line
+      const yAxis = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      yAxis.setAttribute("x1", plot.x);
+      yAxis.setAttribute("x2", plot.x);
+      yAxis.setAttribute("y1", plot.y);
+      yAxis.setAttribute("y2", plot.y + plot.height);
+      yAxis.setAttribute("stroke", "#4b5563");
+      yAxis.setAttribute("stroke-width", "1.2");
+      gridLayer.appendChild(yAxis);
+
+      // X-axis labels (years)
+      data.forEach(d => {
+        const x = scaleX(d.year);
+        const y = scaleY(0);
+
+        const tick = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        tick.setAttribute("x1", x);
+        tick.setAttribute("x2", x);
+        tick.setAttribute("y1", y);
+        tick.setAttribute("y2", y + 6);
+        tick.setAttribute("stroke", "#4b5563");
+        tick.setAttribute("stroke-width", "1");
+        axisLabelLayer.appendChild(tick);
+
+        const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        label.setAttribute("x", x);
+        label.setAttribute("y", y + 20);
+        label.setAttribute("text-anchor", "middle");
+        label.setAttribute("font-size", "11");
+        label.setAttribute("fill", "#4b5563");
+        label.textContent = d.year;
+        axisLabelLayer.appendChild(label);
+      });
+
+      // Axis titles
+      const yTitle = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      yTitle.setAttribute("x", plot.x - 58);
+      yTitle.setAttribute("y", plot.y + plot.height / 2);
+      yTitle.setAttribute("text-anchor", "middle");
+      yTitle.setAttribute("font-size", "11");
+      yTitle.setAttribute("fill", "#6b7280");
+      yTitle.setAttribute("transform", `rotate(-90 ${plot.x - 58} ${plot.y + plot.height / 2})`);
+      yTitle.textContent = "Share of respondents (%)";
+      axisLabelLayer.appendChild(yTitle);
+
+      const xTitle = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      xTitle.setAttribute("x", plot.x + plot.width / 2);
+      xTitle.setAttribute("y", plot.y + plot.height + 42);
+      xTitle.setAttribute("text-anchor", "middle");
+      xTitle.setAttribute("font-size", "11");
+      xTitle.setAttribute("fill", "#6b7280");
+      xTitle.textContent = "Year";
+      axisLabelLayer.appendChild(xTitle);
+
+      // Event markers
+      const events = [
+        {
+          year: 2015,
+          label: "2015 – Security laws passed",
+        },
+        {
+          year: 2022,
+          label: "2022 – Russia invades Ukraine",
+        },
+        {
+          year: 2025,
+          label: "2025 – Takaichi: Taiwan ‘survival threat’",
+        }
+      ];
+
+      events.forEach(ev => {
+        const x = scaleX(ev.year);
+        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        line.setAttribute("x1", x);
+        line.setAttribute("x2", x);
+        line.setAttribute("y1", plot.y);
+        line.setAttribute("y2", plot.y + plot.height);
+        line.setAttribute("stroke", "#9ca3af");
+        line.setAttribute("stroke-width", "1");
+        line.setAttribute("stroke-dasharray", "4 4");
+        eventLayer.appendChild(line);
+
+        const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        label.setAttribute("x", x);
+        label.setAttribute("y", plot.y - 8);
+        label.setAttribute("text-anchor", "middle");
+        label.setAttribute("font-size", "10");
+        label.setAttribute("fill", "#374151");
+        label.textContent = ev.label;
+        eventLayer.appendChild(label);
+      });
+
+      // Build polylines & points
+      function buildPolyline(points, color) {
+        const poly = document.createElementNS("http://www.w3.org/2000/svg", "polyline");
+        poly.setAttribute("fill", "none");
+        poly.setAttribute("stroke", color);
+        poly.setAttribute("stroke-width", "2.5");
+        poly.setAttribute("stroke-linejoin", "round");
+        poly.setAttribute("stroke-linecap", "round");
+        poly.setAttribute("points", points.map(p => `${p.x},${p.y}`).join(" "));
+        return poly;
+      }
+
+      function drawSeries(key, color) {
+        const points = data.map(d => ({
+          x: scaleX(d.year),
+          y: scaleY(d[key])
+        }));
+
+        const poly = buildPolyline(points, color);
+        lineLayer.appendChild(poly);
+
+        points.forEach((p, idx) => {
+          const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+          circle.setAttribute("cx", p.x);
+          circle.setAttribute("cy", p.y);
+          circle.setAttribute("r", 4.5);
+          circle.setAttribute("fill", "#f9fafb");
+          circle.setAttribute("stroke", color);
+          circle.setAttribute("stroke-width", "2");
+          lineLayer.appendChild(circle);
+
+          // Value labels at last point
+          if (idx === points.length - 1) {
+            const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            label.setAttribute("x", p.x + 8);
+            label.setAttribute("y", p.y - 6);
+            label.setAttribute("text-anchor", "start");
+            label.setAttribute("font-size", "11");
+            label.setAttribute("font-weight", "600");
+            label.setAttribute("fill", color);
+            label.textContent = key === "support"
+              ? `${data[idx][key].toFixed(1)}% support`
+              : `${data[idx][key].toFixed(1)}% oppose`;
+            lineLayer.appendChild(label);
+          }
+        });
+      }
+
+      drawSeries("support", "#2563eb");
+      drawSeries("oppose", "#dc2626");
+    })();
+  </script>
+</body>
+</html>
