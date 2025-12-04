@@ -16,4 +16,4 @@ To promote excellence and professionalism in intelligence through cutting-edge e
 
 ## Contact
 
-For more information or collaboration opportunities, please reach out to [info@iselingroup.com](mailto:info@iselingroup.com).
+For more information or collaboration opportunities, please reach out to [info@eipio.eu](mailto:info@eipio.eu).
