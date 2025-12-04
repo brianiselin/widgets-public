@@ -7,7 +7,6 @@
     <!-- Cloudflare Web Analytics -->
     <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "22466d27b8c14ef98293d50b38526660"}'></script>
     <style>
-        /* Reset and base styles */
         * {
             margin: 0;
             padding: 0;
@@ -29,8 +28,6 @@
         a:hover {
             text-decoration: underline;
         }
-
-        /* Iselin Group Top Branding Bar */
         #iselin-top-bar {
             position: fixed;
             top: 0;
@@ -64,8 +61,6 @@
             object-fit: contain;
             filter: brightness(180%) contrast(120%);
         }
-
-        /* Iselin Group Bottom Branding Bar */
         #iselin-bottom-bar {
             position: fixed;
             bottom: 0;
@@ -92,8 +87,6 @@
             line-height: 1.3;
             font-weight: 400;
         }
-
-        /* Container & main content */
         .container {
             max-width: 900px;
             margin: 0 auto;
@@ -319,7 +312,7 @@
             <section id="quiz-section">
                 <div class="intro" tabindex="0">
                     <p><strong>Welcome to the EIPIO Advanced Tradecraft Quiz.</strong></p>
-                    <p style="margin-top: 12px;">This assessment evaluates your mastery of professional intelligence tradecraft across collection methods, counterintelligence, operational security, analytical techniques, and ethical decision-making. The quiz contains 30 advanced questions designed for experienced intelligence professionals.</p>
+                    <p style="margin-top: 12px;">This assessment evaluates your mastery of professional intelligence tradecraft across collection methods, counterintelligence, operational security, analytical techniques, and ethical decision-making. The quiz contains 40 advanced questions designed for experienced intelligence professionals.</p>
                     <p style="margin-top: 12px;">Select the best answer for each question. Good luck!</p>
                 </div>
 
@@ -327,9 +320,7 @@
                     <div class="progress-fill" id="progress-fill" style="width: 0%" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
                 </div>
 
-                <form id="quiz-form" aria-live="polite" aria-relevant="additions" aria-label="Quiz questions form">
-                    <!-- Questions dynamically inserted here -->
-                </form>
+                <form id="quiz-form" aria-live="polite" aria-relevant="additions" aria-label="Quiz questions form"></form>
 
                 <button type="button" class="submit-btn" id="submit-btn" onclick="submitQuiz(event)" disabled>Submit Quiz</button>
             </section>
@@ -341,7 +332,7 @@
     <div id="iselin-bottom-bar" aria-label="Iselin Group Bottom Branding Bar">
         <div class="left">Iselin Group - Strategic Consulting</div>
         <div class="right">
-            © Iselin Group. “EIPIO Intelligence Tradecraft Quiz” – brian.iselin(@)iselingroup.com. The underlying decision‑integrity model, logic, and UI are proprietary to
+            © Iselin Group. “EIPIO Intelligence Tradecraft Quiz” – brian.iselin(@)iselingroup.com. The underlying decision-integrity model, logic, and UI are proprietary to
             Iselin Group and may not be reproduced, adapted, or deployed in whole or in part without prior written consent; all rights reserved.
         </div>
     </div>
@@ -367,8 +358,8 @@
                     "Not usually reliable source, possibly true information",
                     "Reliable source, probably true information"
                 ],
-                correct: 1,
-                explanation: "In the Admiralty System, source reliability is rated A-F (A being most reliable) and information credibility is rated 1-6 (1 being most credible). B3 indicates a 'usually reliable' source with 'possibly true' information."
+                correct: 0,
+                explanation: "In the Admiralty System, source reliability is rated A–F (A being most reliable) and information credibility is rated 1–6 (1 being most credible). B3 indicates a usually reliable source with possibly true information."
             },
             {
                 question: "What is the primary purpose of implementing 'need-to-know' compartmentation in intelligence operations?",
@@ -677,16 +668,127 @@
                 ],
                 correct: 1,
                 explanation: "Signature reduction involves minimizing detectable indicators (technical emissions, behavioral patterns, physical signatures) that adversaries could use to detect, identify, or characterize friendly operations, capabilities, or presence."
+            },
+            {
+                question: "According to standard US/NATO doctrine, what is the doctrinal distinction between a 'covert' and a 'clandestine' operation?",
+                options: [
+                    "Covert operations are smaller in scale than clandestine operations.",
+                    "Covert operations focus on hiding the sponsor; clandestine operations focus on hiding the existence of the operation itself.",
+                    "Covert operations are always lethal; clandestine operations are non-lethal.",
+                    "There is no formal doctrinal distinction; the terms are interchangeable."
+                ],
+                correct: 1,
+                explanation: "Doctrinally, a covert operation is structured so that the sponsor's role can be plausibly denied, while a clandestine operation focuses on concealing the fact that the operation occurred at all, regardless of attribution."
+            },
+            {
+                question: "When running a double-agent operation against a hostile service, which risk most directly threatens the integrity of your own service's operations?",
+                options: [
+                    "The double agent's reporting becomes too detailed to process efficiently.",
+                    "The hostile service uses the double agent to feed you controlled disinformation while mapping your requirements and methods.",
+                    "The double agent requests increased financial compensation for their cooperation.",
+                    "The hostile service refuses to meet the double agent in person."
+                ],
+                correct: 1,
+                explanation: "If the hostile service maintains real control, a double agent becomes a controlled channel for disinformation and a probe into your priorities and tradecraft, directly endangering your broader operations."
+            },
+            {
+                question: "From a cryptanalytic perspective, what is the most serious consequence of reusing a one-time pad key with two different messages?",
+                options: [
+                    "It slightly reduces the key space but remains information-theoretically secure.",
+                    "It allows an attacker to derive both plaintexts by combining the two ciphertexts and applying linguistic analysis.",
+                    "It only compromises one of the messages, not both.",
+                    "It makes the ciphertext immune to frequency analysis."
+                ],
+                correct: 1,
+                explanation: "Reusing a one-time pad produces a 'two-time pad': XORing the two ciphertexts cancels the key and yields the XOR of the plaintexts, which can often be split into both original messages with standard linguistic and statistical techniques."
+            },
+            {
+                question: "Which structured analytic technique is specifically intended to surface and challenge the most important assumptions underlying an assessment before major judgments are made?",
+                options: [
+                    "Key Assumptions Check",
+                    "Devil's Advocacy",
+                    "Scenario Analysis",
+                    "High-Impact/Low-Probability Analysis"
+                ],
+                correct: 0,
+                explanation: "A Key Assumptions Check forces analysts to identify, articulate, and scrutinize the assumptions underpinning their assessment, testing their validity before high-consequence judgments are finalised."
+            },
+            {
+                question: "Which description best captures a professionally designed surveillance detection route (SDR) for a case officer in a denied area?",
+                options: [
+                    "The shortest, most direct route between meeting points to minimize exposure time.",
+                    "A deliberately indirect, time-consuming route that forces any surveillance to reveal itself through repeated exposure at multiple control points.",
+                    "A random walk through the city chosen spontaneously to avoid patterning.",
+                    "A route that always uses public transport rather than walking or driving."
+                ],
+                correct: 1,
+                explanation: "A well-designed SDR is planned in advance, uses multiple control points and changes of pace or mode, and is long enough that any surveillance will struggle to stay hidden across the whole sequence."
+            },
+            {
+                question: "In a service that uses the Admiralty (NATO) source grading system, which of the following combinations would normally trigger the strongest validation and corroboration effort before high-level dissemination?",
+                options: [
+                    "A1 – completely reliable source, confirmed by other information",
+                    "B2 – usually reliable source, probably true information",
+                    "D3 – usually unreliable source, possibly true information on a critical issue",
+                    "C4 – fairly reliable source, doubtful information"
+                ],
+                correct: 2,
+                explanation: "A D3 report on a critical issue combines low source reliability and only possibly true information, so it would demand intensive validation and corroboration before being used in high-level assessments."
+            },
+            {
+                question: "In a highly compartmented Special Access Program (SAP) or Sensitive Compartmented Information (SCI) environment, which control most directly enforces the principle of 'need to know' beyond standard clearance levels?",
+                options: [
+                    "Annual security awareness training for all cleared personnel.",
+                    "Formal indoctrination and signed read-in to specific compartments or code-word programmes.",
+                    "Use of generic 'Top Secret' markings without compartment codes.",
+                    "Physical separation of offices for different directorates."
+                ],
+                correct: 1,
+                explanation: "Compartmented programmes require an additional indoctrination and signed read-in beyond basic clearance, enforcing need-to-know by limiting access to specific code-word compartments."
+            },
+            {
+                question: "Which of the following is the best example of a diagnostic indicator of deception rather than an ambiguous one?",
+                options: [
+                    "An adversary suddenly classifies all information on a previously open topic.",
+                    "Two independent HUMINT sources, who have never met, repeat the same unusual and verifiable false detail originating from the same adversary channel.",
+                    "Media outlets in several countries repeat the same unattributed talking points.",
+                    "A senior official cancels a press conference without explanation."
+                ],
+                correct: 1,
+                explanation: "Convergent, independently sourced repetition of a specific false detail traceable to the same adversary channel is strong, diagnostic evidence of a controlled deception effort."
+            },
+            {
+                question: "A walk-in enters your embassy claiming access to a foreign missile programme and offers documents on the spot. From a tradecraft perspective, what is the most appropriate initial posture?",
+                options: [
+                    "Immediately accept the documents and invite the walk-in to return regularly with more material.",
+                    "Politely decline any contact to avoid legal liability.",
+                    "Treat the walk-in as a potential hostile dangle, minimise immediate intake, and move quickly to secure vetting and technical screening of any material.",
+                    "Demand that the walk-in sign a formal agent agreement before accepting any information."
+                ],
+                correct: 2,
+                explanation: "Professionals treat any unsolicited walk-in as a potential dangle or provocation, limiting exposure while ensuring the person and any material are handled in a controlled, technically screened vetting process."
+            },
+            {
+                question: "Which practice best exemplifies disciplined collection management for a national-level Priority Intelligence Requirement (PIR)?",
+                options: [
+                    "Tasking every available collection platform against the PIR to ensure nothing is missed.",
+                    "Aligning specific collection platforms to clearly defined Essential Elements of Information (EEIs) and periodically re-tasking based on actual reporting value.",
+                    "Allowing individual collectors to decide ad hoc how to support the PIR based on their judgment.",
+                    "Focusing collection exclusively on the easiest targets to ensure steady reporting volume."
+                ],
+                correct: 1,
+                explanation: "Sound collection management maps concrete EEIs to appropriate platforms, reviews actual reporting value, and re-tasks accordingly, rather than simply flooding the requirement with undisciplined collection."
             }
         ];
 
         function generateQuiz() {
             const form = document.getElementById('quiz-form');
+            const totalQuestions = quizData.length;
             quizData.forEach((q, index) => {
                 const questionDiv = document.createElement('div');
                 questionDiv.className = 'question-container';
                 questionDiv.innerHTML = `
-                    <div class="question-number">Question ${index + 1} of 30</div>
+                    <div class="question-number">Question ${index + 1} of ${totalQuestions}</div>
                     <div class="question-text">${q.question}</div>
                     <div class="options">
                         ${q.options.map((option, optIndex) => `
@@ -710,8 +812,9 @@
                 }
             }
             const percentage = (answered / totalQuestions) * 100;
-            document.getElementById('progress-fill').style.width = percentage + '%';
-            document.getElementById('progress-fill').setAttribute('aria-valuenow', Math.round(percentage));
+            const fill = document.getElementById('progress-fill');
+            fill.style.width = percentage + '%';
+            fill.setAttribute('aria-valuenow', Math.round(percentage));
             document.getElementById('submit-btn').disabled = answered < totalQuestions;
         }
 
@@ -723,7 +826,7 @@
 
             quizData.forEach((q, index) => {
                 const selected = document.querySelector(`input[name="question${index}"]:checked`);
-                const userAnswer = selected ? parseInt(selected.value) : -1;
+                const userAnswer = selected ? parseInt(selected.value, 10) : -1;
                 userAnswers.push(userAnswer);
 
                 if (userAnswer === q.correct) {
@@ -735,7 +838,8 @@
         }
 
         function displayResults(score, userAnswers) {
-            const percentage = Math.round((score / quizData.length) * 100);
+            const totalQuestions = quizData.length;
+            const percentage = Math.round((score / totalQuestions) * 100);
             const quizSection = document.getElementById('quiz-section');
             const resultsSection = document.getElementById('results-section');
 
@@ -745,14 +849,14 @@
             let feedback = '';
             let quartile = 0;
 
-            if (percentage >= 75) {
+            if (percentage >= 85) {
                 feedback = "🎖️ <strong>Expert Level Intelligence Officer – Outstanding!</strong><br>Your mastery of advanced tradecraft demonstrates exceptional professional competence. You have internalized the principles that define excellence in the intelligence profession.";
                 quartile = 4;
                 createConfetti();
-            } else if (percentage >= 50) {
+            } else if (percentage >= 60) {
                 feedback = "✅ <strong>Strong Grasp of Tradecraft – Well Done!</strong><br>You demonstrate solid understanding of intelligence principles and methods. Continue refining your expertise through operational experience and professional development.";
                 quartile = 3;
-            } else if (percentage >= 25) {
+            } else if (percentage >= 35) {
                 feedback = "📚 <strong>Intermediate Understanding – Honing Your Skills</strong><br>You have foundational knowledge but would benefit from deeper study of tradecraft principles and operational methods. Focus on areas where you struggled.";
                 quartile = 2;
             } else {
@@ -763,7 +867,7 @@
             let resultsHTML = `
                 <div class="results" tabindex="0">
                     <h2 style="color: #2a5298; margin-bottom: 20px;">Your Results</h2>
-                    <div class="score-display">${score}/30</div>
+                    <div class="score-display">${score}/${totalQuestions}</div>
                     <div class="score-percentage">${percentage}%</div>
                     <div class="feedback">${feedback}</div>
                     <button class="retake-btn" onclick="retakeQuiz()" aria-label="Retake quiz">Retake Quiz</button>
@@ -788,10 +892,7 @@
             });
 
             resultsHTML += `</div>`;
-
             resultsSection.innerHTML = resultsHTML;
-
-            // Scroll to results for accessibility
             resultsSection.focus();
         }
 
@@ -822,7 +923,6 @@
             window.scrollTo(0, 0);
         }
 
-        // Initialize quiz on page load
         generateQuiz();
         document.getElementById('submit-btn').disabled = true;
     </script>
