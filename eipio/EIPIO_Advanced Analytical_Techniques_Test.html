@@ -319,7 +319,7 @@
             <section id="quiz-section">
                 <div class="intro" tabindex="0">
                     <p><strong>Welcome to the EIPIO Advanced Analytical Methods Test.</strong></p>
-                    <p style="margin-top: 12px;">This assessment evaluates your understanding and application of advanced analytical techniques including hypothesis testing, cognitive bias mitigation, structured analytic techniques, and both qualitative and quantitative assessment methods. The test contains 30 challenging questions designed for professional intelligence analysts.</p>
+                    <p style="margin-top: 12px;">This assessment evaluates your understanding and application of advanced analytical techniques including hypothesis testing, cognitive bias mitigation, structured analytic techniques, and both qualitative and quantitative assessment methods. The test contains 40 demanding questions designed for professional intelligence analysts.</p>
                     <p style="margin-top: 12px;">Select the best answer for each question. Good luck!</p>
                 </div>
 
@@ -341,7 +341,7 @@
     <div id="iselin-bottom-bar" aria-label="Iselin Group Bottom Branding Bar">
         <div class="left">Iselin Group - Strategic Consulting</div>
         <div class="right">
-            © Iselin Group. “EIPIO Advanced Analytical Methods Test” – brian.iselin(@)iselingroup.com. The underlying decision‑integrity model, logic, and UI are proprietary to
+            © Iselin Group. “EIPIO Advanced Analytical Methods Test” – brian.iselin(@)iselingroup.com. The underlying decision-integrity model, logic, and UI are proprietary to
             Iselin Group and may not be reproduced, adapted, or deployed in whole or in part without prior written consent; all rights reserved.
         </div>
     </div>
@@ -522,7 +522,7 @@
                     "Gap Analysis"
                 ],
                 correct: 2,
-                explanation: "Inverse analysis interrogates the current line of reasoning by exploring what evidence would contradict it."
+                explanation: "Inverse analysis interrogates the current line of reasoning by exploring what evidence or conditions would make it false or unreliable."
             },
             {
                 question: "Which of the following is NOT a benefit of structured analytic techniques?",
@@ -638,7 +638,7 @@
                 question: "How does 'indicator analysis' contribute to structured assessment?",
                 options: [
                     "Collects quantitative data only",
-                    "Focuses on observable evidence to support hypotheses",
+                    "Focuses on observable evidence to support or refute hypotheses",
                     "Establishes covert sources",
                     "Generates random scenarios"
                 ],
@@ -668,7 +668,7 @@
                 explanation: "Scenario branching helps analysts prepare for multiple plausible futures by differentiating based on key variables."
             },
             {
-                question: "Why is 'structured brainstorming' superior to traditional brainstorming?",
+                question: "Why is 'structured brainstorming' superior to traditional brainstorming for intelligence work?",
                 options: [
                     "It limits contributions to a single expert",
                     "It organizes idea generation systematically to reduce group biases",
@@ -677,16 +677,127 @@
                 ],
                 correct: 1,
                 explanation: "Structured brainstorming uses defined rules and facilitation to ensure diverse ideas surface and biases are reduced."
+            },
+            {
+                question: "Within ACH, how should analysts treat evidence that is consistent with all competing hypotheses?",
+                options: [
+                    "Give it the highest weight because it supports all views",
+                    "Ignore it entirely as irrelevant",
+                    "Code it, but treat it as low diagnostic value when judging between hypotheses",
+                    "Use it to eliminate the least likely hypothesis"
+                ],
+                correct: 2,
+                explanation: "Evidence consistent with all hypotheses has low diagnostic value; it should be recorded but not allowed to dominate judgments about which hypothesis is best supported."
+            },
+            {
+                question: "Which technique is most appropriate for supporting a strategic decision that must weigh several policy options against multiple competing criteria (e.g., cost, risk, political impact)?",
+                options: [
+                    "Key Assumptions Check",
+                    "Multi-Criteria Decision Analysis (MCDA)",
+                    "Simple Trend Extrapolation",
+                    "Delphi Method"
+                ],
+                correct: 1,
+                explanation: "MCDA explicitly scores options against weighted criteria, making trade-offs transparent and supporting defensible strategic choices."
+            },
+            {
+                question: "Which of the following is the best-designed indicator for an Indications and Warning (I&W) framework?",
+                options: [
+                    "Tensions in the region increase",
+                    "Adversary media use more hostile language",
+                    "Adversary armoured units move from garrison to forward staging areas within 50 km of the border",
+                    "The adversary leadership is unhappy with current negotiations"
+                ],
+                correct: 2,
+                explanation: "Effective indicators are specific, observable, and measurable. Movement of identifiable armoured units to defined locations meets these criteria."
+            },
+            {
+                question: "In advanced forecasting practice, what is 'reference class forecasting' intended to correct?",
+                options: [
+                    "Over-reliance on base rates at the expense of case specifics",
+                    "The tendency to ignore historical outcome distributions for similar cases",
+                    "The use of structured techniques in small teams",
+                    "Excessive reliance on expert elicitation"
+                ],
+                correct: 1,
+                explanation: "Reference class forecasting forces analysts to anchor predictions in the outcome distribution of comparable past cases, countering optimism bias and inside-view thinking."
+            },
+            {
+                question: "When calibrating the quality of probabilistic intelligence forecasts, which scoring rule is most commonly used to evaluate forecast accuracy?",
+                options: [
+                    "Pearson correlation coefficient",
+                    "Brier score",
+                    "R-squared (R²)",
+                    "Mean absolute deviation (MAD)"
+                ],
+                correct: 1,
+                explanation: "The Brier score is a proper scoring rule widely used to assess the accuracy and calibration of probabilistic forecasts over many events."
+            },
+            {
+                question: "How does a formal 'Devil’s Advocacy' exercise differ from Red Teaming in analytic practice?",
+                options: [
+                    "Devil’s Advocacy must be quantitative; Red Teaming is qualitative only",
+                    "Devil’s Advocacy challenges a specific prevailing judgment; Red Teaming adopts a broader adversarial or alternative actor perspective",
+                    "Red Teaming always supports the consensus view; Devil’s Advocacy opposes it",
+                    "There is no meaningful distinction; the terms are interchangeable"
+                ],
+                correct: 1,
+                explanation: "Devil’s Advocacy is targeted at stress-testing a specific judgment, while Red Teaming generally adopts an adversary or alternative stakeholder perspective across a wider problem set."
+            },
+            {
+                question: "Which structured technique is explicitly designed to explore how changes in one key driver (e.g., energy prices) may alter the behaviour of other drivers in a scenario set?",
+                options: [
+                    "Cross-Impact Analysis",
+                    "Key Assumptions Check",
+                    "Link Analysis",
+                    "Simple Scenario Narratives"
+                ],
+                correct: 0,
+                explanation: "Cross-Impact Analysis systematically examines how shifts in one driver affect others, revealing non-linear interactions in alternative futures."
+            },
+            {
+                question: "In a strategic environmental scan, 'Key Driver Analysis' primarily aims to:",
+                options: [
+                    "Rank intelligence sources by reliability",
+                    "Identify the most influential forces that shape the future of the issue space",
+                    "Determine which indicators to classify as secret",
+                    "Allocate collection platforms to tactical targets"
+                ],
+                correct: 1,
+                explanation: "Key Driver Analysis isolates the small number of variables that exert disproportionate influence on future outcomes, forming the backbone of robust scenario work."
+            },
+            {
+                question: "Which advanced technique asks analysts to imagine that a plan or assessment has already failed badly and then work backward to explain why?",
+                options: [
+                    "Backcasting",
+                    "Pre-Mortem Analysis",
+                    "Hindsight Bias Check",
+                    "Structured What-If Analysis"
+                ],
+                correct: 1,
+                explanation: "Pre-mortem analysis assumes failure has occurred and forces analysts to identify overlooked risks and failure modes that could plausibly lead to that outcome."
+            },
+            {
+                question: "When constructing a 'cone of plausibility' for alternative futures, which principle is most important?",
+                options: [
+                    "All scenarios inside the cone must have equal probability",
+                    "The cone should include a bounded set of internally consistent futures from most likely through to low-probability/high-impact outcomes",
+                    "Only worst-case scenarios should be represented to ensure preparedness",
+                    "Scenarios should be limited to those aligned with current policy preferences"
+                ],
+                correct: 1,
+                explanation: "A cone of plausibility is designed to span a range of internally consistent futures ordered from central (most likely) paths to more extreme but still plausible outliers."
             }
         ];
 
         function generateQuiz() {
             const form = document.getElementById('quiz-form');
+            const totalQuestions = quizData.length;
             quizData.forEach((q, index) => {
                 const questionDiv = document.createElement('div');
                 questionDiv.className = 'question-container';
                 questionDiv.innerHTML = `
-                    <div class="question-number">Question ${index + 1} of 30</div>
+                    <div class="question-number">Question ${index + 1} of ${totalQuestions}</div>
                     <div class="question-text">${q.question}</div>
                     <div class="options">
                         ${q.options.map((option, optIndex) => `
@@ -710,8 +821,9 @@
                 }
             }
             const percentage = (answered / totalQuestions) * 100;
-            document.getElementById('progress-fill').style.width = percentage + '%';
-            document.getElementById('progress-fill').setAttribute('aria-valuenow', Math.round(percentage));
+            const fill = document.getElementById('progress-fill');
+            fill.style.width = percentage + '%';
+            fill.setAttribute('aria-valuenow', Math.round(percentage));
             document.getElementById('submit-btn').disabled = answered < totalQuestions;
         }
 
@@ -723,7 +835,7 @@
 
             quizData.forEach((q, index) => {
                 const selected = document.querySelector(`input[name="question${index}"]:checked`);
-                const userAnswer = selected ? parseInt(selected.value) : -1;
+                const userAnswer = selected ? parseInt(selected.value, 10) : -1;
                 userAnswers.push(userAnswer);
 
                 if (userAnswer === q.correct) {
@@ -735,7 +847,8 @@
         }
 
         function displayResults(score, userAnswers) {
-            const percentage = Math.round((score / quizData.length) * 100);
+            const totalQuestions = quizData.length;
+            const percentage = Math.round((score / totalQuestions) * 100);
             const quizSection = document.getElementById('quiz-section');
             const resultsSection = document.getElementById('results-section');
 
@@ -745,25 +858,25 @@
             let feedback = '';
             let quartile = 0;
 
-            if (percentage >= 75) {
+            if (percentage >= 85) {
                 feedback = "🎖️ <strong>Expert Analyst – Outstanding Mastery!</strong><br>Your deep command of advanced analytical methods showcases exemplary professional expertise.";
                 quartile = 4;
                 createConfetti();
-            } else if (percentage >= 50) {
-                feedback = "✅ <strong>Strong Analytic Grasp – Well Done!</strong><br>You demonstrate solid competence in analytical techniques. Continued practice will further refine your skills.";
+            } else if (percentage >= 60) {
+                feedback = "✅ <strong>Strong Analytic Grasp – Well Done!</strong><br>You demonstrate solid competence in advanced techniques. Continued practice and professional development will further sharpen your edge.";
                 quartile = 3;
-            } else if (percentage >= 25) {
-                feedback = "📚 <strong>Intermediate Understanding – Developing Rigor</strong><br>You show good foundational knowledge but should deepen your understanding of analytic methods.";
+            } else if (percentage >= 35) {
+                feedback = "📚 <strong>Intermediate Understanding – Developing Rigor</strong><br>You show good foundational knowledge but should deepen your understanding and application of structured analytic methods.";
                 quartile = 2;
             } else {
-                feedback = "🌱 <strong>Analytical Novice – Building Foundations</strong><br>This assessment highlights areas for growth in analytic rigor. Focused study and experience will enhance your expertise.";
+                feedback = "🌱 <strong>Analytical Novice – Building Foundations</strong><br>This assessment highlights clear opportunities to grow your tradecraft. Focused study, mentoring, and professional training will significantly enhance your analytic rigor.";
                 quartile = 1;
             }
 
             let resultsHTML = `
                 <div class="results" tabindex="0">
                     <h2 style="color: #2a5298; margin-bottom: 20px;">Your Results</h2>
-                    <div class="score-display">${score}/30</div>
+                    <div class="score-display">${score}/${totalQuestions}</div>
                     <div class="score-percentage">${percentage}%</div>
                     <div class="feedback">${feedback}</div>
                     <button class="retake-btn" onclick="retakeQuiz()" aria-label="Retake test">Retake Test</button>
@@ -790,8 +903,6 @@
             resultsHTML += `</div>`;
 
             resultsSection.innerHTML = resultsHTML;
-
-            // Scroll to results for accessibility
             resultsSection.focus();
         }
 
@@ -828,4 +939,3 @@
     </script>
 </body>
 </html>
-
