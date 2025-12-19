@@ -1,0 +1,992 @@
+<!-- EIPIO Intelligence Ethics Self-Check (Core Principles) Widget -->
+<div class="eipio-widget" id="eipio-ethics-quiz">
+  <style>
+    #eipio-ethics-quiz {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      max-width: 900px;
+      margin: 0 auto;
+      border: 1px solid #d0d6e0;
+      border-radius: 12px;
+      background: #ffffff;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+      overflow: hidden;
+    }
+
+    #eipio-ethics-quiz .eipio-header {
+      background: linear-gradient(135deg, #102541, #254a7c);
+      color: #ffffff;
+      padding: 18px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    #eipio-ethics-quiz .eipio-header-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    #eipio-ethics-quiz .eipio-header-subtitle {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+
+    #eipio-ethics-quiz .eipio-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      margin-top: 6px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.1);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    #eipio-ethics-quiz .eipio-container {
+      padding: 20px 24px 16px 24px;
+    }
+
+    #eipio-ethics-quiz .eipio-intro {
+      font-size: 0.92rem;
+      color: #2a3240;
+      margin-bottom: 16px;
+      line-height: 1.4;
+    }
+
+    #eipio-ethics-quiz .eipio-intro p {
+      margin: 0 0 8px 0;
+    }
+
+    #eipio-ethics-quiz .eipio-notice {
+      background: #f3f6fb;
+      border-left: 4px solid #254a7c;
+      padding: 10px 12px;
+      font-size: 0.85rem;
+      color: #283246;
+      border-radius: 8px;
+      margin-bottom: 18px;
+    }
+
+    #eipio-ethics-quiz h2.section-title {
+      font-size: 1.05rem;
+      margin: 18px 0 10px 0;
+      color: #152237;
+      border-bottom: 1px solid #e1e5ee;
+      padding-bottom: 6px;
+    }
+
+    #eipio-ethics-quiz .section-caption {
+      font-size: 0.8rem;
+      color: #4d586e;
+      margin-bottom: 8px;
+    }
+
+    #eipio-ethics-quiz .question-block {
+      border-radius: 8px;
+      border: 1px solid #e2e6f0;
+      padding: 10px 12px;
+      margin-bottom: 10px;
+      background: #fbfcff;
+      position: relative;
+    }
+
+    #eipio-ethics-quiz .question-block:hover {
+      border-color: #c8d1ea;
+    }
+
+    #eipio-ethics-quiz .question-number {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #7a8496;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 2px;
+    }
+
+    #eipio-ethics-quiz .question-text {
+      font-size: 0.93rem;
+      color: #1f2935;
+      margin-bottom: 6px;
+    }
+
+    #eipio-ethics-quiz .options {
+      margin-top: 4px;
+      display: grid;
+      gap: 4px;
+    }
+
+    #eipio-ethics-quiz .options label {
+      font-size: 0.9rem;
+      color: #252f3d;
+      display: flex;
+      align-items: flex-start;
+      gap: 4px;
+      cursor: pointer;
+    }
+
+    #eipio-ethics-quiz .options input[type="radio"] {
+      margin-top: 2px;
+    }
+
+    #eipio-ethics-quiz .feedback {
+      margin-top: 6px;
+      font-size: 0.8rem;
+      display: none;
+      padding: 6px 8px;
+      border-radius: 6px;
+    }
+
+    #eipio-ethics-quiz .feedback.correct {
+      display: block;
+      background: #e7f5ec;
+      color: #215732;
+      border: 1px solid #b8e0c2;
+    }
+
+    #eipio-ethics-quiz .feedback.incorrect {
+      display: block;
+      background: #fdeff0;
+      color: #8e2430;
+      border: 1px solid #f2c7cb;
+    }
+
+    #eipio-ethics-quiz .question-block.correct-border {
+      border-color: #65b380;
+      background: #f4fbf6;
+    }
+
+    #eipio-ethics-quiz .question-block.incorrect-border {
+      border-color: #e28c93;
+      background: #fff7f8;
+    }
+
+    #eipio-ethics-quiz .controls {
+      margin: 18px 0 10px 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    #eipio-ethics-quiz .controls button {
+      border-radius: 999px;
+      border: none;
+      padding: 8px 14px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    #eipio-ethics-quiz .btn-primary {
+      background: #254a7c;
+      color: #ffffff;
+    }
+
+    #eipio-ethics-quiz .btn-primary:hover {
+      background: #1b385f;
+    }
+
+    #eipio-ethics-quiz .btn-secondary {
+      background: #e5e9f5;
+      color: #283246;
+    }
+
+    #eipio-ethics-quiz .btn-secondary:hover {
+      background: #d5ddf2;
+    }
+
+    #eipio-ethics-quiz .score-summary {
+      font-size: 0.9rem;
+      margin-bottom: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: #f5f7fc;
+      border: 1px solid #d8def1;
+      display: none;
+    }
+
+    #eipio-ethics-quiz .score-highlight {
+      font-weight: 600;
+      color: #254a7c;
+    }
+
+    /* Likert section */
+
+    #eipio-ethics-quiz .likert-scale-explainer {
+      font-size: 0.8rem;
+      margin-bottom: 6px;
+      color: #4d586e;
+    }
+
+    #eipio-ethics-quiz .likert-row {
+      border-radius: 8px;
+      border: 1px solid #e2e6f0;
+      padding: 8px 10px;
+      margin-bottom: 6px;
+      background: #fbfcff;
+    }
+
+    #eipio-ethics-quiz .likert-text {
+      font-size: 0.9rem;
+      margin-bottom: 4px;
+      color: #1f2935;
+    }
+
+    #eipio-ethics-quiz .likert-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      font-size: 0.8rem;
+      color: #3a4456;
+    }
+
+    #eipio-ethics-quiz .likert-options label {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+    }
+
+    #eipio-ethics-quiz .reflection-summary {
+      display: none;
+      margin-top: 10px;
+      font-size: 0.85rem;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: #f3f7ff;
+      border: 1px solid #ccd6f5;
+      color: #223050;
+    }
+
+    #eipio-ethics-quiz .reflection-summary strong {
+      color: #1a2740;
+    }
+
+    #eipio-ethics-quiz .reflection-summary ul {
+      margin: 6px 0 0 20px;
+      padding: 0;
+    }
+
+    #eipio-ethics-quiz .reflection-summary li {
+      margin-bottom: 2px;
+    }
+
+    #eipio-ethics-quiz .eipio-footer {
+      margin-top: 12px;
+      padding: 10px 16px 12px 16px;
+      font-size: 0.75rem;
+      color: #6a7487;
+      border-top: 1px solid #dee3f1;
+      background: #f8f9fd;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    #eipio-ethics-quiz .eipio-footer strong {
+      color: #2a3240;
+    }
+
+    @media (max-width: 640px) {
+      #eipio-ethics-quiz .eipio-container {
+        padding: 16px 14px 12px 14px;
+      }
+    }
+  </style>
+
+  <div class="eipio-header">
+    <div class="eipio-header-title">EIPIO Ethics Self-Check</div>
+    <div class="eipio-header-subtitle">Core principles for democratic intelligence practice</div>
+    <div class="eipio-badge">
+      <span>European Institute of Professional Intelligence Officers</span>
+    </div>
+  </div>
+
+  <div class="eipio-container">
+    <div class="eipio-intro">
+      <p>
+        This self-check helps you reflect on core ethical principles in intelligence work in democratic systems:
+        legality, necessity and proportionality, human rights, professional integrity and accountability.
+      </p>
+      <p>
+        <strong>Sections A and B</strong> are scenario and knowledge questions (single best answer). 
+        <strong>Section C</strong> is a set of self-reflection statements; there are no “right” answers there.
+      </p>
+    </div>
+
+    <div class="eipio-notice">
+      <strong>Confidentiality note:</strong> this tool is designed for personal reflection. 
+      No data is sent anywhere; your responses stay in this browser session.
+    </div>
+
+    <!-- Section A -->
+    <h2 class="section-title">Section A – Scenarios & Applied Ethics (Questions 1–12)</h2>
+    <div class="section-caption">
+      Choose the single best answer in each scenario.
+    </div>
+
+    <!-- Q1 -->
+    <div class="question-block" data-question="q1">
+      <div class="question-number">Question 1</div>
+      <div class="question-text">
+        You discover that a colleague is routinely sharing raw personal data from a domestic collection programme
+        with a foreign partner service, outside the formally approved channel but “to keep things moving.”
+        What is your most ethically appropriate first step?
+      </div>
+      <div class="options">
+        <label><input type="radio" name="q1" value="A"> A. Ignore it – the partner is trusted and the intention is good.</label>
+        <label><input type="radio" name="q1" value="B"> B. Quietly ask your colleague to stop and delete any shared data.</label>
+        <label><input type="radio" name="q1" value="C"> C. Raise the issue with the appropriate internal compliance / oversight function.</label>
+        <label><input type="radio" name="q1" value="D"> D. Inform the foreign partner that the sharing is unauthorised.</label>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="question-block" data-question="q2">
+      <div class="question-number">Question 2</div>
+      <div class="question-text">
+        Your political leadership strongly signals that it wants “evidence” to support a particular policy line on a neighbouring state.
+        Your analysis team’s current assessment does <em>not</em> support that policy. Ethically, your primary duty is to:
+      </div>
+      <div class="options">
+        <label><input type="radio" name="q2" value="A"> A. Adjust the language to better support the policy and avoid conflict.</label>
+        <label><input type="radio" name="q2" value="B"> B. Present the best-case interpretation that leans toward the preferred policy.</label>
+        <label><input type="radio" name="q2" value="C"> C. Present your honest assessment clearly, with caveats and uncertainties.</label>
+        <label><input type="radio" name="q2" value="D"> D. Delay the product until the political mood changes.</label>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="question-block" data-question="q3">
+      <div class="question-number">Question 3</div>
+      <div class="question-text">
+        A foreign partner proposes joint collection on a dissident group in their country. There are credible reports
+        that this partner tortures detainees. What is the most ethical course of action?
+      </div>
+      <div class="options">
+        <label><input type="radio" name="q3" value="A"> A. Proceed, but ensure your agency never sees the resulting detainee reporting.</label>
+        <label><input type="radio" name="q3" value="B"> B. Proceed, because the partner’s internal methods are not your responsibility.</label>
+        <label><input type="radio" name="q3" value="C"> C. Refuse or suspend cooperation pending a human-rights and legal risk review.</label>
+        <label><input type="radio" name="q3" value="D"> D. Agree, but keep your unit’s involvement secret from senior leadership.</label>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="question-block" data-question="q4">
+      <div class="question-number">Question 4</div>
+      <div class="question-text">
+        Your unit has legal authority to run broad collection, but the proposed target group is large and only a small subset
+        poses any realistic threat. Which principle is most directly at stake?
+      </div>
+      <div class="options">
+        <label><input type="radio" name="q4" value="A"> A. Necessity</label>
+        <label><input type="radio" name="q4" value="B"> B. Confidentiality</label>
+        <label><input type="radio" name="q4" value="C"> C. Loyalty</label>
+        <label><input type="radio" name="q4" value="D"> D. Secrecy</label>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <!-- Q5 -->
+    <div class="question-block" data-question="q5">
+      <div class="question-number">Question 5</div>
+      <div class="question-text">
+        You are pressured to access a national bulk data set “just to check if anything interesting pops up.”
+        There is no specific threat or question. Which is the best ethical response?
+      </div>
+      <div class="options">
+        <label><input type="radio" name="q5" value="A"> A. Agree – any data that might help security is worth exploring.</label>
+        <label><input type="radio" name="q5" value="B"> B. Decline and explain that bulk access without a defined purpose breaches necessity and proportionality.</label>
+        <label><input type="radio" name="q5" value="C"> C. Take a quick look but don’t retain or document anything.</label>
+        <label><input type="radio" name="q5" value="D"> D. Ask a colleague to do it instead so you’re not personally responsible.</label>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <!-- Q6 -->
+    <div class="question-block" data-question="q6">
+      <div class="question-number">Question 6</div>
+      <div class="question-text">
+        An analyst discovers that a widely used open-source dataset includes data obviously scraped from hacked material.
+        Which is the most ethical response?
+      </div>
+      <div class="options">
+        <label><input type="radio" name="q6" value="A"> A. Use the data anyway – “it’s already out there.”</label>
+        <label><input type="radio" name="q6" value="B"> B. Use the data but never cite the source.</label>
+        <label><input type="radio" name="q6" value="C"> C. Pause use of that dataset and escalate for legal/ethical review.</label>
+        <label><input type="radio" name="q6" value="D"> D. Privately download a copy first, then escalate.</label>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <!-- Q7 -->
+    <div class="question-block" data-question="q7">
+      <div class="question-number">Question 7</div>
+      <div class="question-text">
+        A senior official phones you directly and asks for detailed information on a private individual they’re personally interested in,
+        with no clear operational link. Ethically, your first response should be:
+      </div>
+      <div class="options">
+        <label><input type="radio" name="q7" value="A"> A. Provide a brief verbal summary to maintain the relationship.</label>
+        <label><input type="radio" name="q7" value="B"> B. Provide only what is already in open sources.</label>
+        <label><input type="radio" name="q7" value="C"> C. Politely decline and refer them to formal tasking channels.</label>
+        <label><input type="radio" name="q7" value="D"> D. Ask them to send the request by email so you have a record, then comply.</label>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <!-- Q8 -->
+    <div class="question-block" data-question="q8">
+      <div class="question-number">Question 8</div>
+      <div class="question-text">
+        You realise that an internal report you wrote under time pressure may unintentionally overstate the confidence
+        level in a key judgement. Ethically, what should you do?
+      </div>
+      <div class="options">
+        <label><input type="radio" name="q8" value="A"> A. Do nothing – revising it will damage your credibility.</label>
+        <label><input type="radio" name="q8" value="B"> B. Quietly adjust future products to “balance it out.”</label>
+        <label><input type="radio" name="q8" value="C"> C. Correct the record by issuing an update or addendum.</label>
+        <label><input type="radio" name="q8" value="D"> D. Wait to see if anyone challenges it before acting.</label>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <!-- Q9 -->
+    <div class="question-block" data-question="q9">
+      <div class="question-number">Question 9</div>
+      <div class="question-text">
+        During a liaison visit, a partner casually shares a list of activists and journalists they consider “persons of interest”
+        and offers it to you. You know none of them are legitimate security threats. What is the best response?
+      </div>
+      <div class="options">
+        <label><input type="radio" name="q9" value="A"> A. Accept the list but just don’t act on it.</label>
+        <label><input type="radio" name="q9" value="B"> B. Accept the list and see if any names are already in your files.</label>
+        <label><input type="radio" name="q9" value="C"> C. Decline the list and explain your service’s mandate and legal constraints.</label>
+        <label><input type="radio" name="q9" value="D"> D. Accept the list, but store it in a personal folder, not official systems.</label>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <!-- Q10 -->
+    <div class="question-block" data-question="q10">
+      <div class="question-number">Question 10</div>
+      <div class="question-text">
+        Which of the following best captures the ethical meaning of <strong>democratic control</strong> over intelligence?
+      </div>
+      <div class="options">
+        <label><input type="radio" name="q10" value="A"> A. Political leaders can freely direct intelligence outcomes to support policy.</label>
+        <label><input type="radio" name="q10" value="B"> B. Intelligence services are fully independent of any external oversight.</label>
+        <label><input type="radio" name="q10" value="C"> C. Intelligence work is subject to law, oversight and accountable governance.</label>
+        <label><input type="radio" name="q10" value="D"> D. Parliamentary committees approve every operation in advance.</label>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <!-- Q11 -->
+    <div class="question-block" data-question="q11">
+      <div class="question-number">Question 11</div>
+      <div class="question-text">
+        A colleague jokes about “using our tools to check up on my ex’s new partner.” You have no evidence they have actually done this.
+        What is the most ethically appropriate action?
+      </div>
+      <div class="options">
+        <label><input type="radio" name="q11" value="A"> A. Laugh it off – it’s obviously a joke.</label>
+        <label><input type="radio" name="q11" value="B"> B. Publicly criticise them in front of the team.</label>
+        <label><input type="radio" name="q11" value="C"> C. Remind them privately of system use rules and, if concerned, flag to your manager or security.</label>
+        <label><input type="radio" name="q11" value="D"> D. Immediately file a formal misconduct complaint.</label>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <!-- Q12 -->
+    <div class="question-block" data-question="q12">
+      <div class="question-number">Question 12</div>
+      <div class="question-text">
+        You are asked to brief a senior policymaker and they explicitly request:
+        “Just give me the part that justifies tougher measures – the rest is noise.” Ethically, you should:
+      </div>
+      <div class="options">
+        <label><input type="radio" name="q12" value="A"> A. Provide only the supporting evidence; they know the risks.</label>
+        <label><input type="radio" name="q12" value="B"> B. Provide a balanced briefing, highlighting both supportive and conflicting evidence.</label>
+        <label><input type="radio" name="q12" value="C"> C. Tone down conflicting evidence so it doesn’t distract.</label>
+        <label><input type="radio" name="q12" value="D"> D. Decline to brief.</label>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <!-- Section B -->
+    <h2 class="section-title">Section B – Principles & Core Knowledge (Questions 13–20)</h2>
+    <div class="section-caption">
+      Choose the single best answer.
+    </div>
+
+    <!-- Q13 -->
+    <div class="question-block" data-question="q13">
+      <div class="question-number">Question 13</div>
+      <div class="question-text">
+        Which combination best reflects core constraints on intelligence work in a democratic rule-of-law system?
+      </div>
+      <div class="options">
+        <label><input type="radio" name="q13" value="A"> A. Secrecy, loyalty, and efficiency</label>
+        <label><input type="radio" name="q13" value="B"> B. Legality, necessity, and proportionality</label>
+        <label><input type="radio" name="q13" value="C"> C. Secrecy, deniability, and plausible cover</label>
+        <label><input type="radio" name="q13" value="D"> D. Effectiveness, secrecy, and speed</label>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <!-- Q14 -->
+    <div class="question-block" data-question="q14">
+      <div class="question-number">Question 14</div>
+      <div class="question-text">
+        Which statement best captures the ethical duty of an intelligence analyst regarding political neutrality?
+      </div>
+      <div class="options">
+        <label><input type="radio" name="q14" value="A"> A. Analysts should adjust their conclusions to avoid damaging the government of the day.</label>
+        <label><input type="radio" name="q14" value="B"> B. Analysts should shape conclusions to support what they personally believe is the “right” policy.</label>
+        <label><input type="radio" name="q14" value="C"> C. Analysts should present evidence-based judgements, independent of political preferences.</label>
+        <label><input type="radio" name="q14" value="D"> D. Analysts should avoid topics that are politically sensitive.</label>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <!-- Q15 -->
+    <div class="question-block" data-question="q15">
+      <div class="question-number">Question 15</div>
+      <div class="question-text">
+        In human-rights terms, intelligence collection that intrudes on privacy is generally acceptable only when:
+      </div>
+      <div class="options">
+        <label><input type="radio" name="q15" value="A"> A. It has potential value for any future investigation.</label>
+        <label><input type="radio" name="q15" value="B"> B. It is technically possible and not easily detectable.</label>
+        <label><input type="radio" name="q15" value="C"> C. It is lawful, necessary for a legitimate aim, and proportionate.</label>
+        <label><input type="radio" name="q15" value="D"> D. It concerns foreign nationals only.</label>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <!-- Q16 -->
+    <div class="question-block" data-question="q16">
+      <div class="question-number">Question 16</div>
+      <div class="question-text">
+        Which example most clearly violates the principle of proportionality?
+      </div>
+      <div class="options">
+        <label><input type="radio" name="q16" value="A"> A. Targeted interception of a small group suspected of terrorism.</label>
+        <label><input type="radio" name="q16" value="B"> B. Bulk retention of all national communications indefinitely “just in case.”</label>
+        <label><input type="radio" name="q16" value="C"> C. Covert surveillance of a suspected hostile intelligence officer.</label>
+        <label><input type="radio" name="q16" value="D"> D. Short-term geolocation tracking of a kidnap suspect.</label>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <!-- Q17 -->
+    <div class="question-block" data-question="q17">
+      <div class="question-number">Question 17</div>
+      <div class="question-text">
+        The primary ethical role of independent oversight bodies (e.g. parliamentary committees, judicial commissioners) is to:
+      </div>
+      <div class="options">
+        <label><input type="radio" name="q17" value="A"> A. Approve political priorities for intelligence.</label>
+        <label><input type="radio" name="q17" value="B"> B. Protect services from media criticism.</label>
+        <label><input type="radio" name="q17" value="C"> C. Ensure intelligence activities comply with law and respect rights.</label>
+        <label><input type="radio" name="q17" value="D"> D. Operate covertly to support sensitive operations.</label>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <!-- Q18 -->
+    <div class="question-block" data-question="q18">
+      <div class="question-number">Question 18</div>
+      <div class="question-text">
+        Which behaviour best reflects professional integrity in intelligence work?
+      </div>
+      <div class="options">
+        <label><input type="radio" name="q18" value="A"> A. Keeping quiet when your assessment disagrees with influential colleagues.</label>
+        <label><input type="radio" name="q18" value="B"> B. Refusing to alter assessments to fit a preferred narrative, even under pressure.</label>
+        <label><input type="radio" name="q18" value="C"> C. Avoiding controversial topics to protect your career.</label>
+        <label><input type="radio" name="q18" value="D"> D. Only raising concerns anonymously.</label>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <!-- Q19 -->
+    <div class="question-block" data-question="q19">
+      <div class="question-number">Question 19</div>
+      <div class="question-text">
+        You notice that tasking increasingly focuses on one community associated in public debate with security risks,
+        while comparable risks in other groups are not being pursued. Ethically, your first focus should be on:
+      </div>
+      <div class="options">
+        <label><input type="radio" name="q19" value="A"> A. Whether the community “deserves” the extra attention.</label>
+        <label><input type="radio" name="q19" value="B"> B. Whether the pattern reflects explicit or implicit bias and is justified by evidence.</label>
+        <label><input type="radio" name="q19" value="C"> C. Whether the media will criticise the imbalance.</label>
+        <label><input type="radio" name="q19" value="D"> D. Whether colleagues are comfortable with it.</label>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <!-- Q20 -->
+    <div class="question-block" data-question="q20">
+      <div class="question-number">Question 20</div>
+      <div class="question-text">
+        Which of the following best describes moral injury in an intelligence context?
+      </div>
+      <div class="options">
+        <label><input type="radio" name="q20" value="A"> A. Physical injury sustained during an operation.</label>
+        <label><input type="radio" name="q20" value="B"> B. Frustration at not getting promoted despite hard work.</label>
+        <label><input type="radio" name="q20" value="C"> C. Psychological harm from acting (or being forced to act) against one’s core moral beliefs.</label>
+        <label><input type="radio" name="q20" value="D"> D. Feeling bored and underused in a posting.</label>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="controls">
+      <button type="button" class="btn-primary" id="checkAnswersBtn">
+        ✓ Check answers (Sections A & B)
+      </button>
+      <button type="button" class="btn-secondary" id="resetQuizBtn">
+        ↺ Reset all responses
+      </button>
+    </div>
+
+    <div class="score-summary" id="scoreSummary"></div>
+
+    <!-- Section C -->
+    <h2 class="section-title">Section C – Self-Reflection Statements (Questions 21–30)</h2>
+    <div class="likert-scale-explainer">
+      For each statement, rate yourself on a 1–5 scale:
+      <strong>1 = Strongly disagree</strong>, 2 = Disagree, 3 = Neither, 4 = Agree,
+      <strong>5 = Strongly agree</strong>. There are no right or wrong answers.
+    </div>
+
+    <!-- Likert Q21–Q30 -->
+    <div class="likert-row" data-question="q21">
+      <div class="likert-text">
+        Q21. I understand the main legal authorities and constraints that govern my work and could explain them in plain language.
+      </div>
+      <div class="likert-options">
+        <label><input type="radio" name="q21" value="1"> 1</label>
+        <label><input type="radio" name="q21" value="2"> 2</label>
+        <label><input type="radio" name="q21" value="3"> 3</label>
+        <label><input type="radio" name="q21" value="4"> 4</label>
+        <label><input type="radio" name="q21" value="5"> 5</label>
+      </div>
+    </div>
+
+    <div class="likert-row" data-question="q22">
+      <div class="likert-text">
+        Q22. If I felt strong pressure to shape or soften an assessment for political reasons, I would know where and how to raise concerns.
+      </div>
+      <div class="likert-options">
+        <label><input type="radio" name="q22" value="1"> 1</label>
+        <label><input type="radio" name="q22" value="2"> 2</label>
+        <label><input type="radio" name="q22" value="3"> 3</label>
+        <label><input type="radio" name="q22" value="4"> 4</label>
+        <label><input type="radio" name="q22" value="5"> 5</label>
+      </div>
+    </div>
+
+    <div class="likert-row" data-question="q23">
+      <div class="likert-text">
+        Q23. I regularly pause to consider how my personal beliefs or biases might be influencing my judgements.
+      </div>
+      <div class="likert-options">
+        <label><input type="radio" name="q23" value="1"> 1</label>
+        <label><input type="radio" name="q23" value="2"> 2</label>
+        <label><input type="radio" name="q23" value="3"> 3</label>
+        <label><input type="radio" name="q23" value="4"> 4</label>
+        <label><input type="radio" name="q23" value="5"> 5</label>
+      </div>
+    </div>
+
+    <div class="likert-row" data-question="q24">
+      <div class="likert-text">
+        Q24. I feel able to say “no” when asked to do something that may be legal but feels ethically questionable.
+      </div>
+      <div class="likert-options">
+        <label><input type="radio" name="q24" value="1"> 1</label>
+        <label><input type="radio" name="q24" value="2"> 2</label>
+        <label><input type="radio" name="q24" value="3"> 3</label>
+        <label><input type="radio" name="q24" value="4"> 4</label>
+        <label><input type="radio" name="q24" value="5"> 5</label>
+      </div>
+    </div>
+
+    <div class="likert-row" data-question="q25">
+      <div class="likert-text">
+        Q25. I know which internal bodies (ethics, compliance, oversight, ombuds, etc.) I can approach if I have ethical concerns.
+      </div>
+      <div class="likert-options">
+        <label><input type="radio" name="q25" value="1"> 1</label>
+        <label><input type="radio" name="q25" value="2"> 2</label>
+        <label><input type="radio" name="q25" value="3"> 3</label>
+        <label><input type="radio" name="q25" value="4"> 4</label>
+        <label><input type="radio" name="q25" value="5"> 5</label>
+      </div>
+    </div>
+
+    <div class="likert-row" data-question="q26">
+      <div class="likert-text">
+        Q26. My team’s culture encourages open discussion of ethical dilemmas, not just technical or operational challenges.
+      </div>
+      <div class="likert-options">
+        <label><input type="radio" name="q26" value="1"> 1</label>
+        <label><input type="radio" name="q26" value="2"> 2</label>
+        <label><input type="radio" name="q26" value="3"> 3</label>
+        <label><input type="radio" name="q26" value="4"> 4</label>
+        <label><input type="radio" name="q26" value="5"> 5</label>
+      </div>
+    </div>
+
+    <div class="likert-row" data-question="q27">
+      <div class="likert-text">
+        Q27. I am confident that my organisation takes human rights and democratic accountability seriously in operational decisions.
+      </div>
+      <div class="likert-options">
+        <label><input type="radio" name="q27" value="1"> 1</label>
+        <label><input type="radio" name="q27" value="2"> 2</label>
+        <label><input type="radio" name="q27" value="3"> 3</label>
+        <label><input type="radio" name="q27" value="4"> 4</label>
+        <label><input type="radio" name="q27" value="5"> 5</label>
+      </div>
+    </div>
+
+    <div class="likert-row" data-question="q28">
+      <div class="likert-text">
+        Q28. When working with foreign partners, I consciously consider their human-rights record and legal framework, not just their utility.
+      </div>
+      <div class="likert-options">
+        <label><input type="radio" name="q28" value="1"> 1</label>
+        <label><input type="radio" name="q28" value="2"> 2</label>
+        <label><input type="radio" name="q28" value="3"> 3</label>
+        <label><input type="radio" name="q28" value="4"> 4</label>
+        <label><input type="radio" name="q28" value="5"> 5</label>
+      </div>
+    </div>
+
+    <div class="likert-row" data-question="q29">
+      <div class="likert-text">
+        Q29. I have, at least once in the past year, raised a concern or asked a challenging question about the ethical or legal side
+        of a tasking, product or operation.
+      </div>
+      <div class="likert-options">
+        <label><input type="radio" name="q29" value="1"> 1</label>
+        <label><input type="radio" name="q29" value="2"> 2</label>
+        <label><input type="radio" name="q29" value="3"> 3</label>
+        <label><input type="radio" name="q29" value="4"> 4</label>
+        <label><input type="radio" name="q29" value="5"> 5</label>
+      </div>
+    </div>
+
+    <div class="likert-row" data-question="q30">
+      <div class="likert-text">
+        Q30. I have a personal line that I will not cross, even under pressure, and I have thought about what I would do if ordered to cross it.
+      </div>
+      <div class="likert-options">
+        <label><input type="radio" name="q30" value="1"> 1</label>
+        <label><input type="radio" name="q30" value="2"> 2</label>
+        <label><input type="radio" name="q30" value="3"> 3</label>
+        <label><input type="radio" name="q30" value="4"> 4</label>
+        <label><input type="radio" name="q30" value="5"> 5</label>
+      </div>
+    </div>
+
+    <div class="reflection-summary" id="reflectionSummary">
+      <strong>Your self-reflection (Section C):</strong>
+      <p>
+        Lower scores (1–2) do not mean you are unethical; they may point to areas where you could look for more clarity,
+        support or conversation in your organisation.
+      </p>
+      <div id="reflectionDetails"></div>
+    </div>
+
+    <div class="eipio-footer">
+      <div><strong>EIPIO – European Institute of Professional Intelligence Officers</strong></div>
+      <div>Intelligence ethics self-check · Foundational level · For practitioners across government, law enforcement and corporate sectors.</div>
+      <div>© <span id="eipioYear"></span> European Institute of Professional Intelligence Officers (EIPIO). All rights reserved.</div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const correctAnswers = {
+        q1: "C",
+        q2: "C",
+        q3: "C",
+        q4: "A",
+        q5: "B",
+        q6: "C",
+        q7: "C",
+        q8: "C",
+        q9: "C",
+        q10: "C",
+        q11: "C",
+        q12: "B",
+        q13: "B",
+        q14: "C",
+        q15: "C",
+        q16: "B",
+        q17: "C",
+        q18: "B",
+        q19: "B",
+        q20: "C"
+      };
+
+      const explanations = {
+        q1: "Internal compliance or oversight is the right channel. Ignoring or handling it privately risks hiding a systemic issue.",
+        q2: "Your duty is to present an honest, evidence-based assessment, even when politically inconvenient.",
+        q3: "Cooperating with a partner credibly linked to torture raises serious human-rights risks; cooperation should be refused or suspended pending review.",
+        q4: "Necessity is at stake: collection should be limited to what is genuinely needed to address a real threat.",
+        q5: "Bulk access without a defined purpose breaches necessity and proportionality; you should push back and explain why.",
+        q6: "Using hacked or suspect data raises legal and ethical concerns; pause and escalate for legal/ethical review.",
+        q7: "Formal tasking channels protect both you and the service; personal curiosity is not a legitimate basis for access.",
+        q8: "Integrity means correcting the record, even if it feels uncomfortable in the short term.",
+        q9: "Accepting a list of non-threat activists/journalists undermines mandate and rights; you need to be explicit about legal constraints.",
+        q10: "Democratic control means intelligence work is bound by law, oversight and accountable governance.",
+        q11: "Treat it seriously but proportionately: remind them of rules and escalate if you suspect real misuse.",
+        q12: "You must brief a balanced picture, including inconvenient evidence; selective reporting is ethically problematic.",
+        q13: "Legality, necessity and proportionality are core constraints in democratic, human-rights-based frameworks.",
+        q14: "Professional neutrality means evidence-based judgements, independent of political preferences.",
+        q15: "Collection that intrudes on privacy should be lawful, necessary for a legitimate aim, and proportionate.",
+        q16: "Indefinite bulk retention of all communications “just in case” is a clear proportionality violation.",
+        q17: "Oversight bodies exist to ensure activities comply with law and respect rights.",
+        q18: "Integrity includes refusing to alter assessments to fit a preferred narrative, even under pressure.",
+        q19: "You should consider whether tasking is evidence-driven or shaped by explicit or implicit bias.",
+        q20: "Moral injury is psychological harm from acting (or being forced to act) against one’s core moral beliefs."
+      };
+
+      const scoreSummaryEl = document.getElementById("scoreSummary");
+      const reflectionSummaryEl = document.getElementById("reflectionSummary");
+      const reflectionDetailsEl = document.getElementById("reflectionDetails");
+      const checkBtn = document.getElementById("checkAnswersBtn");
+      const resetBtn = document.getElementById("resetQuizBtn");
+      const yearEl = document.getElementById("eipioYear");
+
+      if (yearEl) {
+        yearEl.textContent = new Date().getFullYear();
+      }
+
+      function checkAnswers() {
+        const questions = Object.keys(correctAnswers);
+        let correctCount = 0;
+
+        // Validate all knowledge questions answered
+        for (let q of questions) {
+          const selected = document.querySelector('input[name="' + q + '"]:checked');
+          if (!selected) {
+            alert("Please answer all questions in Sections A and B before checking your answers.");
+            return;
+          }
+        }
+
+        // Evaluate and show feedback
+        questions.forEach(q => {
+          const container = document.querySelector('.question-block[data-question="' + q + '"]');
+          const selected = document.querySelector('input[name="' + q + '"]:checked');
+          const feedback = container ? container.querySelector(".feedback") : null;
+
+          if (!container || !feedback || !selected) return;
+
+          container.classList.remove("correct-border", "incorrect-border");
+          feedback.classList.remove("correct", "incorrect");
+
+          const userVal = selected.value;
+          const correctVal = correctAnswers[q];
+
+          if (userVal === correctVal) {
+            correctCount++;
+            container.classList.add("correct-border");
+            feedback.classList.add("correct");
+            feedback.textContent = "Correct. " + explanations[q];
+          } else {
+            container.classList.add("incorrect-border");
+            feedback.classList.add("incorrect");
+            feedback.textContent = "Incorrect. Correct answer: " + correctVal + ". " + explanations[q];
+          }
+        });
+
+        // Show score summary
+        scoreSummaryEl.style.display = "block";
+        scoreSummaryEl.innerHTML =
+          '<span class="score-highlight">Sections A & B:</span> You answered ' +
+          correctCount +
+          " out of " +
+          questions.length +
+          " questions in line with core EIPIO ethics principles.";
+
+        // Process Likert self-reflection (Section C)
+        const lowItems = [];
+        for (let i = 21; i <= 30; i++) {
+          const qName = "q" + i;
+          const selected = document.querySelector('input[name="' + qName + '"]:checked');
+          if (selected && (selected.value === "1" || selected.value === "2")) {
+            lowItems.push(i);
+          }
+        }
+
+        if (lowItems.length > 0) {
+          reflectionSummaryEl.style.display = "block";
+          let html =
+            "<p><strong>Items you rated low (1–2):</strong></p><ul>";
+          lowItems.forEach(num => {
+            html += "<li>Question " + num + "</li>";
+          });
+          html += "</ul><p>It may be worth reflecting on why these areas scored lower for you, and whether you need more information, support, or space to discuss them in your organisation.</p>";
+          reflectionDetailsEl.innerHTML = html;
+        } else {
+          reflectionSummaryEl.style.display = "block";
+          reflectionDetailsEl.innerHTML =
+            "<p>You did not give any very low scores (1–2) in Section C. That can be a positive sign, but staying reflective and willing to question your environment is as important as any score.</p>";
+        }
+      }
+
+      function resetQuiz() {
+        // Clear all radio buttons
+        const radios = document.querySelectorAll('#eipio-ethics-quiz input[type="radio"]');
+        radios.forEach(r => { r.checked = false; });
+
+        // Clear feedback and styling
+        const blocks = document.querySelectorAll('#eipio-ethics-quiz .question-block');
+        blocks.forEach(b => {
+          b.classList.remove("correct-border", "incorrect-border");
+          const fb = b.querySelector(".feedback");
+          if (fb) {
+            fb.classList.remove("correct", "incorrect");
+            fb.textContent = "";
+            fb.style.display = "none";
+          }
+        });
+
+        // Hide summary sections
+        scoreSummaryEl.style.display = "none";
+        scoreSummaryEl.textContent = "";
+        reflectionSummaryEl.style.display = "none";
+        reflectionDetailsEl.innerHTML = "";
+      }
+
+      // Ensure feedback visibility toggles correctly
+      const observers = document.querySelectorAll('#eipio-ethics-quiz .feedback');
+      observers.forEach(fb => {
+        const observer = new MutationObserver(function () {
+          if (fb.textContent.trim() !== "") {
+            fb.style.display = "block";
+          }
+        });
+        observer.observe(fb, { childList: true, characterData: true, subtree: true });
+      });
+
+      checkBtn.addEventListener("click", checkAnswers);
+      resetBtn.addEventListener("click", resetQuiz);
+    })();
+  </script>
+</div>
