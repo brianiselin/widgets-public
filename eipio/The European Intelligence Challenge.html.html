@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EIPIO — The Fragmentation Problem</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap');
+
+  :root {
+    --navy: #1a2d5a;
+    --navy-deep: #0d1a38;
+    --navy-mid: #243670;
+    --gold: #F5C518;
+    --gold-muted: #c9a227;
+    --gold-pale: #f0d878;
+    --cream: #f5f0e8;
+    --red-threat: #c0392b;
+    --red-glow: rgba(192, 57, 43, 0.15);
+    --text-light: #e8e4db;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--navy-deep);
+    font-family: 'Crimson Pro', Georgia, serif;
+    color: var(--text-light);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Subtle parchment texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: 
+      radial-gradient(ellipse at 20% 50%, rgba(26,45,90,0.6) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 20%, rgba(36,54,112,0.4) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 48px 32px 64px;
+  }
+
+  /* HEADER */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 56px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid rgba(245, 197, 24, 0.25);
+  }
+
+  .logo-area {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .logo-img {
+    width: 72px;
+    height: 72px;
+    object-fit: contain;
+    filter: brightness(1.1);
+  }
+
+  .logo-text {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    color: var(--gold);
+    line-height: 1.7;
+    text-transform: uppercase;
+  }
+
+  .header-label {
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: rgba(245, 197, 24, 0.6);
+    letter-spacing: 0.05em;
+  }
+
+  /* HERO TITLE */
+  .hero {
+    text-align: center;
+    margin-bottom: 64px;
+  }
+
+  .hero-eyebrow {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.3em;
+    color: var(--gold-muted);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .hero h1 {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(28px, 4vw, 48px);
+    font-weight: 700;
+    color: var(--cream);
+    line-height: 1.2;
+    margin-bottom: 12px;
+  }
+
+  .hero h1 span {
+    color: var(--gold);
+  }
+
+  .hero-sub {
+    font-size: 18px;
+    font-style: italic;
+    color: rgba(232, 228, 219, 0.65);
+    font-weight: 300;
+    max-width: 560px;
+    margin: 0 auto;
+  }
+
+  /* MAIN DIAGRAM */
+  .diagram-section {
+    position: relative;
+    margin-bottom: 72px;
+  }
+
+  .diagram-container {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    max-width: 820px;
+    margin: 0 auto;
+  }
+
+  /* Central threat */
+  .threat-core {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #e74c3c 0%, #c0392b 50%, #922b21 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    box-shadow: 
+      0 0 0 8px rgba(192, 57, 43, 0.2),
+      0 0 0 20px rgba(192, 57, 43, 0.1),
+      0 0 60px rgba(192, 57, 43, 0.5),
+      0 0 120px rgba(192, 57, 43, 0.2);
+    animation: pulse-threat 3s ease-in-out infinite;
+  }
+
+  @keyframes pulse-threat {
+    0%, 100% { box-shadow: 0 0 0 8px rgba(192,57,43,0.2), 0 0 0 20px rgba(192,57,43,0.1), 0 0 60px rgba(192,57,43,0.5), 0 0 120px rgba(192,57,43,0.2); }
+    50% { box-shadow: 0 0 0 12px rgba(192,57,43,0.25), 0 0 0 30px rgba(192,57,43,0.12), 0 0 80px rgba(192,57,43,0.6), 0 0 160px rgba(192,57,43,0.25); }
+  }
+
+  .threat-icon {
+    font-size: 28px;
+    margin-bottom: 4px;
+  }
+
+  .threat-label {
+    font-family: 'Cinzel', serif;
+    font-size: 8.5px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: #fff;
+    text-align: center;
+    text-transform: uppercase;
+    line-height: 1.4;
+  }
+
+  /* SVG lines canvas */
+  .lines-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+  }
+
+  /* Country silos */
+  .silo {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    z-index: 5;
+  }
+
+  .silo-body {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--navy-mid), var(--navy-deep));
+    border: 2px solid rgba(245, 197, 24, 0.35);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);
+    position: relative;
+  }
+
+  .silo-body:hover {
+    border-color: var(--gold);
+    box-shadow: 0 0 20px rgba(245, 197, 24, 0.3), 0 4px 16px rgba(0,0,0,0.4);
+    transform: scale(1.12);
+  }
+
+  .silo-flag {
+    font-size: 20px;
+    line-height: 1;
+  }
+
+  .silo-code {
+    font-family: 'Cinzel', serif;
+    font-size: 7px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: var(--gold-muted);
+    margin-top: 2px;
+  }
+
+  /* Fragment piece on each silo */
+  .silo-fragment {
+    position: absolute;
+    top: -10px;
+    right: -8px;
+    width: 20px;
+    height: 20px;
+    background: rgba(192, 57, 43, 0.85);
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    border: 1px solid rgba(231, 76, 60, 0.6);
+    animation: fragment-pulse 4s ease-in-out infinite;
+  }
+
+  @keyframes fragment-pulse {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 1; }
+  }
+
+  /* Barrier lines between silos */
+  .barrier {
+    position: absolute;
+    background: rgba(245, 197, 24, 0.12);
+    border: 1px dashed rgba(245, 197, 24, 0.2);
+    height: 1px;
+    transform-origin: left center;
+    z-index: 3;
+  }
+
+  /* STAT CALLOUTS */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-bottom: 64px;
+  }
+
+  .stat-card {
+    background: linear-gradient(135deg, rgba(26,45,90,0.8), rgba(13,26,56,0.9));
+    border: 1px solid rgba(245, 197, 24, 0.2);
+    border-top: 3px solid var(--gold-muted);
+    padding: 28px 24px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 100%;
+    background: linear-gradient(180deg, rgba(245,197,24,0.03) 0%, transparent 40%);
+  }
+
+  .stat-card:hover {
+    border-color: rgba(245, 197, 24, 0.4);
+  }
+
+  .stat-number {
+    font-family: 'Cinzel', serif;
+    font-size: 52px;
+    font-weight: 700;
+    color: var(--gold);
+    line-height: 1;
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+  }
+
+  .stat-number sup {
+    font-size: 24px;
+    vertical-align: super;
+  }
+
+  .stat-desc {
+    font-size: 15px;
+    color: rgba(232, 228, 219, 0.7);
+    font-style: italic;
+    line-height: 1.5;
+    font-weight: 300;
+  }
+
+  .stat-desc strong {
+    color: var(--cream);
+    font-style: normal;
+    font-weight: 600;
+  }
+
+  /* NARRATIVE SECTION */
+  .narrative {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    margin-bottom: 64px;
+    align-items: start;
+  }
+
+  .narrative-block h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold-muted);
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(245, 197, 24, 0.2);
+  }
+
+  .narrative-block p {
+    font-size: 17px;
+    line-height: 1.75;
+    color: rgba(232, 228, 219, 0.8);
+    font-weight: 300;
+    margin-bottom: 12px;
+  }
+
+  .narrative-block p em {
+    color: var(--cream);
+    font-style: italic;
+  }
+
+  .insight-list {
+    list-style: none;
+    margin-top: 12px;
+  }
+
+  .insight-list li {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    font-size: 15px;
+    color: rgba(232, 228, 219, 0.75);
+    line-height: 1.5;
+  }
+
+  .insight-list li:last-child { border-bottom: none; }
+
+  .insight-list .bullet {
+    color: var(--gold);
+    font-size: 18px;
+    margin-top: -1px;
+    flex-shrink: 0;
+  }
+
+  .insight-list li.threat-item .bullet { color: #e74c3c; }
+
+  /* EIPIO ROLE BOX */
+  .eipio-role {
+    background: linear-gradient(135deg, rgba(36,54,112,0.6), rgba(26,45,90,0.4));
+    border: 1px solid rgba(245, 197, 24, 0.35);
+    border-left: 4px solid var(--gold);
+    padding: 32px 36px;
+    margin-bottom: 64px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .eipio-role::after {
+    content: '⊕';
+    position: absolute;
+    right: 32px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 80px;
+    color: rgba(245, 197, 24, 0.06);
+    pointer-events: none;
+  }
+
+  .eipio-role h3 {
+    font-family: 'Cinzel', serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 14px;
+  }
+
+  .eipio-role p {
+    font-size: 18px;
+    line-height: 1.7;
+    font-style: italic;
+    color: rgba(232, 228, 219, 0.85);
+    max-width: 680px;
+    font-weight: 300;
+  }
+
+  .eipio-role p strong {
+    color: var(--cream);
+    font-style: normal;
+    font-weight: 600;
+  }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid rgba(245, 197, 24, 0.15);
+    padding-top: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .footer-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .footer-logo img {
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+    opacity: 0.8;
+  }
+
+  .footer-text {
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: rgba(245, 197, 24, 0.5);
+    text-transform: uppercase;
+  }
+
+  .footer-tagline {
+    font-size: 13px;
+    font-style: italic;
+    color: rgba(232, 228, 219, 0.35);
+  }
+
+  /* TOOLTIP */
+  .tooltip {
+    position: fixed;
+    background: var(--navy-deep);
+    border: 1px solid var(--gold-muted);
+    padding: 10px 14px;
+    font-size: 13px;
+    color: var(--cream);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s;
+    z-index: 100;
+    max-width: 200px;
+    line-height: 1.5;
+  }
+
+  .tooltip .tip-country {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--gold);
+    margin-bottom: 4px;
+    letter-spacing: 0.1em;
+  }
+
+  .tooltip.visible { opacity: 1; }
+
+  /* Animated intro */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 0.8s ease forwards;
+  }
+
+  .fade-in:nth-child(1) { animation-delay: 0.1s; }
+  .fade-in:nth-child(2) { animation-delay: 0.3s; }
+  .fade-in:nth-child(3) { animation-delay: 0.5s; }
+
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Responsive */
+  @media (max-width: 700px) {
+    .stats-row { grid-template-columns: 1fr; }
+    .narrative { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 26px; }
+    .stat-number { font-size: 38px; }
+    .diagram-container { max-width: 340px; }
+    .silo-body { width: 40px; height: 40px; }
+    .silo-flag { font-size: 14px; }
+    .silo-code { display: none; }
+    .threat-core { width: 80px; height: 80px; }
+    .threat-icon { font-size: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="tooltip" id="tooltip">
+  <div class="tip-country" id="tip-country"></div>
+  <div id="tip-text"></div>
+</div>
+
+<div class="page">
+
+  <!-- HEADER -->
+  <header class="fade-in">
+    <div class="logo-area">
+      <img src="https://brianiselin.github.io/widgets-public/eipio/EIPIO_trans_Logo_icon_only.png" alt="EIPIO Logo" class="logo-img"
+           onerror="this.style.display='none'; document.getElementById('logo-fallback').style.display='flex'">
+      <div id="logo-fallback" style="display:none; align-items:center; justify-content:center; width:72px; height:72px;">
+        <div style="color:var(--gold); font-family:'Cinzel',serif; font-size:20px; font-weight:700; border: 2px solid var(--gold); border-radius:50%; width:60px; height:60px; display:flex; align-items:center; justify-content:center;">EI</div>
+      </div>
+      <div class="logo-text">European Institute<br>of Professional<br>Intelligence Officers™</div>
+    </div>
+    <div class="header-label">Intelligence Landscape Series · 2025</div>
+  </header>
+
+  <!-- HERO -->
+  <div class="hero fade-in">
+    <div class="hero-eyebrow">The European Intelligence Landscape</div>
+    <h1><span>One Threat.</span> Thirty-Two Blind Spots.</h1>
+    <p class="hero-sub">Across Europe, every nation sees a fragment of the picture — but no single actor sees the whole.</p>
+  </div>
+
+  <!-- DIAGRAM -->
+  <div class="diagram-section fade-in">
+    <div class="diagram-container" id="diagram">
+
+      <!-- SVG for lines -->
+      <svg class="lines-svg" id="linesSvg" viewBox="0 0 680 680" preserveAspectRatio="xMidYMid meet"></svg>
+
+      <!-- Central threat -->
+      <div class="threat-core" id="threatCore">
+        <div class="threat-icon">⚠</div>
+        <div class="threat-label">Transnational<br>Threat Actor</div>
+      </div>
+
+      <!-- Country silos will be generated by JS -->
+    </div>
+
+    <p style="text-align:center; margin-top:24px; font-style:italic; font-size:14px; color:rgba(232,228,219,0.4);">
+      Hover over any country node to explore. Each holds a piece — none holds the whole.
+    </p>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-number">32<sup>+</sup></div>
+      <div class="stat-desc"><strong>Countries</strong> across EEA, Switzerland & the UK — each with sovereign intelligence structures</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">100<sup>+</sup></div>
+      <div class="stat-desc"><strong>Distinct agencies</strong> operating with separate mandates, legal frameworks, and classification systems</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">0</div>
+      <div class="stat-desc"><strong>Common professional standard</strong> for intelligence officers across the European community</div>
+    </div>
+  </div>
+
+  <!-- NARRATIVE -->
+  <div class="narrative">
+    <div class="narrative-block">
+      <h2>The Fragmentation Problem</h2>
+      <p>Europe's intelligence community is <em>structurally incapable</em> of delivering a unified picture of transnational threats. Not because of a lack of talent or resources — but because the architecture was never designed for coherence.</p>
+      <p>Threats do not respect borders. Intelligence structures do.</p>
+      <ul class="insight-list">
+        <li class="threat-item">
+          <span class="bullet">◆</span>
+          <span>A threat actor operating across 6 countries may be tracked by 6 separate agencies — with no shared picture, no common vocabulary, and no mechanism for synthesis</span>
+        </li>
+        <li class="threat-item">
+          <span class="bullet">◆</span>
+          <span>Legal barriers, classification incompatibilities, and political sensitivities prevent routine intelligence sharing at the practitioner level</span>
+        </li>
+        <li class="threat-item">
+          <span class="bullet">◆</span>
+          <span>There is no equivalent of a European Bar Association, Medical Council, or CFA Institute for intelligence professionals — no shared ethics, no shared standards, no shared identity</span>
+        </li>
+      </ul>
+    </div>
+    <div class="narrative-block">
+      <h2>The Strategic Asymmetry</h2>
+      <p>Adversaries — state and non-state alike — operate <em>across</em> borders with coherent strategy, unified command, and shared doctrine.</p>
+      <p>Europe responds with 32 separate pictures, 32 separate interpretations, and 32 separate response authorities.</p>
+      <ul class="insight-list">
+        <li>
+          <span class="bullet">◆</span>
+          <span>Five Eyes (FVEY) demonstrates what deliberate, trust-based intelligence community building can achieve — Europe has no equivalent</span>
+        </li>
+        <li>
+          <span class="bullet">◆</span>
+          <span>Bilateral and multilateral sharing agreements exist but are ad hoc, asymmetric, and personality-dependent rather than institutional</span>
+        </li>
+        <li>
+          <span class="bullet">◆</span>
+          <span>Practitioner-level relationships — the human infrastructure of intelligence — remain underdeveloped and unstructured across European borders</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- EIPIO ROLE -->
+  <div class="eipio-role">
+    <h3>The EIPIO Mandate</h3>
+    <p>EIPIO exists to build <strong>cohesion and coherence</strong> across Europe's fragmented intelligence landscape — not by creating another agency, but by professionalising the people who work within them. A <strong>common professional identity</strong>, shared standards, and a pan-European community of practice: the connective tissue Europe's intelligence community lacks.</p>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">
+      <img src="https://brianiselin.github.io/widgets-public/eipio/EIPIO_Emblem_trans.png" alt="EIPIO Emblem"
+           onerror="this.style.display='none'">
+      <div class="footer-text">EIPIO · eipio.eu</div>
+    </div>
+    <div class="footer-tagline">Building the connective tissue of European intelligence</div>
+  </footer>
+
+</div>
+
+<script>
+// Country data
+const countries = [
+  { code: 'DE', flag: '🇩🇪', name: 'Germany', agencies: 'BfV, BND, MAD', fragment: '🔍' },
+  { code: 'FR', flag: '🇫🇷', name: 'France', agencies: 'DGSI, DGSE, DRM', fragment: '📡' },
+  { code: 'IT', flag: '🇮🇹', name: 'Italy', agencies: 'AISI, AISE', fragment: '🔎' },
+  { code: 'ES', flag: '🇪🇸', name: 'Spain', agencies: 'CNI, CITCO', fragment: '📊' },
+  { code: 'PL', flag: '🇵🇱', name: 'Poland', agencies: 'ABW, AW, SKW', fragment: '🗂' },
+  { code: 'NL', flag: '🇳🇱', name: 'Netherlands', agencies: 'AIVD, MIVD', fragment: '📁' },
+  { code: 'SE', flag: '🇸🇪', name: 'Sweden', agencies: 'SÄPO, MUST', fragment: '📋' },
+  { code: 'FI', flag: '🇫🇮', name: 'Finland', agencies: 'Supo, PVTIEDL', fragment: '🔐' },
+  { code: 'NO', flag: '🇳🇴', name: 'Norway', agencies: 'PST, E-tjenesten', fragment: '🧩' },
+  { code: 'CH', flag: '🇨🇭', name: 'Switzerland', agencies: 'NDB', fragment: '🔒' },
+  { code: 'UK', flag: '🇬🇧', name: 'United Kingdom', agencies: 'MI5, MI6, GCHQ', fragment: '📌' },
+  { code: 'BE', flag: '🇧🇪', name: 'Belgium', agencies: 'VSSE, SGRS', fragment: '🗃' },
+  { code: 'AT', flag: '🇦🇹', name: 'Austria', agencies: 'DSN, HNaA', fragment: '📂' },
+  { code: 'CZ', flag: '🇨🇿', name: 'Czechia', agencies: 'BIS, ÚZSI, VZ', fragment: '🔑' },
+  { code: 'RO', flag: '🇷🇴', name: 'Romania', agencies: 'SRI, SIE', fragment: '📎' },
+  { code: 'PT', flag: '🇵🇹', name: 'Portugal', agencies: 'SIED, SIS', fragment: '🗄' },
+  { code: 'GR', flag: '🇬🇷', name: 'Greece', agencies: 'EYP', fragment: '📝' },
+  { code: 'HU', flag: '🇭🇺', name: 'Hungary', agencies: 'AH, KAH, KFH', fragment: '🗝' },
+  { code: 'DK', flag: '🇩🇰', name: 'Denmark', agencies: 'PET, E-tjenesten', fragment: '🔏' },
+  { code: 'SK', flag: '🇸🇰', name: 'Slovakia', agencies: 'SIS', fragment: '📃' },
+  { code: 'IE', flag: '🇮🇪', name: 'Ireland', agencies: 'G2', fragment: '🗒' },
+  { code: 'HR', flag: '🇭🇷', name: 'Croatia', agencies: 'SOA, VSOA', fragment: '📑' },
+  { code: 'LT', flag: '🇱🇹', name: 'Lithuania', agencies: 'VSD, AOTD', fragment: '🔗' },
+  { code: 'LV', flag: '🇱🇻', name: 'Latvia', agencies: 'SAB, DD', fragment: '📬' },
+  { code: 'EE', flag: '🇪🇪', name: 'Estonia', agencies: 'KAPO, EKRA', fragment: '🔭' },
+  { code: 'BG', flag: '🇧🇬', name: 'Bulgaria', agencies: 'DANS, DNI', fragment: '🧲' },
+  { code: 'SI', flag: '🇸🇮', name: 'Slovenia', agencies: 'SOVA', fragment: '📷' },
+  { code: 'RS', flag: '🇷🇸', name: 'Serbia', agencies: 'BIA, VOA', fragment: '🔦' },
+  { code: 'CY', flag: '🇨🇾', name: 'Cyprus', agencies: 'KYP', fragment: '🔮' },
+  { code: 'LU', flag: '🇱🇺', name: 'Luxembourg', agencies: 'SREL', fragment: '📻' },
+  { code: 'MT', flag: '🇲🇹', name: 'Malta', agencies: 'MSS', fragment: '🗺' },
+  { code: 'IS', flag: '🇮🇸', name: 'Iceland', agencies: 'Þjóðaröryggisnefnd', fragment: '❄️' },
+];
+
+function buildDiagram() {
+  const container = document.getElementById('diagram');
+  const svg = document.getElementById('linesSvg');
+  const cx = 50, cy = 50; // percent
+  const count = countries.length;
+
+  // Orbit radii as percentages — 4 rings, well spaced
+  // Ring 1: r=22, 6 nodes  (innermost, small count so angular gap is wide)
+  // Ring 2: r=32, 8 nodes
+  // Ring 3: r=41, 10 nodes
+  // Ring 4: r=47, 8 nodes  (outermost)
+  // Total: 32 nodes
+  const orbits = [
+    { r: 22, count: 6,  startIdx: 0 },
+    { r: 32, count: 8,  startIdx: 6 },
+    { r: 41, count: 10, startIdx: 14 },
+    { r: 47, count: 8,  startIdx: 24 },
+  ];
+
+  const positions = new Array(count);
+
+  orbits.forEach((orbit, oi) => {
+    // Stagger each ring slightly so nodes don't radially align
+    const phaseOffset = oi * (Math.PI / orbit.count);
+    for (let i = 0; i < orbit.count; i++) {
+      const idx = orbit.startIdx + i;
+      if (idx >= count) break;
+      const angle = (i / orbit.count) * 2 * Math.PI - Math.PI / 2 + phaseOffset;
+      const x = cx + orbit.r * Math.cos(angle);
+      const y = cy + orbit.r * Math.sin(angle);
+      positions[idx] = { x, y, angle };
+    }
+  });
+
+  // Draw dashed lines from each silo to center
+  positions.forEach((pos, idx) => {
+    if (!pos) return;
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('x1', `${pos.x}%`);
+    line.setAttribute('y1', `${pos.y}%`);
+    line.setAttribute('x2', '50%');
+    line.setAttribute('y2', '50%');
+    line.setAttribute('stroke', 'rgba(192, 57, 43, 0.2)');
+    line.setAttribute('stroke-width', '1');
+    line.setAttribute('stroke-dasharray', '3 5');
+    line.style.animation = `fragment-pulse ${3 + (idx % 4) * 0.5}s ease-in-out infinite`;
+    svg.appendChild(line);
+  });
+
+  // Create silo nodes
+  positions.forEach((pos, idx) => {
+    if (!pos) return;
+    const country = countries[idx];
+    const el = document.createElement('div');
+    el.className = 'silo';
+    el.style.left = `${pos.x}%`;
+    el.style.top = `${pos.y}%`;
+
+    el.innerHTML = `
+      <div class="silo-body" data-idx="${idx}">
+        <span class="silo-flag">${country.flag}</span>
+        <span class="silo-code">${country.code}</span>
+        <span class="silo-fragment">${country.fragment}</span>
+      </div>
+    `;
+    container.appendChild(el);
+
+    // Tooltip events
+    const body = el.querySelector('.silo-body');
+    body.addEventListener('mouseenter', (e) => {
+      const tip = document.getElementById('tooltip');
+      document.getElementById('tip-country').textContent = `${country.flag} ${country.name}`;
+      document.getElementById('tip-text').textContent = `Agencies: ${country.agencies}`;
+      tip.classList.add('visible');
+    });
+    body.addEventListener('mousemove', (e) => {
+      const tip = document.getElementById('tooltip');
+      tip.style.left = (e.clientX + 14) + 'px';
+      tip.style.top = (e.clientY - 10) + 'px';
+    });
+    body.addEventListener('mouseleave', () => {
+      document.getElementById('tooltip').classList.remove('visible');
+    });
+  });
+}
+
+buildDiagram();
+</script>
+</body>
+</html>
