@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Three things CEDIA members need to understand — Brian Iselin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;1,8..60,300;1,8..60,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --cream: #FAF8F4;
+    --cream-dark: #F2EFE8;
+    --ink: #1A1714;
+    --ink-mid: #3D3830;
+    --ink-light: #7A7268;
+    --navy: #1B2A4A;
+    --gold: #C4922A;
+    --gold-light: #E8C47A;
+    --slate: #2E5F8A;
+    --rule: #D4CFC5;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-weight: 300;
+    line-height: 1.75;
+    font-size: 17px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── PROGRESS BAR ── */
+  #progress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 2px;
+    width: 0%;
+    background: linear-gradient(90deg, var(--gold), var(--slate));
+    z-index: 1000;
+    transition: width 0.1s linear;
+  }
+
+  /* ── MASTHEAD ── */
+  .masthead {
+    border-bottom: 1px solid var(--rule);
+    padding: 18px 0 14px;
+    position: sticky;
+    top: 0;
+    background: rgba(250,248,244,0.96);
+    backdrop-filter: blur(8px);
+    z-index: 100;
+    opacity: 0;
+    transform: translateY(-8px);
+    animation: fadeDown 0.6s ease 0.1s forwards;
+  }
+
+  .masthead-inner {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 32px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .masthead-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--navy);
+  }
+
+  .masthead-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-light);
+  }
+
+  .masthead-date {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    color: var(--ink-light);
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 72px 32px 56px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.3s forwards;
+  }
+
+  .hero-kicker {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .hero-kicker::before {
+    content: '';
+    display: block;
+    width: 32px;
+    height: 1px;
+    background: var(--gold);
+  }
+
+  .hero-headline {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(32px, 5vw, 52px);
+    font-weight: 700;
+    line-height: 1.15;
+    color: var(--navy);
+    max-width: 680px;
+    margin-bottom: 28px;
+  }
+
+  .hero-headline em {
+    font-style: italic;
+    color: var(--slate);
+  }
+
+  .hero-deck {
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 1.65;
+    color: var(--ink-mid);
+    max-width: 620px;
+    margin-bottom: 36px;
+    font-style: italic;
+  }
+
+  .byline-block {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding-top: 24px;
+    border-top: 1px solid var(--rule);
+  }
+
+  .byline-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--navy) 0%, var(--slate) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    color: white;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+
+  .byline-text {}
+  .byline-name {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--navy);
+    letter-spacing: 0.02em;
+  }
+  .byline-title {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    color: var(--ink-light);
+    letter-spacing: 0.03em;
+    margin-top: 2px;
+  }
+
+  /* ── SECTION DIVIDER ── */
+  .section-break {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+
+  .section-break hr {
+    border: none;
+    border-top: 1px solid var(--rule);
+    margin: 8px 0;
+  }
+
+  /* ── ARTICLE SECTIONS ── */
+  .article-section {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 56px 32px;
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .article-section.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .section-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 72px;
+    font-weight: 700;
+    color: var(--cream-dark);
+    line-height: 1;
+    margin-bottom: -12px;
+    user-select: none;
+    display: block;
+  }
+
+  .section-header {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 2px solid var(--navy);
+  }
+
+  .section-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(22px, 3.5vw, 32px);
+    font-weight: 600;
+    color: var(--navy);
+    line-height: 1.25;
+  }
+
+  .section-body {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  @media (min-width: 700px) {
+    .section-body {
+      grid-template-columns: 1fr 260px;
+      gap: 48px;
+    }
+  }
+
+  .section-text p {
+    margin-bottom: 20px;
+    color: var(--ink-mid);
+    font-size: 16.5px;
+    line-height: 1.8;
+  }
+
+  .section-text p:last-child { margin-bottom: 0; }
+
+  .section-text strong {
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  /* ── PULL QUOTE ── */
+  .pull-quote {
+    background: var(--navy);
+    color: white;
+    padding: 28px 28px 24px;
+    position: relative;
+    align-self: start;
+    margin-top: 0;
+  }
+
+  @media (max-width: 699px) {
+    .pull-quote {
+      margin-top: 32px;
+      margin-bottom: 8px;
+    }
+  }
+
+  .pull-quote::before {
+    content: '\201C';
+    font-family: 'Playfair Display', serif;
+    font-size: 64px;
+    line-height: 1;
+    color: var(--gold);
+    display: block;
+    margin-bottom: -16px;
+  }
+
+  .pull-quote-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px;
+    font-style: italic;
+    line-height: 1.55;
+    font-weight: 400;
+  }
+
+  .pull-quote-attr {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold-light);
+    margin-top: 16px;
+    display: block;
+  }
+
+  /* ── ACCENT STRIP between sections ── */
+  .accent-strip {
+    background: var(--navy);
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 32px;
+    height: 1px;
+    background: linear-gradient(90deg, var(--navy), var(--slate), transparent);
+  }
+
+  /* ── WHAT THIS MEANS BOX ── */
+  .implication-box {
+    margin-top: 32px;
+    background: var(--cream-dark);
+    border-left: 3px solid var(--gold);
+    padding: 20px 24px;
+  }
+
+  .implication-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+
+  .implication-text {
+    font-size: 15px;
+    color: var(--ink-mid);
+    line-height: 1.7;
+    font-weight: 400;
+  }
+
+  /* ── FOOTER ── */
+  .article-footer {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 56px 32px 72px;
+    border-top: 1px solid var(--rule);
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.5s forwards;
+  }
+
+  .footer-rule {
+    width: 48px;
+    height: 2px;
+    background: var(--gold);
+    margin-bottom: 28px;
+  }
+
+  .footer-bio {
+    font-family: 'Source Serif 4', serif;
+    font-size: 15px;
+    font-style: italic;
+    color: var(--ink-mid);
+    line-height: 1.75;
+    max-width: 560px;
+    margin-bottom: 28px;
+  }
+
+  .footer-contact {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--ink-light);
+    letter-spacing: 0.04em;
+  }
+
+  .footer-contact a {
+    color: var(--slate);
+    text-decoration: none;
+    border-bottom: 1px solid var(--slate);
+    padding-bottom: 1px;
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  .footer-contact a:hover {
+    color: var(--gold);
+    border-color: var(--gold);
+  }
+
+  .footer-contact span {
+    margin: 0 8px;
+    color: var(--rule);
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeDown {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── TABLE OF CONTENTS ── */
+  .toc {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 32px 48px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.45s forwards;
+  }
+
+  .toc-inner {
+    background: white;
+    border: 1px solid var(--rule);
+    padding: 24px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .toc-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-light);
+    margin-bottom: 14px;
+  }
+
+  .toc-item {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--cream-dark);
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .toc-item:last-child { border-bottom: none; }
+
+  .toc-item:hover .toc-item-title {
+    color: var(--slate);
+  }
+
+  .toc-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gold);
+    flex-shrink: 0;
+    width: 18px;
+  }
+
+  .toc-item-title {
+    font-family: 'Source Serif 4', serif;
+    font-size: 15px;
+    color: var(--ink-mid);
+    line-height: 1.4;
+    transition: color 0.2s;
+  }
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<!-- MASTHEAD -->
+<header class="masthead">
+  <div class="masthead-inner">
+    <div>
+      <div class="masthead-name">Brian Iselin</div>
+      <div class="masthead-label">Analytical Brief &nbsp;·&nbsp; Smart Systems & European Policy</div>
+    </div>
+    <div class="masthead-date">March 2026</div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-kicker">Analytical Brief</div>
+  <h1 class="hero-headline">Three things CEDIA members need to understand about <em>AI and smart home liability</em> in Europe right now</h1>
+  <p class="hero-deck">The regulatory landscape governing connected residential systems is shifting faster than most integrators recognise. These are not edge cases — they are structural changes with direct implications for installation practice, client relationships, and professional exposure.</p>
+  <div class="byline-block">
+    <div class="byline-avatar">BI</div>
+    <div class="byline-text">
+      <div class="byline-name">Brian Iselin</div>
+      <div class="byline-title">Former Intelligence Officer &amp; Diplomat &nbsp;·&nbsp; Brussels-based Policy Analyst &nbsp;·&nbsp; President, EIPIO</div>
+    </div>
+  </div>
+</section>
+
+<!-- TABLE OF CONTENTS -->
+<div class="toc">
+  <div class="toc-inner">
+    <div class="toc-label">In this brief</div>
+    <a class="toc-item" onclick="document.getElementById('section1').scrollIntoView({behavior:'smooth'})">
+      <span class="toc-num">1</span>
+      <span class="toc-item-title">The EU AI Act has already redefined what "safe" means for connected home systems — whether your clients know it or not</span>
+    </a>
+    <a class="toc-item" onclick="document.getElementById('section2').scrollIntoView({behavior:'smooth'})">
+      <span class="toc-num">2</span>
+      <span class="toc-item-title">The Cyber Resilience Act shifts product liability upstream — and integrators sit squarely in that supply chain</span>
+    </a>
+    <a class="toc-item" onclick="document.getElementById('section3').scrollIntoView({behavior:'smooth'})">
+      <span class="toc-num">3</span>
+      <span class="toc-item-title">Data localisation and digital sovereignty are becoming client requirements, not just regulatory abstractions</span>
+    </a>
+  </div>
+</div>
+
+<!-- SECTION 1 -->
+<div id="section1" class="article-section">
+  <span class="section-number">01</span>
+  <div class="section-header">
+    <div class="section-label">AI Governance &amp; Installation Practice</div>
+    <h2 class="section-title">The EU AI Act has already redefined what "safe" means for connected home systems — whether your clients know it or not</h2>
+  </div>
+  <div class="section-body">
+    <div class="section-text">
+      <p>When the EU AI Act entered into force in August 2024, the conversation in Brussels focused almost entirely on enterprise and public-sector AI systems. The residential smart home sector was barely mentioned. That silence was misleading.</p>
+      <p>A modern high-specification residential installation — adaptive lighting that learns occupancy patterns, HVAC systems with predictive climate modelling, security systems that use AI-driven facial recognition or behavioural anomaly detection — now intersects directly with the Act's risk classification framework. Systems that make consequential inferences about individuals in their domestic environment are not inherently excluded from scrutiny. The question is classification, and classification is a judgement call that will eventually be made by national market surveillance authorities across 27 member states, not uniformly.</p>
+      <p>For CEDIA members operating across European markets, the practical issue is this: <strong>the moment an integrated system processes biometric, behavioural, or health-adjacent data to make automated decisions affecting a person in their home, the liability picture changes.</strong> Integrators who specify, configure, and commission those systems are not merely installers — they are actors in a deployment chain that regulators are beginning to scrutinise.</p>
+      <p>The sector does not yet have consolidated guidance on what documentation, transparency obligations, or conformity assessments might eventually be required. That is precisely the moment to get ahead of it.</p>
+      <div class="implication-box">
+        <div class="implication-label">What this means for integrators</div>
+        <div class="implication-text">Documentation of system capabilities — specifically any AI-driven inference or automated decision function — should be part of every installation record. Clients may ask. Regulators eventually will.</div>
+      </div>
+    </div>
+    <div>
+      <div class="pull-quote">
+        <div class="pull-quote-text">A system that learns who is home, when, and adjusts behaviour accordingly is not a neutral appliance. European regulators are beginning to treat it accordingly.</div>
+        <span class="pull-quote-attr">— Brian Iselin</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="accent-strip"></div>
+
+<!-- SECTION 2 -->
+<div id="section2" class="article-section">
+  <span class="section-number">02</span>
+  <div class="section-header">
+    <div class="section-label">Supply Chain Liability &amp; The Cyber Resilience Act</div>
+    <h2 class="section-title">The Cyber Resilience Act shifts product liability upstream — and integrators sit squarely in that supply chain</h2>
+  </div>
+  <div class="section-body">
+    <div class="section-text">
+      <p>The EU Cyber Resilience Act, agreed in late 2024 and entering phased application from 2027, represents the most significant reorientation of digital product liability in the European market in a generation. Its central principle is straightforward and its implications are profound: <strong>cybersecurity is no longer a feature. It is a legal requirement, and responsibility for it extends across the supply chain.</strong></p>
+      <p>For hardware and software manufacturers, the obligations are substantial — mandatory vulnerability disclosure, security update commitments for the expected product lifetime, and documentation of cybersecurity properties at point of sale. But the Act's logic does not stop at the factory gate. Importers, distributors, and — critically — anyone who makes substantial modification to a product before placing it into service can inherit the obligations of a manufacturer.</p>
+      <p>A CEDIA member who takes a networking product, a smart display, or a home automation controller and reconfigures it materially — integrating it with other systems, modifying its default operating parameters, connecting it to a residential network architecture they have designed — is not simply installing a product. They are, in regulatory terms, potentially placing a modified product into service. The distinction between "installer" and "economic operator" is exactly what European enforcement authorities will be examining as the Act matures.</p>
+      <p>The practical implication is not that integrators face immediate legal peril. It is that the evidentiary standard for professional practice is rising. Records of what was specified, what was configured, and what security advisories were communicated to clients will matter in ways they have not previously.</p>
+      <div class="implication-box">
+        <div class="implication-label">What this means for integrators</div>
+        <div class="implication-text">Client handover documentation should include explicit cybersecurity guidance — default credentials changed, update schedules communicated, known limitations noted. This is increasingly a professional standard, not optional.</div>
+      </div>
+    </div>
+    <div>
+      <div class="pull-quote">
+        <div class="pull-quote-text">The distinction between "installer" and "economic operator" is exactly what enforcement authorities will be examining. The evidentiary standard for professional practice is rising.</div>
+        <span class="pull-quote-attr">— Brian Iselin</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="accent-strip"></div>
+
+<!-- SECTION 3 -->
+<div id="section3" class="article-section">
+  <span class="section-number">03</span>
+  <div class="section-header">
+    <div class="section-label">Digital Sovereignty &amp; Client Expectations</div>
+    <h2 class="section-title">Data localisation and digital sovereignty are becoming client requirements, not just regulatory abstractions</h2>
+  </div>
+  <div class="section-body">
+    <div class="section-text">
+      <p>For most of the past decade, European regulatory concern about data flows — where personal data is processed, stored, and who can compel access to it — has been understood as a matter for large platforms and cloud service providers. The residential smart home has been an afterthought. That is changing, and the change is being driven not just from Brussels but from clients themselves.</p>
+      <p>A significant segment of the high-value residential market — executives, government officials, legal and financial professionals, and others with elevated privacy concerns — is beginning to ask questions that were previously the exclusive territory of enterprise IT: <strong>Where does my home's data go? Who can access it? What happens if the platform provider is acquired or goes dark?</strong></p>
+      <p>The Schrems II legacy and the ongoing uncertainty around US-EU data transfer frameworks have made European clients more sophisticated about transatlantic data flows than they were three years ago. Add to this the escalating geopolitical sensitivity around Chinese-manufactured smart home components — cameras, sensors, network equipment — and the picture becomes one in which the origin and data residency of installed systems are becoming legitimate client due-diligence questions.</p>
+      <p>CEDIA members who can articulate a coherent position on data localisation — local processing architectures, European cloud infrastructure, hardware supply chain provenance — are differentiated in this market. Those who cannot articulate it will increasingly face clients who can ask the question and will not be satisfied with vague reassurances.</p>
+      <div class="implication-box">
+        <div class="implication-label">What this means for integrators</div>
+        <div class="implication-text">Data residency and local processing architecture are becoming premium differentiators, not just technical choices. Knowing where every component in a system sends data — and being able to explain it — is a commercial advantage in the high-value residential market.</div>
+      </div>
+    </div>
+    <div>
+      <div class="pull-quote">
+        <div class="pull-quote-text">Where does my home's data go? Who can access it? These are no longer just enterprise IT questions. High-value residential clients are asking them — and expecting answers.</div>
+        <span class="pull-quote-attr">— Brian Iselin</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="article-footer">
+  <div class="footer-rule"></div>
+  <p class="footer-bio">Brian Iselin writes for organisations that need to understand the world clearly. He is a former intelligence officer, diplomat, and Embassy Counsellor, now Brussels-based, writing and editing at the intersection of geopolitics, technology and industrial policy.</p>
+  <div class="footer-contact">
+    <a href="mailto:brian.iselin@iselingroup.com">brian.iselin@iselingroup.com</a>
+    <span>·</span>
+    <a href="https://linkedin.com/in/brianiselin67" target="_blank">LinkedIn</a>
+    <span>·</span>
+    <a href="https://eipio.eu" target="_blank">eipio.eu</a>
+  </div>
+</footer>
+
+<script>
+  // Progress bar
+  window.addEventListener('scroll', () => {
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+    document.getElementById('progress-bar').style.width = pct + '%';
+  });
+
+  // Scroll-reveal for article sections
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
+
+  document.querySelectorAll('.article-section').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
