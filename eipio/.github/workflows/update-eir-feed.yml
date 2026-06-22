@@ -1,0 +1,64 @@
+name: Update EIR Feed
+
+on:
+  schedule:
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+jobs:
+  update-feed:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Fetch Medium RSS and convert to JSON
+        run: |
+          curl -s "https://medium.com/feed/eipio-intelligence-review" -o feed.xml
+          python3 -c "
+          import xml.etree.ElementTree as ET
+          import json
+          import re
+
+          tree = ET.parse('feed.xml')
+          root = tree.getroot()
+          ns = {'content': 'http://purl.org/rss/1.0/modules/content/', 'dc': 'http://purl.org/dc/elements/1.1/'}
+
+          articles = []
+          for item in root.findall('.//item')[:8]:
+              title = item.findtext('title', default='')
+              link = item.findtext('link', default='')
+              pub_date = item.findtext('pubDate', default='')
+              creator = item.findtext('dc:creator', default='EIPIO', namespaces=ns)
+              content = item.findtext('content:encoded', default='', namespaces=ns) or ''
+              
+              img_match = re.search(r'<img[^>]+src=\"([^\"]+)\"', content)
+              img = img_match.group(1) if img_match else ''
+              
+              text_only = re.sub(r'<[^>]+>', ' ', content)
+              text_only = re.sub(r'\s+', ' ', text_only).strip()
+              excerpt = text_only[:200]
+
+              articles.append({
+                  'title': title,
+                  'link': link,
+                  'date': pub_date,
+                  'author': creator,
+                  'excerpt': excerpt,
+                  'img': img
+              })
+
+          with open('eir-feed.json', 'w') as f:
+              json.dump({'articles': articles}, f, indent=2)
+          "
+
+      - name: Move file to eipio folder
+        run: mv eir-feed.json eipio/eir-feed.json
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add eipio/eir-feed.json
+          git diff --staged --quiet || git commit -m "Update EIR feed data"
+          git push
