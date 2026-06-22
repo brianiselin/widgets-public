@@ -255,6 +255,17 @@
     line-height:1.7;
   }
 
+  footer.copyright-notice{
+    margin-top:24px;
+    padding-top:16px;
+    border-top:1px solid var(--rule);
+    font-size:11px;
+    color:var(--ink-faint);
+    max-width:820px;
+    line-height:1.6;
+    font-family:var(--mono);
+  }
+
   @media (prefers-reduced-motion: reduce){
     .card, .assessment-panel{transition:none;}
   }
@@ -285,6 +296,10 @@
 
   <footer class="notes">
     <strong>How to read this.</strong> Each provider is scored across four aggregate categories, each built from two underlying factors. A category grade is the weaker of its two factors, not an average — a strong score on one factor does not cancel a weak score on the other. Where public information was insufficient to score a factor, that is marked rather than guessed. Investor relationships and concentration-of-control facts (for example, a shared investor between an AI company and its verification vendor, or a single individual holding unchecked operational control) are scored where they affect a factor's grade and explained in full in the written assessment, rather than added as a separate bar — these are disclosed facts about structure, not character judgements about named individuals. This is a working rubric, not a regulatory finding, and individual scores should be read alongside the sourcing in each assessment panel.
+  </footer>
+
+  <footer class="copyright-notice">
+    &copy; 2026 Brian Iselin / Iselin Group. All rights reserved. This page may be linked to or embedded as published, with attribution. Reproduction, modification, or republication of this rubric, its methodology, or its written assessments, in whole or in part, is not permitted without written permission. Permissions: info@iselingroup.com
   </footer>
 
 </div>
@@ -584,6 +599,31 @@ document.querySelectorAll(".assessment-toggle").forEach(btn=>{
     scene.classList.toggle("expanded", isOpen);
   });
 });
+
+(function(){
+  function reportHeight(){
+    const h = document.documentElement.scrollHeight;
+    if(window.parent && window.parent !== window){
+      window.parent.postMessage({ type:"ai-trust-resize", height:h }, "*");
+    }
+  }
+  let pending = false;
+  function scheduleReport(){
+    if(pending) return;
+    pending = true;
+    requestAnimationFrame(()=>{
+      reportHeight();
+      setTimeout(()=>{ reportHeight(); pending = false; }, 750);
+    });
+  }
+  window.addEventListener("load", scheduleReport);
+  window.addEventListener("resize", scheduleReport);
+  document.addEventListener("click", scheduleReport, true);
+  if(window.ResizeObserver){
+    new ResizeObserver(scheduleReport).observe(document.body);
+  }
+  scheduleReport();
+})();
 </script>
 </body>
 </html>
