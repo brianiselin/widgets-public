@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI provider trust ratings</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F7F5F0;
+    --paper-raised:#FFFFFF;
+    --ink:#1A1A18;
+    --ink-muted:#6B6862;
+    --ink-faint:#9C9890;
+    --rule:#D9D5CB;
+    --rule-strong:#1A1A18;
+    --grade-a:#3D6B4F;
+    --grade-b:#7A8253;
+    --grade-c:#B08D3E;
+    --grade-d:#B5622E;
+    --grade-e:#8C3A2E;
+    --grade-x:#8A8780;
+    --serif: "Newsreader", Georgia, serif;
+    --sans: "IBM Plex Sans", -apple-system, sans-serif;
+    --mono: "IBM Plex Mono", monospace;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--sans);
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding:48px 32px 96px;}
+
+  header.masthead{
+    border-bottom:2px solid var(--rule-strong);
+    padding-bottom:24px;
+    margin-bottom:8px;
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    gap:24px;
+    flex-wrap:wrap;
+  }
+  .masthead-title{
+    font-family:var(--serif);
+    font-weight:600;
+    font-size:clamp(28px,4vw,42px);
+    letter-spacing:-0.01em;
+    margin:0;
+  }
+  .masthead-sub{
+    font-family:var(--sans);
+    font-size:13px;
+    color:var(--ink-muted);
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    margin:6px 0 0;
+  }
+  .masthead-meta{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--ink-muted);
+    text-align:right;
+    line-height:1.6;
+  }
+
+  .standfirst{
+    font-family:var(--serif);
+    font-size:18px;
+    font-style:italic;
+    color:var(--ink-muted);
+    max-width:760px;
+    margin:28px 0 40px;
+    line-height:1.55;
+  }
+
+  .methodology-bar{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    flex-wrap:wrap;
+    padding:14px 18px;
+    background:var(--paper-raised);
+    border:1px solid var(--rule);
+    border-radius:4px;
+    margin-bottom:48px;
+    font-size:13px;
+    color:var(--ink-muted);
+  }
+  .methodology-bar strong{color:var(--ink);font-weight:500;}
+  .group-key{display:flex;gap:16px;flex-wrap:wrap;margin-left:auto;}
+  .group-key span{display:flex;align-items:center;gap:6px;white-space:nowrap;}
+  .group-key i{width:10px;height:10px;border-radius:2px;display:inline-block;}
+
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(260px, 1fr));
+    gap:24px;
+  }
+
+  .card-scene{
+    perspective:1800px;
+    height:430px;
+  }
+  .card{
+    position:relative;
+    width:100%;
+    height:100%;
+    transition:transform 0.7s cubic-bezier(.4,.2,.2,1);
+    transform-style:preserve-3d;
+    cursor:pointer;
+  }
+  .card-scene.flipped .card{transform:rotateY(180deg);}
+  .face{
+    position:absolute;
+    inset:0;
+    backface-visibility:hidden;
+    border:1px solid var(--rule);
+    border-radius:6px;
+    background:var(--paper-raised);
+    padding:20px;
+    display:flex;
+    flex-direction:column;
+  }
+  .face.back{transform:rotateY(180deg);}
+
+  .face:focus-visible{outline:2px solid var(--ink);outline-offset:3px;}
+
+  .card-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    margin-bottom:14px;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .brand-icon{
+    width:30px;height:30px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    background:var(--paper);
+    border:1px solid var(--rule);
+    font-family:var(--serif);
+    font-weight:600;
+    font-size:14px;
+  }
+  .brand-name{
+    font-family:var(--serif);
+    font-weight:600;
+    font-size:17px;
+    line-height:1.2;
+  }
+  .brand-sub{
+    font-size:11px;
+    color:var(--ink-faint);
+    text-transform:uppercase;
+    letter-spacing:0.05em;
+  }
+  .grade-badge{
+    font-family:var(--serif);
+    font-weight:600;
+    font-size:30px;
+    width:48px;height:48px;
+    border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    color:#fff;
+    flex-shrink:0;
+  }
+
+  .verdict{
+    font-size:13px;
+    color:var(--ink-muted);
+    margin:0 0 18px;
+    min-height:34px;
+  }
+
+  .bars{flex:1;display:flex;flex-direction:column;gap:11px;justify-content:center;}
+  .bar-row{display:grid;grid-template-columns:84px 1fr 28px;align-items:center;gap:8px;}
+  .bar-label{font-size:11.5px;color:var(--ink-muted);line-height:1.3;}
+  .bar-track{height:7px;background:var(--paper);border:1px solid var(--rule);border-radius:4px;overflow:hidden;}
+  .bar-fill{height:100%;border-radius:3px;}
+  .bar-score{font-family:var(--mono);font-size:11px;color:var(--ink-muted);text-align:right;}
+
+  .face-foot{
+    margin-top:14px;
+    padding-top:12px;
+    border-top:1px solid var(--rule);
+    font-size:11px;
+    color:var(--ink-faint);
+    display:flex;
+    justify-content:space-between;
+  }
+  .flip-hint{font-style:italic;}
+
+  .face.back .bars{gap:7px;}
+  .face.back .bar-row{grid-template-columns:96px 1fr 26px;}
+  .face.back .bar-label{font-size:10.5px;}
+
+  .assessment-toggle{
+    margin-top:10px;
+    width:100%;
+    background:none;
+    border:1px solid var(--rule);
+    border-radius:4px;
+    padding:8px 12px;
+    font-family:var(--sans);
+    font-size:12px;
+    font-weight:500;
+    color:var(--ink);
+    cursor:pointer;
+    text-align:left;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+  .assessment-toggle:hover{background:var(--paper);}
+  .assessment-toggle .chev{transition:transform 0.2s;}
+  .assessment-toggle.open .chev{transform:rotate(180deg);}
+
+  .assessment-panel{
+    max-height:0;
+    overflow:hidden;
+    transition:max-height 0.35s ease;
+  }
+  .assessment-panel.open{max-height:600px;overflow-y:auto;}
+  .assessment-inner{
+    font-family:var(--serif);
+    font-size:13.5px;
+    line-height:1.65;
+    padding:14px 2px 4px;
+    color:var(--ink);
+  }
+  .assessment-inner p{margin:0 0 10px;}
+  .assessment-inner p:last-child{margin-bottom:0;}
+  .assessment-inner .cite{font-family:var(--sans);font-size:10.5px;color:var(--ink-faint);display:block;margin-top:2px;}
+
+  .card-scene.expanded{height:auto;}
+  .card-scene.expanded .face.back{position:relative;height:auto;}
+
+  footer.notes{
+    margin-top:56px;
+    padding-top:24px;
+    border-top:1px solid var(--rule);
+    font-size:12px;
+    color:var(--ink-faint);
+    max-width:820px;
+    line-height:1.7;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .card, .assessment-panel{transition:none;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <div>
+      <p class="masthead-title">AI provider trust ratings</p>
+      <p class="masthead-sub">Data handling &middot; security &middot; jurisdiction &middot; output integrity</p>
+    </div>
+    <div class="masthead-meta">
+      Assessment date: 22 June 2026<br>
+      Methodology v1.0
+    </div>
+  </header>
+
+  <p class="standfirst">A grade is not a verdict on how good a model is at its job. It is a measure of what happens to your data, who can reach it, and what legal or commercial pressure sits behind the company providing it. Click a card to see the breakdown; open the assessment for the sourcing behind each score.</p>
+
+  <div class="methodology-bar">
+    <span><strong>Grades:</strong> A = low risk &nbsp;&rarr;&nbsp; E = high risk, per category</span>
+    <div class="group-key" id="group-key"></div>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <footer class="notes">
+    <strong>How to read this.</strong> Each provider is scored across four aggregate categories, each built from two underlying factors. A category grade is the weaker of its two factors, not an average — a strong score on one factor does not cancel a weak score on the other. Where public information was insufficient to score a factor, that is marked rather than guessed. Investor relationships and concentration-of-control facts (for example, a shared investor between an AI company and its verification vendor, or a single individual holding unchecked operational control) are scored where they affect a factor's grade and explained in full in the written assessment, rather than added as a separate bar — these are disclosed facts about structure, not character judgements about named individuals. This is a working rubric, not a regulatory finding, and individual scores should be read alongside the sourcing in each assessment panel.
+  </footer>
+
+</div>
+
+<script>
+const GROUPS = [
+  { key:"data", label:"Data handling", color:"#3D6B4F",
+    sub:[{key:"vendor",label:"Verification vendor"},{key:"training",label:"Training data use"}]},
+  { key:"security", label:"Security", color:"#B08D3E",
+    sub:[{key:"breach",label:"Breach &amp; disclosure record"},{key:"infra",label:"Infrastructure controls"}]},
+  { key:"jurisdiction", label:"Jurisdiction &amp; accountability", color:"#B5622E",
+    sub:[{key:"legal",label:"State access risk"},{key:"enforce",label:"EU/UK enforceability"}]},
+  { key:"output", label:"Output integrity", color:"#8C3A2E",
+    sub:[{key:"identity",label:"Identity &amp; profiling risk"},{key:"disclosure",label:"Disclosure quality"}]}
+];
+
+const GRADE_COLOR = {A:"var(--grade-a)",B:"var(--grade-b)",C:"var(--grade-c)",D:"var(--grade-d)",E:"var(--grade-e)",X:"var(--grade-x)"};
+function scoreToGrade(s){
+  if(s===null) return "X";
+  if(s<=1.5) return "A";
+  if(s<=2.5) return "B";
+  if(s<=3.5) return "C";
+  if(s<=4.5) return "D";
+  return "E";
+}
+function groupScore(a,b){
+  if(a===null && b===null) return null;
+  if(a===null) return b;
+  if(b===null) return a;
+  return Math.max(a,b);
+}
+
+const PROVIDERS = [
+  {
+    key:"google", name:"Gemini", parent:"Google", initial:"G",
+    factors:{
+      vendor:{score:1, note:"No evidence found of mandatory biometric ID verification for chat access at time of writing."},
+      training:{score:2, note:"Training use is disclosed with account-level controls; default settings vary by region."},
+      breach:{score:2, note:"No major Gemini-specific breach identified in the period reviewed."},
+      infra:{score:2, note:"Standard large-platform security posture; no distinguishing public concern identified."},
+      legal:{score:4, note:"US-based. The CLOUD Act allows US authorities to compel data held by US companies regardless of physical storage location, and FISA Section 702 permits collection on non-US persons without an individual warrant. Both carry secrecy provisions comparable in kind to the state-access powers scored for China-based providers below."},
+      enforce:{score:2, note:"EU/UK users have a registered legal pathway: Standard Contractual Clauses, an EU presence, and regulators (e.g. Ireland's DPC, the ICO) with a track record of fines and audits against US tech firms, even though CLOUD Act tension means that pathway is imperfect."},
+      identity:{score:2, note:"General-purpose model; no specific public concern beyond category norms."},
+      disclosure:{score:2, note:"Verification and data-handling triggers for Gemini chat are not separately itemised in consumer-facing terms."}
+    },
+    assessment:`<p>Gemini's chat product does not appear to require government ID or facial-geometry verification to access core functionality, which is the single largest factor separating its score from Anthropic's and OpenAI's. That absence is based on a direct search at time of writing and should be read as "not found," not as a verified guarantee — Google could introduce age or identity gating without wide press coverage, and a regional rollout could exist that did not surface in available sources.</p><p>Where Google's wider business does process facial data at scale is Google Photos, which runs face-grouping for users who enable backup. That is a different product, under a different consent basis, and is not bundled into Gemini chat access — but it is worth a reader knowing the same parent company operates that capability elsewhere.</p><p>The more durable risk for Google sits in incentive structure: advertising remains central to Alphabet's revenue, and while Gemini's own data-use terms are disclosed, the broader question of how account-level data could inform commercial products elsewhere in Google's portfolio is a structural one rather than a Gemini-specific failing.</p>`
+  },
+  {
+    key:"anthropic", name:"Claude", parent:"Anthropic", initial:"A",
+    factors:{
+      vendor:{score:4, note:"Biometric ID and facial geometry processed by Persona, a third-party processor with a documented February 2026 exposed-dashboard incident affecting its government-facing codebase."},
+      training:{score:2, note:"Anthropic states verification data is not used to train models and is not stored on its own systems; ordinary chat data has a separate, disclosed opt-out."},
+      breach:{score:2, note:"No major Anthropic-side breach identified; the documented exposure sits with Persona, the processor, not Anthropic directly."},
+      infra:{score:2, note:"No distinguishing public infrastructure concern identified beyond the vendor relationship itself."},
+      legal:{score:4, note:"US-based, with the same CLOUD Act and FISA 702 exposure scored across all US providers here. Retention duration and CLOUD Act applicability for non-US verification data specifically are not publicly specified, which is a disclosure gap on top of the structural exposure."},
+      enforce:{score:2, note:"SCC-based EU transfer pathway exists with an active regulatory relationship; no documented enforcement action against Anthropic specifically at time of writing."},
+      identity:{score:2, note:"No specific public concern beyond category norms for general-purpose models."},
+      disclosure:{score:3, note:"Confirms what is collected and the stated purpose, but retention windows and exact verification triggers are unpublished."}
+    },
+    assessment:`<p>The core risk in Claude's rating is not that Anthropic mishandles biometric data itself, but that it has outsourced the handling of that data to Persona, a third-party identity verification firm. Anthropic's own documentation states that ID images and selfies are held on Persona's servers, that Anthropic does not copy or store them itself, and that the data is not used for model training. Taken at face value, that is a reasonably disciplined position for the platform layer.</p><p>The vendor layer is where the grade drops. Persona's codebase was found exposed on a publicly accessible government-facing endpoint in February 2026, revealing the scope of checks the platform is capable of running across its client base generally. That incident does not mean Anthropic's specific verification data was exposed, but it establishes that the vendor handling sensitive biometric data for Anthropic's users has a live, documented security lapse on its record elsewhere in its business.</p><p>On state access, Anthropic is scored on the same basis as every other US provider here: the CLOUD Act and FISA Section 702 give US authorities a compelled-access route to data held by a US company, including, under FISA 702, data belonging to non-US persons, without an individual warrant and often under secrecy provisions. That is a real and serious exposure, and this rubric scores it at the same level it scores China's Cybersecurity Law and National Intelligence Law for DeepSeek and Qwen below — the two are different legal mechanisms reaching a structurally similar outcome, and treating one as a footnote and the other as the headline risk would be an editorial choice, not an evidential one. Anthropic's relative advantage sits specifically in EU/UK enforceability: a Standard Contractual Clauses pathway and an active European regulatory relationship exist, even though that pathway does not resolve the underlying CLOUD Act tension. <p>It is worth naming a concrete instance of US state leverage over an AI lab, in the same way this rubric names Italy's Garante ban for DeepSeek: in June 2026, Anthropic suspended access to its Mythos-tier models in response to a US export control directive. That is a different mechanism from a data-access request, but it is the same general category of fact, a US government action directly shaping what an American AI company can make available, and it belongs in the record for the same reason the Garante's action belongs in DeepSeek's.</p><p>One further fact belongs here for completeness, stated as fact rather than character judgement: Founders Fund, the venture firm co-founded by Peter Thiel, is both a reported co-lead investor in Anthropic's February 2026 funding round and an early investor in Persona, the verification vendor scored above. That is a real adjacency, and a reader assessing potential conflicts of interest is entitled to know it. It should be weighed against Anthropic's specific governance structure: the company is controlled by its founders and a Long-Term Benefit Trust designed so that no single investor, including Founders Fund, holds board seats or voting control. The adjacency is a fact worth disclosing; it is not, on current evidence, a fact of demonstrated influence over Anthropic's choice of verification vendor or any other decision.</p>`
+  },
+  {
+    key:"openai", name:"ChatGPT", parent:"OpenAI", initial:"O",
+    factors:{
+      vendor:{score:4, note:"Uses both Persona (full ID verification) and Yoti (age-only, pass/fail) depending on region and trigger; shares the same Persona exposure history as other Persona clients."},
+      training:{score:3, note:"A training opt-out exists in data controls but functions as opt-out rather than opt-in by default in most flows."},
+      breach:{score:3, note:"OpenAI confirmed in May 2026 that two employee devices were compromised in the same TanStack/Mini Shai-Hulud supply-chain campaign that affected Mistral, resulting in credential-focused exfiltration from a limited set of internal source code repositories. OpenAI stated no user data, production systems, or model weights were affected, but the incident forced a full revocation and reissuance of code-signing certificates across macOS, iOS, and Windows applications. Vendor-side Persona exposure also applies as for other Persona clients."},
+      infra:{score:2, note:"No distinguishing public infrastructure concern identified beyond the vendor relationship."},
+      legal:{score:4, note:"US-based, same CLOUD Act / FISA 702 exposure as other US providers in this set."},
+      enforce:{score:2, note:"SCC-based EU transfer pathway exists; OpenAI has faced active EU regulatory scrutiny (including an early Garante intervention in 2023), which cuts both ways: it shows enforcement teeth exist, and that they have already been used."},
+      identity:{score:2, note:"No specific public concern beyond category norms."},
+      disclosure:{score:3, note:"Verification triggers are region- and deadline-driven and disclosed at a general level; granular retention specifics are not consistently published."}
+    },
+    assessment:`<p>ChatGPT's verification architecture runs two vendors in parallel: Yoti for age-only checks, which by design returns a pass/fail result without passing the underlying document to OpenAI, and Persona for fuller identity checks, which carries the same vendor-level exposure history documented for other Persona clients. Splitting the lighter-touch age check from the heavier identity check is a meaningfully better design choice than routing everyone through the same high-data-footprint flow, and it is the main reason OpenAI's vendor score does not exceed Anthropic's despite the broader rollout.</p><p>The training-data picture is the more notable point of difference. A model-training opt-out exists, but the default in most consumer flows is opt-out rather than opt-in, meaning a user who does not actively find and disable the setting is, by default, contributing conversation data to model improvement. That is a meaningfully different posture from an opt-in default, even where the mechanism to decline exists.</p><p>On security, OpenAI was an independently confirmed victim, alongside Mistral, of the May 2026 TanStack supply-chain campaign: two employee devices were compromised, and attackers exfiltrated credential material from a limited set of internal source code repositories the affected employees could access. OpenAI's own disclosure states no user data, production systems, or model weights were affected, and the company responded by rotating exposed credentials and revoking code-signing certificates across its desktop and mobile applications, a more disruptive remediation than Mistral's equivalent response. This rubric scores both companies on the same incident family using the same standard: a confirmed, disclosed breach of internal developer infrastructure, with the company's own account of limited scope taken seriously but not as the final word.</p><p>OpenAI's corporate and capital structure is more complex than Anthropic's, with a wider set of commercial partners and monetisation surfaces. That complexity is not in itself evidence of misuse, but it is a relevant factor in assessing incentive structure, and is reflected in a marginally higher ownership score.</p>`
+  },
+  {
+    key:"meta", name:"Meta AI", parent:"Meta", initial:"M",
+    factors:{
+      vendor:{score:3, note:"Uses Yoti for facial age estimation; narrower data footprint than full ID-plus-selfie verification, but still processes a live facial image."},
+      training:{score:3, note:"Broad cross-product data use is standard across Meta's ecosystem; Meta AI-specific training disclosures are less granular than some peers."},
+      breach:{score:2, note:"No major Meta AI-specific breach identified in the period reviewed."},
+      infra:{score:2, note:"No distinguishing public infrastructure concern identified specific to Meta AI."},
+      legal:{score:4, note:"US-based, same CLOUD Act / FISA 702 exposure as other US providers in this set."},
+      enforce:{score:2, note:"SCC-based EU transfer pathway exists; Meta has the longest record of EU regulatory enforcement of any provider here, including some of the largest GDPR fines issued to date, again showing both that enforcement exists and that it has already been needed."},
+      identity:{score:3, note:"Meta's parallel use of behavioural and content-interaction profiling to infer age, separate from any biometric step, raises a distinct profiling concern."},
+      disclosure:{score:3, note:"Age-assurance mechanics are publicly documented in general terms; the interaction between behavioural inference and biometric fallback is less clearly specified."}
+    },
+    assessment:`<p>Meta's age-assurance approach differs structurally from Anthropic's and OpenAI's. Rather than gating access behind a biometric check from the outset, Meta first attempts to infer age from account activity and content interaction through what it has called an "adult classifier," reserving Yoti's facial age estimation for cases where that inference is contested or insufficient. The biometric step itself, when it is reached, has a narrower data footprint than a full ID-and-selfie verification: Yoti's stated design returns an age estimate or threshold result rather than retaining a full identity record.</p><p>The harder question is the behavioural-inference layer that runs ahead of any biometric step. Scanning account activity, content interaction patterns, and device signals to infer age is a form of profiling in its own right, conducted before the user has been asked for explicit consent to a specific verification method. That is a different risk shape from Anthropic or OpenAI's flows, and it is the reason Meta's identity and profiling score sits higher despite a comparatively lighter biometric footprint.</p><p>Meta's advertising-funded business model remains the most structurally significant factor in its ownership and incentive score. Even where a specific product's data-use terms are narrowly drawn, the surrounding commercial context, in which behavioural data is core to the company's revenue elsewhere, is a relevant consideration for a reader assessing overall incentive alignment.</p>`
+  },
+  {
+    key:"xai", name:"Grok", parent:"xAI", initial:"X",
+    factors:{
+      vendor:{score:2, note:"No confirmed biometric KYC vendor identified for chat access; treated as a lower-confidence absence rather than a verified clean record."},
+      training:{score:4, note:"Public documentation on training-data use and opt-out mechanisms is comparatively limited relative to peers reviewed here."},
+      breach:{score:3, note:"Less mature public security disclosure history relative to longer-established peers; no specific major breach identified, but verification of practice is limited by sparse disclosure."},
+      infra:{score:3, note:"Comparatively limited public detail on infrastructure controls."},
+      legal:{score:4, note:"US-based, same CLOUD Act / FISA 702 exposure as other US providers in this set."},
+      enforce:{score:3, note:"SCC-based EU transfer pathway exists; no documented EU enforcement action against xAI specifically identified at time of writing, though this may reflect xAI's limited public footprint as much as a clean record. Scored a point higher than other US providers' enforceability to reflect concentrated personal control over the company, addressed in the assessment below."},
+      identity:{score:3, note:"Comparatively limited public detail on safeguards against identity-related misuse."},
+      disclosure:{score:4, note:"Materially less public disclosure on data handling, retention, and verification triggers than other providers reviewed."}
+    },
+    assessment:`<p>Grok's rating is shaped less by any single confirmed failure than by a consistent pattern of comparatively thin public disclosure. No confirmed biometric verification vendor was identified for chat access, which on its face is a lower risk than Anthropic's or OpenAI's Persona-based flows — but that absence carries less confidence than the equivalent finding for Gemini, because xAI publishes markedly less detail across the board, including on data retention, training-data use, and the specific triggers that might prompt any future verification requirement.</p><p>That disclosure gap is the throughline across this card: lower marks on training-data transparency, infrastructure detail, and identity-safeguard documentation are not necessarily evidence that xAI's practices are worse than peers, but the absence of published detail makes it materially harder for a member of the public, or a legislator, to assess the actual risk with any confidence. A rubric built on public information necessarily scores opacity itself as a risk factor, separate from whatever practice that opacity may be concealing or simply not yet documenting.</p><p>xAI carries a distinct structural risk that the other providers in this set do not: a single individual, Elon Musk, holds direct and effectively unconstrained operational control of the company, with no equivalent to Anthropic's Long-Term Benefit Trust or OpenAI's board structure standing between his personal decisions and the company's. The relevant factor here is concentration of control, not a character judgement about Musk himself. It is, however, worth being precise about what is current and what is historical. Musk does not currently hold a formal US government position: he served roughly a year as a special government employee leading the Department of Government Efficiency, with documented access to federal payment systems and personnel data, before departing that role in May 2025. He was also the largest single donor of the 2024 US election cycle, at over $277 million. Neither fact means xAI's data is presently subject to government access beyond what any US company faces under the CLOUD Act and FISA 702, scored elsewhere on this card. It does mean that the company's governance offers fewer structural checks on a single person's judgement than its peers, which is the basis for this card's higher enforceability-adjacent score.</p>`
+  },
+  {
+    key:"deepseek", name:"DeepSeek", parent:"Hangzhou DeepSeek AI", initial:"D",
+    factors:{
+      vendor:{score:1, note:"No evidence of biometric ID verification for chat access; this is not the dominant risk for this provider."},
+      training:{score:4, note:"Privacy policy discloses broad data collection including device and behavioural signals; training use is opt-out rather than opt-in in most markets."},
+      breach:{score:3, note:"No major confirmed breach identified in the period reviewed; security posture is harder to verify independently given limited Western regulatory access."},
+      infra:{score:3, note:"Encryption and security claims are made in published policy; independent verification is limited."},
+      legal:{score:4, note:"User data stored on servers in mainland China, subject to the Cybersecurity Law and National Intelligence Law compelling state access on request. This is the same broad category of risk as the CLOUD Act and FISA 702 scored for US providers above: compelled access, limited independent judicial review, secrecy provisions. Scored equally rather than treated as a distinct category of threat."},
+      enforce:{score:5, note:"No EU representative and no SCC-equivalent transfer mechanism identified. Several EU data protection authorities, including Italy's Garante, moved to an outright ban rather than the fines-and-audits route used against US providers, specifically because the lighter-touch enforcement levers available against a company with an EU presence are not available here. This is the genuine point of asymmetry between Chinese and US providers in this rubric: not that the state-access power is worse, but that a European user has no practical mechanism to contest it."},
+      identity:{score:3, note:"No specific identity-misuse concern beyond the general data-jurisdiction risk already scored elsewhere."},
+      disclosure:{score:3, note:"Privacy policy is published and specific about server location, but does not address GDPR-equivalent international transfer safeguards."}
+    },
+    assessment:`<p>DeepSeek's risk profile is structurally different from the US providers on this list, and a reader should not expect the same factors to drive the grade. There is no evidence of biometric identity verification gating access to the product — the vendor-layer risk that dominates Anthropic's and OpenAI's cards is essentially absent here.</p><p>On the question of state access itself, this rubric scores DeepSeek on the same basis as every US provider above. China's Cybersecurity Law and National Intelligence Law compel disclosure to state authorities; the US CLOUD Act and FISA Section 702 compel disclosure to US authorities, including, under FISA 702, the ability to collect on non-US persons without an individual warrant, under comparable secrecy provisions. Both are scored at the same level here, because the underlying mechanism, a state's domestic law reaching into data held by a company headquartered there, with limited independent judicial check and no requirement that the affected user ever find out, is the same shape in both cases. Treating China's version as uniquely alarming while describing the US version as routine legal architecture would not be a fair reading of either law.</p><p>Where DeepSeek's score is genuinely worse than the US providers' is enforceability, not state power. DeepSeek has no published GDPR representative and no Standard Contractual Clauses-equivalent transfer mechanism, which leaves an EU or UK user with no practical route to exercise data-subject rights. That absence is also why several EU data protection authorities, Italy's Garante among the first, reached for an outright ban rather than the fines-and-audits approach used against US providers: the lighter-touch tools that work against a company with an EU legal presence simply do not apply here. That is the real, narrow, evidence-based gap between DeepSeek and its US counterparts. It is a claim about which user has a working complaints process, not a claim that the underlying state-access risk is categorically different.</p>`
+  },
+  {
+    key:"qwen", name:"Qwen", parent:"Alibaba", initial:"Q",
+    factors:{
+      vendor:{score:1, note:"No evidence of biometric ID verification for chat access."},
+      training:{score:4, note:"Comparable data-collection breadth concerns to DeepSeek; similarly limited published detail on training opt-outs for non-China users."},
+      breach:{score:3, note:"No major confirmed breach identified; independent verification limited by the same access constraints as DeepSeek."},
+      infra:{score:3, note:"Security claims published; independent verification limited."},
+      legal:{score:4, note:"Same structural state-access exposure as DeepSeek, scored on the same basis as the CLOUD Act / FISA 702 exposure applied to US providers."},
+      enforce:{score:5, note:"Same enforceability gap as DeepSeek: no EU representative, no SCC-equivalent mechanism, and EU regulators have used outright restriction rather than the fines-and-audits approach available against US providers."},
+      identity:{score:3, note:"No specific identity-misuse concern beyond the general jurisdiction risk scored elsewhere."},
+      disclosure:{score:3, note:"Published policy addresses data categories but, as with DeepSeek, does not resolve GDPR-equivalent transfer safeguards."}
+    },
+    assessment:`<p>Qwen's grade follows the same logic as DeepSeek's, for the same structural reason: both are Chinese-developed models whose distinguishing risk, relative to the US providers in this set, is enforceability rather than the underlying state-access power. No evidence was found of identity verification gating access, so that factor scores low.</p><p>On state access, Qwen is scored on the same basis as DeepSeek and as every US provider above: China's Cybersecurity Law and National Intelligence Law are treated as comparable in kind, not degree, to the US CLOUD Act and FISA Section 702. The gap that actually separates Qwen's score from a US provider's is the absence of a GDPR representative and an SCC-equivalent transfer mechanism, which is why EU regulators have used outright restriction here rather than the audits-and-fines approach taken against US platforms with an EU legal presence.</p><p>Qwen is developed by Alibaba, one of China's largest technology conglomerates, and Alibaba's scale and commercial relationships are a relevant backdrop to any reading of incentive structure, in the same way that an advertising-funded revenue model is a relevant backdrop for Meta or that a complex investor base is relevant for OpenAI. The practical caution for a European or UK reader is the same as for DeepSeek: this is not a claim that Qwen's state-access exposure is worse than a US provider's. It is a claim that, if something goes wrong, the European user has fewer working levers to do anything about it.</p>`
+  },
+  {
+    key:"mistral", name:"Le Chat", parent:"Mistral AI", initial:"M",
+    factors:{
+      vendor:{score:1, note:"No evidence found of biometric ID verification for Le Chat / Vibe consumer access."},
+      training:{score:2, note:"Free-tier users are opted in to training improvement by default but can opt out; paid Le Chat and API users are excluded from training by default, no opt-out required. Zero Data Retention is available on the API but not on the consumer chat product, since it depends on stored conversation history to function."},
+      breach:{score:4, note:"In May 2026, Mistral's own SDK packages were compromised as part of a wider supply-chain attack (Mini Shai-Hulud) after a third-party dependency was poisoned. Malicious package versions were live for several hours. A criminal group separately claims to have stolen and is selling roughly 450 internal repositories; Mistral confirms a developer device was compromised but disputes the scope of the claimed theft and states core infrastructure and user data were unaffected. The dispute over scope is scored as a real, unresolved risk rather than taken at either side's word."},
+      infra:{score:3, note:"The May 2026 incident exploited a third-party CI/CD and developer-credential weakness rather than Mistral's production infrastructure directly, per Mistral's own account; independent verification of the full scope is not yet available."},
+      legal:{score:3, note:"Headquartered and data-hosted in the EU by default; CNIL is the lead supervisory authority. No equivalent to the CLOUD Act or FISA 702 reaches EU-hosted data the way it reaches US-headquartered providers' data, though a US API endpoint exists as an opt-in routing choice that would carry US-style exposure if selected."},
+      enforce:{score:1, note:"As an EU-headquartered company under direct GDPR jurisdiction, Mistral does not face the representative or SCC-equivalence gap scored against DeepSeek and Qwen. CNIL has direct enforcement authority as home regulator, not a cross-border mechanism."},
+      identity:{score:2, note:"No specific public concern beyond category norms for general-purpose models."},
+      disclosure:{score:2, note:"Retention periods by data category, training defaults by tier, and EU data residency are published with more specificity than most providers reviewed here; the May 2026 breach disclosure was relatively prompt, though the disputed scope leaves some open questions."}
+    },
+    assessment:`<p>Mistral's card looks different from every other provider here because its core advantage, EU headquarters and EU-default data hosting under direct GDPR jurisdiction with CNIL as home regulator, is structural rather than promised. There is no CLOUD Act or FISA Section 702 mechanism reaching into EU-hosted data the way it reaches data held by a US-headquartered company, and no equivalent of the enforceability gap scored against DeepSeek and Qwen, since CNIL's authority over Mistral is direct rather than cross-border. A reader should treat that as a genuine structural fact, not marketing: it is the same kind of jurisdictional analysis applied evenly across every other provider on this page, and it lands clearly in Mistral's favour. Ownership is similarly diffuse: Mistral has raised funding from over 48 investors with no single controlling shareholder, ASML's 11% stake and board seat being the largest, which does not raise the kind of concentration-of-control question scored against xAI.</p><p>Where this card should not get an easy pass is security. In May 2026, Mistral was caught up in the same TanStack/Mini Shai-Hulud supply-chain campaign that separately hit OpenAI (see OpenAI's card): malicious versions of Mistral's own SDK packages were published on npm and PyPI for several hours after a developer device was compromised. Mistral has confirmed that attackers gained access to its codebase management system, though it maintains the affected repositories were non-core and that hosted services, managed user data, and research and testing environments were unaffected. Separately, a criminal group has claimed to have stolen and is offering for sale roughly 450 internal repositories; that claim, as distinct from the confirmed SDK and codebase compromise, remains unverified and disputed by Mistral. Two different things are therefore both true: a real breach of internal developer infrastructure is confirmed, and a broader theft claim sits on top of it, unverified. That layered structure, a confirmed incident with a disputed broader claim, is held to the same standard this rubric applied to Persona's exposed dashboard and is scored as a real security risk rather than waved through because Mistral's jurisdictional position is strong elsewhere.</p><p>On data handling, Mistral's tiered approach, opt-out training for free users, opt-out-free exclusion for paid users, Zero Data Retention available on the API but not on the consumer chat product, is more granular and more clearly published than most peers reviewed here, which is reflected in a comparatively strong disclosure score even alongside the security incident.</p>`
+  },
+  {
+    key:"copilot", name:"Copilot", parent:"Microsoft", initial:"C",
+    factors:{
+      vendor:{score:1, note:"No biometric ID verification found for consumer Copilot; only standard date-of-birth account checks comparable to general account age-gating, and these are sometimes reported as glitchy in practice rather than overly invasive."},
+      training:{score:2, note:"Microsoft 365 Copilot prompts, responses, and Microsoft Graph data are explicitly excluded from foundation model training. Consumer Copilot users under 18 are excluded from personalization, personalized ads, and training use by default."},
+      breach:{score:5, note:"Two separate, serious, publicly disclosed vulnerabilities in Microsoft 365 Copilot allowed silent data exfiltration from a user's own mailbox and files via prompt injection: EchoLeak (June 2025, zero-click, CVE-2025-32711, CVSS 9.3) and SearchLeak (June 2026, one-click, CVE-2026-42824). SearchLeak's severity rating is itself contested across sources: Microsoft's own published CVSS v3.1 base score is 6.5, NVD separately lists 7.5, while Microsoft assigned a qualitative \"critical\" severity label and Varonis (the discovering researchers) describe it as critical; this rubric notes the discrepancy rather than picking one figure. Both vulnerabilities were patched before or shortly after disclosure with no confirmed in-the-wild exploitation, but two distinct exfiltration-class chains within a year, against a product with deep access to email and documents, is a materially more severe pattern than a vendor-side dashboard exposure."},
+      infra:{score:3, note:"Microsoft's enterprise security architecture (tenant isolation, permissions inheritance, Zero Trust controls) is mature and well-documented, but both EchoLeak and SearchLeak demonstrated that prompt injection can route around those controls by exploiting trust boundaries between the AI layer and legacy web infrastructure (SSRF, HTML rendering) rather than the permissions model itself failing."},
+      legal:{score:4, note:"US-headquartered; same CLOUD Act and FISA Section 702 exposure scored against every other US provider in this set."},
+      enforce:{score:2, note:"EU Data Boundary commitment and an extensive GDPR/DPA compliance architecture for commercial Copilot exist, with active EU regulatory engagement. However, Flex Routing, introduced in 2026, allows LLM inference to occur outside the EU Data Boundary during peak demand unless an administrator actively disables it, which is a real, recently introduced gap between the headline compliance claim and the default technical behaviour. Notably, Anthropic's models are explicitly excluded from the EU Data Boundary commitment entirely within Copilot, regardless of Flex Routing."},
+      identity:{score:2, note:"No specific public concern beyond category norms; SearchLeak and EchoLeak are scored under security rather than here, since the underlying risk was data exfiltration via injection rather than identity misuse of the model's own outputs."},
+      disclosure:{score:3, note:"Microsoft publishes detailed technical documentation on data flows and compliance commitments, which is a genuine strength, but the Flex Routing change and EchoLeak's disclosure timeline (patched quietly before public acknowledgement) both reflect a pattern of compliance-relevant changes landing with limited advance notice to affected organisations."}
+    },
+    assessment:`<p>Copilot's card is unusual in this set because it is not one product but a family: Microsoft 365 Copilot for enterprise tenants, Copilot Chat, Security Copilot, and the free consumer Copilot at copilot.microsoft.com, each with different data-handling terms. This assessment focuses on the enterprise and consumer chat products most readers will actually encounter. On data handling, the enterprise product's position is genuinely strong: prompts, responses, and Microsoft Graph data are contractually excluded from foundation model training, and that commitment is documented with more specificity than most consumer-facing competitors offer.</p><p>Security is where this card diverges sharply from the rest of the set. Two separate, serious vulnerabilities, EchoLeak in 2025 and SearchLeak in 2026, demonstrated that Copilot's enterprise search and chat functions could be manipulated through prompt injection to silently exfiltrate a user's own emails, calendar details, and files, in one case requiring no user interaction at all beyond receiving a crafted email. Both were responsibly disclosed and patched, and Microsoft found no evidence of in-the-wild exploitation before the fixes shipped. But two distinct exfiltration-capable chains in successive years against a product that is, by design, granted broad access to a user's mailbox and document store is a different category of risk from a vendor dashboard being left exposed: this is the core product surface being shown, twice, to be exploitable in ways that bypass the access-control architecture Microsoft has built its entire enterprise pitch around. That is scored heavily here, on the same logic this rubric has applied to every other documented security incident in this set.</p><p>On jurisdiction, the EU Data Boundary is a real and substantive commitment, but Flex Routing, introduced in 2026 and enabled by default, allows Copilot's underlying model inference to occur outside the EU during periods of high demand unless an administrator proactively disables it, which sits uncomfortably next to Microsoft's headline EU-residency claim. Separately, and worth flagging given this rubric's own coverage of Anthropic above: Microsoft's own documentation states that Anthropic's models are excluded from the EU Data Boundary commitment when used inside Copilot, meaning a Copilot user routed to an Anthropic model inside Word, Excel, or PowerPoint does not get the same EU-residency guarantee as one routed to Microsoft's own models. On ownership, Microsoft is a publicly traded company with diffuse institutional shareholding and no single controlling individual, which is the most structurally diffuse ownership picture of any provider in this set and avoids the concentration-of-control concerns scored against xAI.</p>`
+  },
+  {
+    key:"perplexity", name:"Perplexity", parent:"Perplexity AI", initial:"P",
+    factors:{
+      vendor:{score:1, note:"No biometric ID verification found for chat access; standard identity checks apply only to data-subject rights requests, consistent with most providers in this set."},
+      training:{score:4, note:"Free and standard Pro users are opted into training by default and must manually opt out; this default-in posture is more permissive than most peers reviewed here. Enterprise and API (Sonar) users are excluded from training, with the Sonar API operating under a stated Zero Data Retention policy."},
+      breach:{score:4, note:"An April 2026 class-action lawsuit (originally filed as Doe v. Perplexity AI Inc., N.D. Cal., case no. 3:26-cv-02803; refiled under the plaintiff's real name as Noel v. Perplexity AI, Inc. on 14 April 2026 after the court denied a motion to proceed pseudonymously) alleges Perplexity embedded undisclosed third-party trackers that transmitted user conversations, including content shared in Incognito mode, to Meta and Google for advertising purposes. The allegations are detailed and specific, including named tracking technologies, but remain unproven; Perplexity stated it had not been served with a matching suit at the time of initial reporting. Independent security researchers have also documented hardcoded secrets in Perplexity's Android app and prompt-injection risks in its Comet browser. Scored as a real, contested risk rather than a confirmed breach, in the same way this rubric treats other disputed-scope incidents."},
+      infra:{score:3, note:"SOC 2 Type II certification is in place, but SOC 2 audits organisational process rather than technical security measures, and the specific vulnerabilities identified in the Android app and Comet browser indicate gaps in technical hardening alongside the process-level certification."},
+      legal:{score:4, note:"US-headquartered; same CLOUD Act and FISA Section 702 exposure scored against every other US provider in this set."},
+      enforce:{score:2, note:"Perplexity states GDPR compliance and offers EU data-subject rights mechanisms; no major EU enforcement action against Perplexity specifically was identified, though the pending tracker lawsuit, if substantiated, would raise separate GDPR consent questions for EU users beyond the California claims at issue."},
+      identity:{score:3, note:"Documented allegations that full conversation transcripts, including health, financial, and other sensitive content, may be transmitted to third parties for advertising purposes raise a distinct profiling concern beyond ordinary training-data use, if the lawsuit's allegations are substantiated."},
+      disclosure:{score:4, note:"The core allegation in the pending lawsuit is specifically that the tracking was not disclosed in Perplexity's privacy policy and that the policy itself was not easily accessible from the product. Separately, Perplexity has faced repeated, documented accusations of using undisclosed web crawlers that ignore robots.txt directives, which speaks to a broader pattern of disclosure practices being more permissive than stated policy suggests."}
+    },
+    assessment:`<p>Perplexity's card centres on a single, serious, unresolved allegation rather than a confirmed incident, and it is important to be precise about which it is. A class-action lawsuit filed on 31 March 2026 in federal court in San Francisco, initially filed under the pseudonym "John Doe" and refiled under the plaintiff's real name, David Noel, on 14 April 2026 after a judge declined to permit anonymity, alleges that Perplexity embedded undisclosed tracking code that transmitted complete conversation transcripts, including health, financial, and tax information the plaintiff shared believing it was private, to Meta and Google for advertising purposes, and that this occurred even when users enabled Incognito mode. The complaint is detailed, names specific tracking technologies, and survived initial filing scrutiny enough to proceed; Perplexity's public response was that it had not been formally served and could not verify the claims. Both facts matter: a serious, specific allegation exists, and it has not been proven or admitted. This rubric scores it as a real, contested risk on the same basis it scored the disputed-scope claims against Persona and against Mistral's own breach: a serious allegation with disputed scope is not the same as a confirmed clean record, and it is not the same as a proven breach either.</p><p>If the allegations are substantiated, the implications are more serious than a typical data-sharing dispute, because Perplexity's free and standard-tier default is to opt users into training on their own conversation data, meaning a user who shared sensitive information without opting out could have that data both used for training and, per the complaint, transmitted to two advertising companies without disclosure. Independent security researchers have separately documented hardcoded secrets in Perplexity's Android application and prompt-injection risks in its Comet browser, and Perplexity has faced repeated, separately documented accusations, from Forbes, Wired, and Cloudflare among others, of using undisclosed crawlers that bypass robots.txt directives. None of these are the tracker lawsuit, but together they describe a pattern worth a reader's attention: a company whose stated privacy and access commitments have, on multiple separate occasions and via multiple separate parties, been alleged to diverge from its actual technical practice.</p><p>On ownership, Perplexity's board includes independent members alongside its four co-founders, which is a meaningfully more diffuse governance structure than xAI's, though readers should note that 1789 Capital, a venture firm associated with Donald Trump Jr., is among its investors, stated here as a disclosed fact rather than an implication of influence, consistent with how this rubric has handled comparable investor-adjacency facts for other providers.</p>`
+  }
+];
+
+function buildCardHTML(p){
+  const groupScores = {};
+  GROUPS.forEach(g=>{
+    const [s1,s2] = g.sub.map(s=>p.factors[s.key].score);
+    groupScores[g.key] = Math.max(s1,s2);
+  });
+  const overallAvg = GROUPS.reduce((sum,g)=>sum+groupScores[g.key],0)/GROUPS.length;
+  const overallGrade = scoreToGrade(overallAvg);
+
+  const frontBars = GROUPS.map(g=>{
+    const score = groupScores[g.key];
+    const grade = scoreToGrade(score);
+    const pct = (score/5)*100;
+    return `<div class="bar-row">
+      <span class="bar-label">${g.label}</span>
+      <div class="bar-track"><div class="bar-fill" style="width:${pct}%; background:${g.color};"></div></div>
+      <span class="bar-score">${grade}</span>
+    </div>`;
+  }).join("");
+
+  const backBars = GROUPS.map(g=>{
+    return g.sub.map(s=>{
+      const score = p.factors[s.key].score;
+      const grade = scoreToGrade(score);
+      const pct = (score/5)*100;
+      return `<div class="bar-row">
+        <span class="bar-label">${s.label}</span>
+        <div class="bar-track"><div class="bar-fill" style="width:${pct}%; background:${g.color};"></div></div>
+        <span class="bar-score">${grade}</span>
+      </div>`;
+    }).join("");
+  }).join("");
+
+  const assessmentParas = p.assessment;
+
+  return `
+  <div class="card-scene" data-key="${p.key}">
+    <div class="card" tabindex="0" role="button" aria-pressed="false" aria-label="${p.name} by ${p.parent}, overall grade ${overallGrade}. Press to see breakdown.">
+      <div class="face front">
+        <div class="card-top">
+          <div class="brand">
+            <span class="brand-icon">${p.initial}</span>
+            <div>
+              <div class="brand-name">${p.name}</div>
+              <div class="brand-sub">${p.parent}</div>
+            </div>
+          </div>
+          <div class="grade-badge" style="background:${GRADE_COLOR[overallGrade]};">${overallGrade}</div>
+        </div>
+        <p class="verdict">${verdictLine(overallGrade)}</p>
+        <div class="bars">${frontBars}</div>
+        <div class="face-foot">
+          <span>4 categories</span>
+          <span class="flip-hint">Click to flip &rarr;</span>
+        </div>
+      </div>
+      <div class="face back">
+        <div class="card-top">
+          <div class="brand">
+            <span class="brand-icon">${p.initial}</span>
+            <div>
+              <div class="brand-name">${p.name}</div>
+              <div class="brand-sub">Full breakdown</div>
+            </div>
+          </div>
+        </div>
+        <div class="bars">${backBars}</div>
+        <button class="assessment-toggle" data-key="${p.key}">
+          <span>Read the full assessment</span>
+          <span class="chev">&darr;</span>
+        </button>
+        <div class="assessment-panel" data-panel="${p.key}">
+          <div class="assessment-inner">${assessmentParas}</div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function verdictLine(grade){
+  const lines = {
+    A:"Low overall risk against this rubric.",
+    B:"Mostly low risk, with one or two factors to watch.",
+    C:"Moderate risk. Worth understanding before sensitive use.",
+    D:"Significant risk on at least one major factor.",
+    E:"High risk on at least one major factor."
+  };
+  return lines[grade] || "Insufficient information to grade.";
+}
+
+const grid = document.getElementById("grid");
+grid.innerHTML = PROVIDERS.map(buildCardHTML).join("");
+
+document.getElementById("group-key").innerHTML = GROUPS.map(g=>
+  `<span><i style="background:${g.color};"></i>${g.label}</span>`
+).join("");
+
+document.querySelectorAll(".card-scene").forEach(scene=>{
+  const cardEl = scene.querySelector(".card");
+  cardEl.addEventListener("click", (e)=>{
+    if(e.target.closest(".assessment-toggle")) return;
+    const willFlip = !scene.classList.contains("flipped");
+    scene.classList.toggle("flipped");
+    cardEl.setAttribute("aria-pressed", willFlip ? "true" : "false");
+  });
+  cardEl.addEventListener("keydown", (e)=>{
+    if(e.key === "Enter" || e.key === " "){
+      e.preventDefault();
+      cardEl.click();
+    }
+  });
+});
+
+document.querySelectorAll(".assessment-toggle").forEach(btn=>{
+  btn.addEventListener("click", (e)=>{
+    e.stopPropagation();
+    const key = btn.dataset.key;
+    const panel = document.querySelector(`.assessment-panel[data-panel="${key}"]`);
+    const scene = btn.closest(".card-scene");
+    const isOpen = panel.classList.toggle("open");
+    btn.classList.toggle("open", isOpen);
+    scene.classList.toggle("expanded", isOpen);
+  });
+});
+</script>
+</body>
+</html>
