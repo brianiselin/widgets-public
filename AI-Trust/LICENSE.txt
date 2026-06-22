@@ -1,0 +1,47 @@
+Copyright (c) 2026 Brian Iselin. All rights reserved.
+
+This repository and its contents, including but not limited to the rubric,
+scoring methodology, written assessments, source code, and design, are the
+original work of Brian Iselin and are protected by copyright law.
+
+PERMITTED USE
+
+You may:
+  - View this tool in a web browser.
+  - Link to the live, hosted version of this page from your own website,
+    article, or publication.
+  - Embed the live, hosted version of this page via iframe, exactly as
+    published and without modification, with a visible link or credit to
+    the original source.
+
+NOT PERMITTED
+
+Without prior written permission from the copyright holder, you may not:
+  - Copy, reproduce, fork, mirror, or rehost this repository or its
+    contents, in whole or in part, on any other site, repository, or
+    platform.
+  - Modify, adapt, translate, or create derivative works based on this
+    tool, its rubric, its scoring methodology, or its written assessments.
+  - Republish, redistribute, or incorporate the content of this tool,
+    in whole or in part, into any other publication, product, dataset,
+    or AI training corpus.
+  - Use this tool or its contents for commercial purposes.
+  - Remove or obscure copyright, attribution, or licensing notices from
+    the page or its source.
+
+ATTRIBUTION
+
+Any permitted link or embed must clearly credit:
+  Brian Iselin / Iselin Group
+  with a link to the live, hosted version of this page.
+
+NO WARRANTY
+
+This tool is provided "as is," for informational purposes. It reflects a
+working methodology and assessment based on publicly available information
+at the time of writing, is not a regulatory finding, and should not be
+relied upon as legal, financial, or professional advice. The copyright
+holder makes no warranty as to the accuracy, completeness, or currency
+of any score, rating, or statement contained within it.
+
+For permissions beyond the scope above, contact: info@iselingroup.com
