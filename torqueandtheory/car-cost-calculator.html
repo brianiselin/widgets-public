@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Torque & Theory interactive calculator: compare the economics of keeping, buying, financing, leasing or subscribing to a car.">
+<meta name="theme-color" content="#eef1f3">
+<title>What Does Your Car Actually Cost? — Torque & Theory</title>
+<style>
+:root{--bg:#eef1f3;--panel:#fff;--ink:#172027;--muted:#66727a;--line:#d8dee2;--accent:#1f2930;--soft:#f5f7f8;--good:#214b3a;--goodbg:#f2f7f4;--warn:#735a1e;--warnbg:#fbf7ea}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input,select{font:inherit}.wrap{max-width:1120px;margin:auto;padding:28px 18px 48px}.hero{background:var(--panel);padding:38px 40px;border:1px solid var(--line);box-shadow:0 12px 35px rgba(20,30,35,.06)}.kicker{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:800}h1,h2,h3{font-family:Georgia,"Times New Roman",serif;font-weight:500}h1{font-size:clamp(36px,5vw,60px);line-height:.98;margin:12px 0 12px;max-width:780px}.hero p{font-family:Georgia,"Times New Roman",serif;font-size:18px;line-height:1.55;max-width:800px;margin:0;color:#39444b}.card{background:var(--panel);border:1px solid var(--line);margin-top:16px;padding:28px}h2{font-size:28px;margin:0 0 7px}h3{font-size:20px;margin:28px 0 12px}.sub{color:var(--muted);font-size:14px;line-height:1.55;margin:0 0 18px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.field label{display:block;font-size:12px;font-weight:800;color:#4c5961;margin:0 0 6px}.field input{width:100%;padding:11px 12px;border:1px solid #cbd3d8;background:#fff;border-radius:6px;color:var(--ink)}.field input:focus,input[type=range]:focus,button:focus{outline:2px solid #aeb9c0;outline-offset:2px}.unit{font-size:11px;color:var(--muted);margin-top:4px}.options{display:flex;gap:8px;flex-wrap:wrap;margin:15px 0 20px}.option{border:1px solid var(--line);background:#fff;color:var(--ink);padding:10px 15px;border-radius:999px;cursor:pointer;font-weight:800;font-size:13px}.option:hover{background:var(--soft)}.option.active{background:var(--accent);color:#fff;border-color:var(--accent)}.range-row{display:grid;grid-template-columns:1fr 130px;gap:14px;align-items:center}.range-row input{width:100%}.range-value{font-weight:800;text-align:right}input[type=range]{accent-color:#33434d}.hidden{display:none!important}.section-note{margin-top:16px;padding:13px 15px;background:var(--soft);border-left:3px solid #b8c1c6;font-size:13px;line-height:1.5;color:#4d5961}.results-wrap{overflow-x:auto}.results{display:grid;grid-template-columns:repeat(5,minmax(150px,1fr));gap:10px;margin-top:20px;min-width:790px}.result{border:1px solid var(--line);background:#fafbfb;padding:15px;min-height:156px}.result.best{border:2px solid var(--good);background:var(--goodbg)}.result .name{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#59656c}.result .amount{font-family:Georgia,"Times New Roman",serif;font-size:25px;margin:8px 0 2px}.result .weekly{font-size:12px;color:var(--muted)}.result .why{font-size:12px;line-height:1.45;margin-top:12px;color:#46525a}.winner{margin-top:18px;background:#172027;color:white;padding:24px 26px}.winner .label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;opacity:.72;font-weight:800}.winner h3{font-size:29px;margin:6px 0}.winner p{margin:5px 0 0;line-height:1.55;color:#dce3e7}.toggle{display:flex;gap:6px;flex-wrap:wrap;margin-top:18px}.toggle button{border:1px solid var(--line);background:#fff;padding:8px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:800;color:#526068}.toggle button.active{background:#172027;color:#fff;border-color:#172027}.breakdown{display:grid;grid-template-columns:1.15fr .85fr;gap:16px;margin-top:18px}.break{border:1px solid var(--line);padding:18px}.barrow{margin:10px 0}.barlabel{display:flex;justify-content:space-between;gap:12px;font-size:12px;color:#526068;margin-bottom:5px}.track{height:7px;background:#e5e9eb;border-radius:10px;overflow:hidden}.fill{height:100%;background:#66747c;border-radius:10px}.explain{font-size:13px;line-height:1.6;color:#4d5961}.assumption-list{margin:12px 0 0;padding-left:18px;color:#4d5961;font-size:13px;line-height:1.6}.actions{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:18px;flex-wrap:wrap}.reset{border:1px solid var(--line);background:#fff;padding:9px 13px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:800;color:#4d5961}.reset:hover{background:var(--soft)}footer{font-size:11px;color:#738087;text-align:center;margin-top:18px;line-height:1.55}.smallcaps{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:800;color:#647078}.muted-inline{color:var(--muted)}@media(max-width:900px){.results{grid-template-columns:repeat(5,minmax(145px,1fr))}.grid{grid-template-columns:repeat(2,1fr)}.breakdown{grid-template-columns:1fr}}@media(max-width:560px){.hero,.card{padding:23px 18px}.grid{grid-template-columns:1fr}.range-row{grid-template-columns:1fr}.range-value{text-align:left}.results{grid-template-columns:1fr;min-width:0}.results-wrap{overflow:visible}.result{min-height:auto}.winner h3{font-size:25px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<section class="hero">
+<div class="kicker">Torque &amp; Theory — Interactive</div>
+<h1>What does your car actually cost to have?</h1>
+<p>The car without a finance payment can feel free. It isn't. Put your own numbers into the calculation and compare the economics of keeping, buying, financing, leasing or subscribing.</p>
+</section>
+
+<section class="card">
+<h2>1. Start with the car you already have</h2>
+<p class="sub">This is the benchmark. If keeping your current car wins, the calculator will tell you so.</p>
+<div class="grid">
+<div class="field"><label for="currentName">Current car</label><input id="currentName" value="My current car" autocomplete="off"></div>
+<div class="field"><label for="currentValue">Current value</label><input id="currentValue" type="number" value="8000" min="0" step="500"><div class="unit">$</div></div>
+<div class="field"><label for="currentEnd">Expected value when replaced</label><input id="currentEnd" type="number" value="4000" min="0" step="500"><div class="unit">$</div></div>
+<div class="field"><label for="currentYears">Years you would keep it</label><input id="currentYears" type="number" value="3" min="1" max="20" step="1"><div class="unit">years</div></div>
+<div class="field"><label for="currentKm">Distance per year</label><input id="currentKm" type="number" value="12000" min="0" step="500"><div class="unit">km</div></div>
+<div class="field"><label for="currentL">Fuel consumption</label><input id="currentL" type="number" value="7.5" min="0" step=".1"><div class="unit">L / 100 km</div></div>
+<div class="field"><label for="fuelPrice">Fuel price</label><input id="fuelPrice" type="number" value="1.90" min="0" step=".05"><div class="unit">$ / litre</div></div>
+<div class="field"><label for="currentIns">Insurance per year</label><input id="currentIns" type="number" value="1000" min="0" step="50"><div class="unit">$</div></div>
+<div class="field"><label for="currentRego">Registration per year</label><input id="currentRego" type="number" value="900" min="0" step="50"><div class="unit">$</div></div>
+<div class="field"><label for="currentService">Servicing per year</label><input id="currentService" type="number" value="600" min="0" step="50"><div class="unit">$</div></div>
+<div class="field"><label for="currentRepairs">Repairs &amp; maintenance per year</label><input id="currentRepairs" type="number" value="600" min="0" step="50"><div class="unit">$</div></div>
+<div class="field"><label for="currentTyres">Tyres per year</label><input id="currentTyres" type="number" value="250" min="0" step="25"><div class="unit">$</div></div>
+</div>
+
+<h3>How much is the hassle worth to you?</h3>
+<div class="range-row"><input id="hassle" type="range" min="0" max="3000" step="50" value="750"><div class="range-value" id="hassleOut">$750 / year</div></div>
+<p class="sub" style="margin-top:7px">Set this to $0 if you genuinely don't mind servicing, registration, repairs and administration. It is your number, not ours.</p>
+
+<h3>How much is flexibility worth?</h3>
+<div class="range-row"><input id="flex" type="range" min="0" max="5000" step="100" value="1000"><div class="range-value" id="flexOut">$1,000 / year</div></div>
+<p class="sub" style="margin-top:7px">This is the value you place on being able to walk away from a vehicle without selling it or carrying its residual-value risk. It is applied as a benefit to the subscription option only.</p>
+</section>
+
+<section class="card">
+<h2>2. Now imagine replacing it</h2>
+<p class="sub">Describe the alternatives you're actually considering. You can compare all five methods at once; the selected option simply controls which extra inputs are visible.</p>
+<div class="options" id="choiceTabs" role="tablist" aria-label="Replacement method">
+<button type="button" class="option active" data-choice="buy">Buy</button><button type="button" class="option" data-choice="finance">Finance</button><button type="button" class="option" data-choice="lease">Lease</button><button type="button" class="option" data-choice="subscribe">Subscribe</button>
+</div>
+<div id="replacementFields">
+<div class="grid">
+<div class="field"><label for="repName">Replacement vehicle</label><input id="repName" value="Replacement car" autocomplete="off"></div>
+<div class="field"><label for="repPrice">Purchase price</label><input id="repPrice" type="number" value="40000" min="0" step="500"><div class="unit">$</div></div>
+<div class="field"><label for="repEnd">Expected resale value</label><input id="repEnd" type="number" value="22000" min="0" step="500"><div class="unit">$</div></div>
+<div class="field"><label for="repYears">Years you would keep it</label><input id="repYears" type="number" value="5" min="1" max="20"><div class="unit">years</div></div>
+<div class="field"><label for="repIns">Annual insurance</label><input id="repIns" type="number" value="1300" min="0" step="50"><div class="unit">$</div></div>
+<div class="field"><label for="repRego">Annual registration</label><input id="repRego" type="number" value="900" min="0" step="50"><div class="unit">$</div></div>
+<div class="field"><label for="repService">Annual servicing</label><input id="repService" type="number" value="500" min="0" step="50"><div class="unit">$</div></div>
+<div class="field"><label for="repRepairs">Annual repairs &amp; maintenance</label><input id="repRepairs" type="number" value="300" min="0" step="50"><div class="unit">$</div></div>
+<div class="field"><label for="repTyres">Annual tyres</label><input id="repTyres" type="number" value="250" min="0" step="25"><div class="unit">$</div></div>
+<div class="field"><label for="repEnergy">Annual fuel / charging</label><input id="repEnergy" type="number" value="2200" min="0" step="50"><div class="unit">$</div></div>
+</div>
+</div>
+<div id="financeFields" class="hidden"><h3>Finance</h3><div class="grid">
+<div class="field"><label for="deposit">Deposit</label><input id="deposit" type="number" value="5000" min="0" step="500"><div class="unit">$</div></div>
+<div class="field"><label for="rate">Interest rate</label><input id="rate" type="number" value="7" min="0" step=".1"><div class="unit">% p.a.</div></div>
+<div class="field"><label for="loanYears">Loan term</label><input id="loanYears" type="number" value="5" min="1" max="20"><div class="unit">years</div></div>
+</div><div class="section-note">Finance is modelled economically: depreciation is a cost, while the principal is not. Interest is a financing cost. If you sell before the loan ends, the remaining loan balance is accounted for.</div></div>
+<div id="leaseFields" class="hidden"><h3>Lease</h3><div class="grid">
+<div class="field"><label for="leasePayment">Lease payment</label><input id="leasePayment" type="number" value="900" min="0" step="25"><div class="unit">$ / month</div></div>
+<div class="field"><label for="leaseYears">Lease term</label><input id="leaseYears" type="number" value="5" min="1" max="20"><div class="unit">years</div></div>
+<div class="field"><label for="leaseExtras">Annual costs not included</label><input id="leaseExtras" type="number" value="2500" min="0" step="50"><div class="unit">$ / year</div></div>
+</div><div class="section-note">Enter the annual costs your real lease does not cover. A novated lease can have tax effects that this general calculator does not model.</div></div>
+<div id="subscribeFields" class="hidden"><h3>Subscription</h3><div class="grid">
+<div class="field"><label for="subWeekly">Subscription</label><input id="subWeekly" type="number" value="260" min="0" step="5"><div class="unit">$ / week</div></div>
+<div class="field"><label for="subExtras">Extra annual costs</label><input id="subExtras" type="number" value="0" min="0" step="50"><div class="unit">$ / year</div></div>
+<div class="field"><label for="subMin">Minimum commitment</label><input id="subMin" type="number" value="4" min="0" step="1"><div class="unit">months</div></div>
+</div><p class="sub" style="margin-top:14px">Default assumption: insurance, registration, servicing and routine maintenance are included; no mileage limit. Edit the weekly price or extra costs if your subscription differs. The minimum commitment is shown for context; the annual comparison assumes you continue for a full year.</p></div>
+</section>
+
+<section class="card" id="resultsCard">
+<div class="result-head"><div><div class="smallcaps">Your result</div><h2 id="resultTitle">Estimated economic cost</h2><p class="sub" style="margin-bottom:0">Annualised cost based on your assumptions. Economic cost includes depreciation and financing costs, but not the return of your own capital. Optional hassle and flexibility values make explicit costs that ordinary car calculators often ignore.</p></div></div>
+<div class="toggle" role="group" aria-label="Result view"><button type="button" id="economicBtn" class="active">Economic cost</button><button type="button" id="cashBtn">Cash cost</button></div>
+<div class="results-wrap"><div class="results" id="results"></div></div>
+<div class="winner" id="winner" aria-live="polite"></div>
+<div class="breakdown"><div class="break"><h3 style="margin-top:0">What the calculation counts</h3><div id="breakdown1"></div></div><div class="break"><h3 style="margin-top:0">A useful reality check</h3><p class="explain" id="reality"></p><ul class="assumption-list"><li>Depreciation is based on the value you enter today and the value you expect later.</li><li>Finance uses an amortising loan and accounts for the remaining balance if you sell early.</li><li>Tax effects, insurance excesses, opportunity cost of invested cash and unusual repair events are not modelled unless you put them into the inputs.</li></ul></div></div>
+<div class="actions"><span class="muted-inline" style="font-size:12px">Change any input and the result updates instantly.</span><button type="button" class="reset" id="resetBtn">Reset calculator</button></div>
+</section>
+<footer>This is an editorial model, not financial advice. Results are only as good as the assumptions you enter. A lower economic cost does not necessarily mean a better car, and a higher cost does not necessarily mean a worse decision.</footer>
+</div>
+<script>
+(() => {
+'use strict';
+const $ = id => document.getElementById(id);
+const money = n => new Intl.NumberFormat('en-AU',{style:'currency',currency:'AUD',maximumFractionDigits:0}).format(Math.max(0,n));
+const raw = id => parseFloat($(id).value);
+const num = id => Number.isFinite(raw(id)) ? Math.max(0,raw(id)) : 0;
+let choice='buy'; let view='economic';
+const initial = {};
+document.querySelectorAll('input').forEach(i => initial[i.id]=i.value);
+
+function annFuel(km, litres, price){return km/100*litres*price;}
+function loanSchedule(principal, annualRate, years, holdYears){
+ const months=Math.max(1,Math.round(years*12)); const hold=Math.max(0,Math.min(months,Math.round(holdYears*12)));
+ const r=annualRate/100/12; let bal=principal, totalPaid=0, totalInterest=0;
+ if(principal<=0) return {payment:0,totalPaid:0,totalInterest:0,balance:0,months:hold};
+ const payment=r===0?principal/months:principal*r/(1-Math.pow(1+r,-months));
+ for(let m=1;m<=hold;m++){const interest=r*bal;const principalPaid=Math.min(bal,Math.max(0,payment-interest));const actual=interest+principalPaid;totalInterest+=interest;totalPaid+=actual;bal=Math.max(0,bal-principalPaid);}
+ return {payment,totalPaid,totalInterest,balance:bal,months:hold};
+}
+function current(){
+ const years=Math.max(1,num('currentYears')); const dep=Math.max(0,(num('currentValue')-num('currentEnd'))/years);
+ const fuel=annFuel(num('currentKm'),num('currentL'),num('fuelPrice')); const running=fuel+num('currentIns')+num('currentRego')+num('currentService')+num('currentRepairs')+num('currentTyres');
+ const hassle=num('hassle'); const cash=running; return {economic:dep+running+hassle,cash,dep,running,hassle,flex:0};
+}
+function replacementBase(){
+ const years=Math.max(1,num('repYears')); const dep=Math.max(0,(num('repPrice')-num('repEnd'))/years);
+ const running=num('repIns')+num('repRego')+num('repService')+num('repRepairs')+num('repTyres')+num('repEnergy');
+ return {years,dep,running,resale:num('repEnd')};
+}
+function buy(){const b=replacementBase();return {economic:b.dep+b.running+num('hassle'),cash:b.dep+b.running,dep:b.dep,running:b.running,hassle:num('hassle'),flex:0};}
+function finance(){
+ const b=replacementBase(); const principal=Math.max(0,num('repPrice')-num('deposit')); const s=loanSchedule(principal,num('rate'),num('loanYears'),b.years);
+ const economic=b.dep+b.running+(s.totalInterest/b.years)+num('hassle');
+ const cash=(num('deposit')+s.totalPaid+s.balance+b.running*b.years-b.resale)/b.years;
+ return {economic,cash,dep:b.dep,running:b.running+s.totalInterest/b.years,hassle:num('hassle'),interest:s.totalInterest,balance:s.balance,flex:0};
+}
+function lease(){const annual=num('leasePayment')*12+num('leaseExtras');return {economic:annual+num('hassle'),cash:annual,dep:0,running:annual,hassle:num('hassle'),flex:0};}
+function subscribe(){const base=num('subWeekly')*52+num('subExtras');const flexibility=num('flex');return {economic:Math.max(0,base-flexibility),cash:base,dep:0,running:base,hassle:0,flex:flexibility};}
+function allOptions(){return [
+ {key:'keep',name:'Keep it',x:current(),desc:'Current car'},
+ {key:'buy',name:'Buy',x:buy(),desc:'Replacement bought outright'},
+ {key:'finance',name:'Finance',x:finance(),desc:'Replacement with loan'},
+ {key:'lease',name:'Lease',x:lease(),desc:'Lease arrangement'},
+ {key:'subscribe',name:'Subscribe',x:subscribe(),desc:'EV subscription'}
+];}
+function setChoice(){document.querySelectorAll('.option').forEach(b=>b.classList.toggle('active',b.dataset.choice===choice));$('financeFields').classList.toggle('hidden',choice!=='finance');$('leaseFields').classList.toggle('hidden',choice!=='lease');$('subscribeFields').classList.toggle('hidden',choice!=='subscribe');}
+function calculate(){
+ $('hassleOut').textContent=money(num('hassle'))+' / year'; $('flexOut').textContent=money(num('flex'))+' / year';
+ const options=allOptions(); const metric=view; const best=Math.min(...options.map(o=>o.x[metric])); const winner=options.find(o=>Math.abs(o.x[metric]-best)<0.01);
+ $('results').innerHTML=options.map(o=>{const amount=o.x[metric];const cls=Math.abs(amount-best)<0.01?'result best':'result';let why='Includes depreciation, operating costs and your hassle value.';if(o.key==='subscribe')why='Subscription and extras, less the flexibility value you assigned in economic view.';if(o.key==='finance')why='Depreciation, operating costs and actual loan interest over the holding period.';return `<div class="${cls}"><div class="name">${o.name}</div><div class="amount">${money(amount)}</div><div class="weekly">${money(amount/52)} / week</div><div class="why">${why}</div></div>`}).join('');
+ let explanation='';
+ if(winner.key==='keep') explanation='Keeping your current car is cheapest on these assumptions. That may be exactly the right answer. The car is not cost-free simply because the finance has been paid off.';
+ if(winner.key==='buy') explanation='Buying wins on these assumptions. The model credits the replacement with its expected resale value rather than treating the purchase price as a pure expense.';
+ if(winner.key==='finance') explanation='Finance wins on these assumptions. The result is sensitive to the interest rate, deposit, loan term and expected resale value.';
+ if(winner.key==='lease') explanation='Leasing wins on these assumptions. Check carefully which running costs and tax effects are actually included in your real arrangement.';
+ if(winner.key==='subscribe') explanation=view==='cash'?'Subscription has the lowest cash cost on these inputs. In economic view, the flexibility value can also make it competitive.':'Subscription has the lowest economic cost on these assumptions. You are paying for access while transferring much of the residual-value and disposal risk away from yourself.';
+ $('winner').innerHTML=`<div class="label">Lowest ${view==='cash'?'cash':'estimated economic'} cost</div><h3>${winner.name} — ${money(winner.x[metric])} a year</h3><p>${explanation}</p>`;
+ const max=Math.max(...options.map(o=>o.x[metric]),1); $('breakdown1').innerHTML=options.map(o=>`<div class="barrow"><div class="barlabel"><span>${o.name}</span><span>${money(o.x[metric])}</span></div><div class="track"><div class="fill" style="width:${(o.x[metric]/max)*100}%"></div></div></div>`).join('');
+ $('resultTitle').textContent=view==='cash'?'Estimated cash cost':'Estimated economic cost';
+ $('economicBtn').classList.toggle('active',view==='economic');$('cashBtn').classList.toggle('active',view==='cash');
+ $('reality').textContent=view==='cash'?'Cash cost answers: “How much money actually leaves my pocket, annualised over the period I keep the vehicle?” It excludes depreciation as a separate cost, but includes purchase/finance cash flows and resale proceeds where relevant. Your hassle and flexibility values are not cash costs.':'Economic cost answers: “What does it cost me to have this vehicle?” It treats depreciation and financing interest as real economic costs, while making your optional hassle and flexibility values explicit.';
+}
+
+document.querySelectorAll('.option').forEach(b=>b.addEventListener('click',()=>{choice=b.dataset.choice;setChoice();calculate();}));
+$('economicBtn').addEventListener('click',()=>{view='economic';calculate();});$('cashBtn').addEventListener('click',()=>{view='cash';calculate();});
+document.querySelectorAll('input').forEach(i=>i.addEventListener('input',calculate));
+$('resetBtn').addEventListener('click',()=>{Object.entries(initial).forEach(([id,v])=>$(id).value=v);choice='buy';view='economic';setChoice();calculate();$('resultsCard').scrollIntoView({behavior:'smooth',block:'start'});});
+setChoice();calculate();
+})();
+</script>
+</body>
+</html>
