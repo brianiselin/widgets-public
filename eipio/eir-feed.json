@@ -1,6 +1,14 @@
 {
   "articles": [
     {
+      "title": "Space Domain Intelligence and Security",
+      "link": "https://medium.com/eipio-intelligence-review/space-domain-intelligence-and-security-01d418dc8932?source=rss----4316059b7c4d---4",
+      "date": "Thu, 19 Nov 2026 09:01:02 GMT",
+      "author": "Christophe Bosquillon FEIPIO",
+      "excerpt": "Space Domain Intelligence and Security What\u2019s Missing from the DIA\u2019s Space Report The report is thin on threat detail and on how space intelligence must adapt. Four days later, a Chinese study said mo",
+      "img": "https://cdn-images-1.medium.com/max/1024/1*iZKseoyVsiJUZ7XdIvE8ZA.png"
+    },
+    {
       "title": "AI Is Making Intelligence Cheap. Knowing What to Believe Is Getting Harder.",
       "link": "https://medium.com/eipio-intelligence-review/ai-is-making-intelligence-cheap-knowing-what-to-believe-is-getting-harder-420245bd4f22?source=rss----4316059b7c4d---4",
       "date": "Thu, 12 Nov 2026 08:46:01 GMT",
@@ -55,14 +63,6 @@
       "author": "Brian Iselin FEIPIO",
       "excerpt": "THE CHANGING HUMAN COLLECTION ENVIRONMENT Foreign intelligence services no longer need a clandestine meeting to turn an ordinary professional interaction into an intelligence collection opportunity. A",
       "img": "https://cdn-images-1.medium.com/max/1024/1*pjPRcc5jDFCUei0ZAg6zog.png"
-    },
-    {
-      "title": "Seeing the Ship Is Not the Problem",
-      "link": "https://medium.com/eipio-intelligence-review/seeing-the-ship-is-not-the-problem-d5fbd1e135fe?source=rss----4316059b7c4d---4",
-      "date": "Fri, 02 Oct 2026 08:00:24 GMT",
-      "author": "Christophe Bosquillon FEIPIO",
-      "excerpt": "MARITIME INTELLIGENCE What Space Can, and Cannot, Do About COSCO\u2019s Spy Fleet Washington alleges that China\u2019s shipping giant doubles as a SIGINT platform. Expelling it would hurt the West as much as Be",
-      "img": "https://cdn-images-1.medium.com/max/1024/1*XYeeQfP4BuzaB1LbPB3UNA.png"
     }
   ]
 }
